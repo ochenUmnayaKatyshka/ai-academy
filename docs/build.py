@@ -196,7 +196,7 @@ a{color:#0a0a0a;text-decoration:none}
 .lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
 .lesson-content details>*:not(summary){padding:0 16px}
 .lesson-content details>p:first-of-type{padding-top:12px}
-.lesson-content img{max-width:100%;margin:16px 0}
+.lesson-content img{max-width:560px;width:100%;margin:16px 0;display:block;border-radius:6px}
 
 /* Test */
 .test__question{margin-bottom:24px}

@@ -108,7 +108,7 @@ a{color:#0a0a0a;text-decoration:none}
 .lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
 .lesson-content details>*:not(summary){padding:0 16px}
 .lesson-content details>p:first-of-type{padding-top:12px}
-.lesson-content img{max-width:100%;margin:16px 0}
+.lesson-content img{max-width:560px;width:100%;margin:16px 0;display:block;border-radius:6px}
 
 /* Test */
 .test__question{margin-bottom:24px}
@@ -301,6 +301,9 @@ body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
 Спроси у Claude Code прямо в VS Code:
 <code>Где в проекте лежит index.html — в корне или в папке docs?</code>
 Claude посмотрит структуру проекта и ответит. Этот ответ и подставляй в поле Folder.</p>
+</blockquote>
+<p><img alt="Claude Code отвечает где лежит index.html" src="../img/cc/21-claude-answers-where-index.png" /></p>
+<blockquote>
 <p>Ещё вариант — посмотреть в VS Code слева в панели Explorer. Если <code>index.html</code> в самом верху списка файлов проекта — это корень. Если внутри папки <code>docs/</code> — значит <code>/docs</code>.</p>
 </blockquote>
 <p><strong>Шаг 5.</strong> Подожди 1–2 минуты. Обнови страницу Settings → Pages. Сверху появится зелёная плашка с твоей ссылкой:</p>
