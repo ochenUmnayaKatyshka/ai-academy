@@ -11,6 +11,12 @@ import markdown
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COURSE_DIR = os.path.dirname(BASE_DIR)  # ai-academy/
 OUTPUT_DIR = os.path.join(BASE_DIR, 'lessons')
+MATERIALS_OUTPUT_DIR = os.path.join(BASE_DIR, 'materials')
+
+# Materials: (html_filename, md_path, title)
+MATERIALS = [
+    ('claude-code-guide.html', 'reference/claude-code-friendly-guide.md', 'Claude Code: что и как'),
+]
 
 # Lesson definitions: (lesson_id, html_filename, md_path, title, stage, lesson_num, stage_total)
 LESSONS = [
@@ -465,9 +471,43 @@ def get_cc_lesson_html_template(title, module, lesson_num, module_total, lesson_
 </html>'''
 
 
+def get_material_html_template(title, content_html):
+    return f'''<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} — Материалы — AI Academy</title>
+  {GOOGLE_FONTS}
+  <style>{INLINE_CSS}</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">\U0001F338 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../materials.html" class="lesson-header__back">\u2190 НАЗАД К МАТЕРИАЛАМ</a>
+    <span class="lesson-header__meta">Материалы</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      {content_html}
+    </div>
+  </div>
+
+  <script>{INLINE_JS}</script>
+  <script>{THEME_JS}</script>
+</body>
+</html>'''
+
+
 def build():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     os.makedirs(CC_OUTPUT_DIR, exist_ok=True)
+    os.makedirs(MATERIALS_OUTPUT_DIR, exist_ok=True)
 
     md_converter = markdown.Markdown(
         extensions=['tables', 'fenced_code', 'codehilite', 'md_in_html'],
@@ -546,7 +586,34 @@ def build():
         cc_built += 1
         print(f'  ✅ [CC] {html_file} ← {md_path}')
 
-    print(f'\nГотово: {built} уроков + {cc_built} Claude Code уроков, {errors + cc_errors} ошибок')
+    # Build Materials
+    materials_built = 0
+    materials_errors = 0
+
+    for html_file, md_path, title in MATERIALS:
+        md_full_path = os.path.join(COURSE_DIR, md_path)
+
+        if not os.path.exists(md_full_path):
+            print(f'  ❌ Material файл не найден: {md_path}')
+            materials_errors += 1
+            continue
+
+        with open(md_full_path, 'r', encoding='utf-8') as f:
+            md_text = f.read()
+
+        md_converter.reset()
+        content_html = md_converter.convert(md_text)
+
+        html = get_material_html_template(title, content_html)
+
+        output_path = os.path.join(MATERIALS_OUTPUT_DIR, html_file)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        materials_built += 1
+        print(f'  ✅ [MATERIAL] {html_file} ← {md_path}')
+
+    print(f'\nГотово: {built} уроков + {cc_built} Claude Code уроков + {materials_built} материалов, {errors + cc_errors + materials_errors} ошибок')
 
 
 if __name__ == '__main__':
