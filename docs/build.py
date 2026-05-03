@@ -15,7 +15,7 @@ MATERIALS_OUTPUT_DIR = os.path.join(BASE_DIR, 'materials')
 
 # Materials: (html_filename, md_path, title)
 MATERIALS = [
-    ('claude-code-guide.html', 'reference/claude-code-friendly-guide.md', 'Claude Code: что и как'),
+    ('claude-code-guide.html', 'reference/claude-code-friendly-guide.md', 'Как общаться с Claude'),
 ]
 
 # Lesson definitions: (lesson_id, html_filename, md_path, title, stage, lesson_num, stage_total)
