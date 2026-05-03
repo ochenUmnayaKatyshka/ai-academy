@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Что дальше — Claude Code — AI Academy</title>
+  <title>Публикация в интернет — Claude Code — AI Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -234,97 +234,143 @@ body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
 
   <div class="lesson-header">
     <a href="../claude-code.html" class="lesson-header__back">← НАЗАД К CLAUDE CODE</a>
-    <span class="lesson-header__meta">Модуль 5: Для продвинутых · Урок 7 из 7</span>
+    <span class="lesson-header__meta">Модуль 5: Для продвинутых · Урок 7 из 8</span>
   </div>
 
   <div class="container">
     <div class="lesson-content">
-      <h1>Что дальше</h1>
-<p>Курс по Claude Code завершён. Ты знаешь всё что нужно для работы с этим инструментом.</p>
+      <h1>Публикация проекта в интернет</h1>
+<p>Проект работает на твоём компьютере. Тебе нравится. Теперь хочется чтобы по ссылке могли зайти друзья, коллеги, мама — кто угодно. Это и есть публикация.</p>
 <hr />
-<h2>Что ты теперь умеешь</h2>
+<h2>Словарь</h2>
 <ul>
 <li>
-<p>VS Code и Claude Code установлены и настроены</p>
+<p><strong>Локально</strong> — то что работает только на твоём компьютере. Никто кроме тебя не видит.</p>
 </li>
 <li>
-<p>GitHub подключён для бэкапов</p>
+<p><strong>Опубликовать (deploy)</strong> — выложить проект в интернет так, чтобы он открывался по ссылке у любого человека.</p>
 </li>
 <li>
-<p>Понимаешь интерфейс и систему подтверждений</p>
+<p><strong>GitHub Pages</strong> — бесплатный хостинг от GitHub. Берёт твой репозиторий и делает из него сайт.</p>
 </li>
 <li>
-<p>Знаешь как разговаривать с Claude эффективно</p>
-</li>
-<li>
-<p>Умеешь писать документацию перед работой</p>
-</li>
-<li>
-<p>Работаешь с файлами: создание, изменение, удаление</p>
-</li>
-<li>
-<p>Сохраняешь работу через Git</p>
-</li>
-<li>
-<p>Используешь несколько чатов параллельно</p>
-</li>
-<li>
-<p>Знаешь про CLAUDE.md и режимы работы</p>
-</li>
-<li>
-<p>Умеешь решать проблемы когда что-то идёт не так</p>
+<p><strong>Хостинг</strong> — сервис, на котором живёт сайт. GitHub Pages — это и есть хостинг.</p>
 </li>
 </ul>
-<p>Это полный набор для продуктивной работы.</p>
 <hr />
-<h2>Куда двигаться</h2>
-<p><strong>Путь 1: Публикация проекта в интернете</strong></p>
-<p>Проект работает на компьютере — теперь показать его миру:</p>
+<h2>Что нужно перед публикацией</h2>
+<ol>
+<li>
+<p>Проект уже на GitHub (см. урок «Подключение GitHub» и «Git: сохранение работы»)</p>
+</li>
+<li>
+<p>Это статический сайт — HTML, CSS, JavaScript. Без сервера, без базы данных.</p>
+</li>
+<li>
+<p>Точка входа — файл <code>index.html</code> в корне проекта или в папке <code>docs/</code>.</p>
+</li>
+</ol>
+<blockquote>
+<p>💡 <strong>Простыми словами:</strong>
+Если проект — это HTML-файлы которые открываются в браузере по двойному клику, GitHub Pages его опубликует.</p>
+</blockquote>
+<hr />
+<h2>Способ 1: через интерфейс GitHub (вручную)</h2>
+<p>Самый понятный для новичка. Ничего не сломаешь.</p>
+<p><strong>Шаг 1.</strong> Заходи на github.com → открой свой репозиторий с проектом.</p>
+<p><strong>Шаг 2.</strong> В верхнем меню репозитория нажми <strong>Settings</strong> (шестерёнка справа).</p>
+<p><strong>Шаг 3.</strong> В левом меню найди раздел <strong>Pages</strong>.</p>
+<p><strong>Шаг 4.</strong> В блоке «Build and deployment»:</p>
 <ul>
 <li>
-<p>Как купить домен</p>
+<p><strong>Source</strong> → выбери <strong>Deploy from a branch</strong></p>
 </li>
 <li>
-<p>Как выложить на хостинг</p>
+<p><strong>Branch</strong> → выбери <strong>main</strong> (или <strong>master</strong> — смотря как у тебя называется)</p>
 </li>
 <li>
-<p>Как подключить базу данных</p>
+<p><strong>Folder</strong> → выбери <strong>/ (root)</strong> если <code>index.html</code> лежит в корне. Или <strong>/docs</strong> если он в папке <code>docs/</code>.</p>
 </li>
 <li>
-<p>Как добавить авторизацию и платежи</p>
+<p>Нажми <strong>Save</strong></p>
 </li>
 </ul>
-<p><strong>Путь 2: Прокачать Claude Code до максимума</strong></p>
-<p>То что ты видел — примерно 20% возможностей:</p>
+<p><strong>Шаг 5.</strong> Подожди 1–2 минуты. Обнови страницу Settings → Pages. Сверху появится зелёная плашка с твоей ссылкой:</p>
+<pre class="highlight"><code>https://твой-username.github.io/название-репозитория/
+</code></pre>
+
+<p>Открой её — это твой опубликованный сайт.</p>
+<hr />
+<h2>Способ 2: через Claude Code</h2>
+<p>Раз уж учимся пользоваться Claude — пусть он сделает.</p>
+<p><strong>Что попросить:</strong></p>
+<pre class="highlight"><code>Опубликуй этот проект через GitHub Pages.
+Точка входа — index.html в корне.
+</code></pre>
+
+<p>Claude проверит что репозиторий подключён, что есть нужные файлы, и подскажет что делать дальше. Если в системе установлен <code>gh</code> (GitHub CLI) — Claude включит Pages сам через одну команду. Если нет — даст пошаговую инструкцию для интерфейса GitHub из Способа 1.</p>
+<p><strong>Если Claude спрашивает про ветку или папку:</strong></p>
 <ul>
 <li>
-<p><strong>Skills</strong> — навыки по команде</p>
+<p>Ветка обычно — <strong>main</strong></p>
 </li>
 <li>
-<p><strong>MCP</strong> — подключение внешних сервисов</p>
-</li>
-<li>
-<p><strong>Hooks</strong> — автоматические действия</p>
-</li>
-<li>
-<p><strong>Worktrees</strong> — параллельная работа над задачами</p>
-</li>
-<li>
-<p><strong>Agent Teams</strong> — команды агентов</p>
+<p>Папка — <strong>/</strong> (корень) если <code>index.html</code> в корне, или <strong>/docs</strong> если в папке docs</p>
 </li>
 </ul>
+<p>После публикации Claude напишет ссылку. Открывай и проверяй.</p>
+<blockquote>
+<p>💡 <strong>Когда какой способ выбрать:</strong>
+Первый раз — попробуй Способ 1, чтобы понимать что происходит. Потом — Способ 2, чтобы не повторяться.</p>
+</blockquote>
+<hr />
+<h2>Что делать если ссылка не работает</h2>
+<p><strong>Подожди ещё.</strong> Первая публикация занимает до 5 минут. Обнови страницу через минуту.</p>
+<p><strong>Проверь файл <code>index.html</code>.</strong> Он должен быть точно в той папке, которую ты выбрал в настройках (корень или <code>/docs</code>).</p>
+<p><strong>Проверь имя файла.</strong> Именно <code>index.html</code>, маленькими буквами. Не <code>Index.html</code>, не <code>main.html</code>.</p>
+<p><strong>Проверь что коммит запушен.</strong> Если изменения только локально — GitHub их не видит. Попроси Claude:</p>
+<pre class="highlight"><code>Запушь все изменения на GitHub
+</code></pre>
+
+<p><strong>Если ничего не помогло</strong> — открой Settings → Pages, посмотри что написано в блоке статуса. Скопируй текст и спроси Claude:</p>
+<pre class="highlight"><code>GitHub Pages показывает такую ошибку: [текст]. Что делать?
+</code></pre>
+
+<hr />
+<h2>Обновление сайта</h2>
+<p>После публикации сайт обновляется автоматически. Цикл такой:</p>
+<pre class="highlight"><code>Меняешь файлы → commit → push → ждёшь 1–2 минуты → сайт обновился
+</code></pre>
+
+<p>Никаких дополнительных действий. GitHub видит новый коммит на ветке main и сам пересобирает сайт.</p>
+<hr />
+<h2>Свой домен (необязательно)</h2>
+<p>Ссылка <code>username.github.io/project</code> — рабочая, можно показывать. Но если хочется красивее, например <code>мойсайт.com</code> — нужно купить домен и подключить его.</p>
+<p>Это тема для отдельного разговора. Пока хватает ссылки от GitHub.</p>
 <hr />
 <h2>Главное</h2>
-<p>Фундамент освоен. Claude Code уже работает на тебя. Дальше — вопрос того, насколько глубоко хочешь зайти.</p>
-<p>Если есть идея — начинай делать. Если застрял — возвращайся к урокам.</p>
-<p>Открывай VS Code и строй. Удачи!</p>
+<ul>
+<li>
+<p>GitHub Pages — бесплатный способ опубликовать статический сайт</p>
+</li>
+<li>
+<p>Два способа: вручную через Settings → Pages или через Claude Code</p>
+</li>
+<li>
+<p>После публикации сайт сам обновляется при каждом push</p>
+</li>
+<li>
+<p>Если что-то не работает — проверь <code>index.html</code>, ветку и папку</p>
+</li>
+</ul>
+<p>Теперь у проекта есть ссылка, которую можно отправить кому угодно.</p>
     </div>
   </div>
 
   <div class="container">
     <div class="lesson-nav">
       <a href="20-problems-solutions.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
-      <span class="lesson-nav__btn lesson-nav__btn--disabled">СЛЕДУЮЩИЙ →</span>
+      <a href="22-whats-next.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
     </div>
   </div>
 

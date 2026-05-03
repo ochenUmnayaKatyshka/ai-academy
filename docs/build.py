@@ -75,13 +75,14 @@ CC_LESSONS = [
     ('cc-12', '12-create-edit-files.html',   '06-claude-code/12-create-edit-files.md',   'Создание и изменение файлов',   4, 1, 3),
     ('cc-13', '13-attach-files.html',        '06-claude-code/13-attach-files.md',        'Прикрепление файлов',           4, 2, 3),
     ('cc-14', '14-git-save.html',            '06-claude-code/14-git-save.md',            'Git: сохранение работы',        4, 3, 3),
-    ('cc-15', '15-research-roles.html',      '06-claude-code/15-research-roles.md',      'Исследование и роли',           5, 1, 7),
-    ('cc-16', '16-multiple-chats.html',      '06-claude-code/16-multiple-chats.md',      'Несколько чатов',               5, 2, 7),
-    ('cc-17', '17-troubleshooting.html',     '06-claude-code/17-troubleshooting.md',     'Когда что-то не работает',      5, 3, 7),
-    ('cc-18', '18-claude-md.html',           '06-claude-code/18-claude-md.md',           'Файл CLAUDE.md',               5, 4, 7),
-    ('cc-19', '19-work-modes.html',          '06-claude-code/19-work-modes.md',          'Режимы работы',                 5, 5, 7),
-    ('cc-20', '20-problems-solutions.html',  '06-claude-code/20-problems-solutions.md',  'Проблемы и решения',            5, 6, 7),
-    ('cc-21', '21-whats-next.html',          '06-claude-code/21-whats-next.md',          'Что дальше',                    5, 7, 7),
+    ('cc-15', '15-research-roles.html',      '06-claude-code/15-research-roles.md',      'Исследование и роли',           5, 1, 8),
+    ('cc-16', '16-multiple-chats.html',      '06-claude-code/16-multiple-chats.md',      'Несколько чатов',               5, 2, 8),
+    ('cc-17', '17-troubleshooting.html',     '06-claude-code/17-troubleshooting.md',     'Когда что-то не работает',      5, 3, 8),
+    ('cc-18', '18-claude-md.html',           '06-claude-code/18-claude-md.md',           'Файл CLAUDE.md',               5, 4, 8),
+    ('cc-19', '19-work-modes.html',          '06-claude-code/19-work-modes.md',          'Режимы работы',                 5, 5, 8),
+    ('cc-20', '20-problems-solutions.html',  '06-claude-code/20-problems-solutions.md',  'Проблемы и решения',            5, 6, 8),
+    ('cc-21', '21-publish-online.html',      '06-claude-code/21-publish-online.md',      'Публикация в интернет',         5, 7, 8),
+    ('cc-22', '22-whats-next.html',          '06-claude-code/22-whats-next.md',          'Что дальше',                    5, 8, 8),
 ]
 
 CC_MODULE_NAMES = {
