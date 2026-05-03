@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Academy — От нуля до создания AI-продуктов</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}
+a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.hero{text-align:center;padding:60px 20px 40px}
+.hero__logo{font-size:32px;font-weight:700;color:#fff;margin-bottom:16px}
+.hero__logo-icon{margin-right:8px}
+.hero__subtitle{color:#888;font-size:16px;line-height:1.5;max-width:400px;margin:0 auto}
+.progress{padding:0 20px 32px}
+.progress__info{display:flex;justify-content:space-between;font-size:14px;color:#888;margin-bottom:8px}
+.progress__bar{width:100%;height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden}
+.progress__fill{height:100%;background:#6b8afd;border-radius:3px;transition:width .3s ease;width:0%}
+.big-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 40px}
+.big-card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:32px 16px;text-align:center;cursor:pointer;transition:border-color .2s ease;display:block}
+.big-card:hover{border-color:#6b8afd}
+.big-card__icon{font-size:36px;margin-bottom:12px;display:block}
+.big-card__title{font-size:16px;font-weight:600;color:#e5e5e5}
+.stages{padding:0 20px}
+.stage{margin-bottom:40px}
+.stage__label{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.stage__title{font-size:18px;font-weight:600;color:#e5e5e5;margin-bottom:4px}
+.stage__desc{font-size:14px;color:#888;margin-bottom:16px}
+.stage__counter{font-size:14px;color:#666;float:right;margin-top:-22px}
+.lesson-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lesson-card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .2s ease;text-decoration:none;color:#e5e5e5;position:relative}
+.lesson-card:hover{border-color:#6b8afd;color:#e5e5e5}
+.lesson-card--completed{border-color:#2d3a2d}
+.lesson-card__icon{font-size:20px;flex-shrink:0}
+.lesson-card__name{font-size:13px;font-weight:500;line-height:1.3}
+.lesson-card__check{position:absolute;top:6px;right:8px;font-size:12px;color:#4ade80}
+.footer{padding:60px 20px 40px;text-align:center;border-top:1px solid #1a1a1a;margin-top:60px}
+.footer__label{font-size:14px;color:#666;margin-bottom:24px}
+.footer__avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:2px solid #2a2a2a}
+.footer__name{font-size:18px;font-weight:600;color:#e5e5e5;margin-bottom:4px}
+.footer__role{font-size:14px;color:#888;margin-bottom:8px}
+.footer__instagram{font-size:14px;color:#6b8afd}
+.footer__copy{font-size:12px;color:#444;margin-top:32px}
+@media(max-width:480px){.hero{padding:40px 16px 24px}.hero__logo{font-size:26px}.hero__subtitle{font-size:14px}.big-cards{padding:0 16px 32px}.big-card{padding:24px 12px}.stages{padding:0 16px}.lesson-grid{gap:8px}.lesson-card{padding:12px}.lesson-card__name{font-size:12px}.container{padding:0 16px}}
+
+/* Theme toggle */
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+/* Girls theme — light, elegant, like the reference */
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .hero__logo{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;font-size:34px;letter-spacing:-0.5px}
+body.girls .hero__subtitle{color:#8a7a7a;font-family:'Georgia',serif;font-style:italic}
+body.girls a{color:#c47a8a}
+body.girls a:hover{color:#a05a6a}
+body.girls .progress__fill{background:#d4a0aa}
+body.girls .progress__bar{background:#e8ddd8}
+body.girls .progress__info{color:#9a8a8a}
+body.girls .big-card{background:#fff;border-color:#e0d5d0;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
+body.girls .big-card:hover{border-color:#c47a8a;box-shadow:0 4px 20px rgba(196,122,138,0.12)}
+body.girls .big-card__title{color:#3a3a3a;font-family:'Georgia',serif}
+body.girls .lesson-card{background:#fff;border-color:#e0d5d0;box-shadow:0 1px 6px rgba(0,0,0,0.03)}
+body.girls .lesson-card:hover{border-color:#c47a8a;color:#3a3a3a}
+body.girls .lesson-card__name{color:#3a3a3a;font-family:'Georgia',serif}
+body.girls .lesson-card--completed{border-color:#c8dcc8}
+body.girls .stage__label{color:#b0a0a0;font-family:-apple-system,sans-serif}
+body.girls .stage__title{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;font-size:20px}
+body.girls .stage__desc{color:#9a8a8a;font-family:'Georgia',serif;font-style:italic}
+body.girls .stage__counter{color:#b0a0a0}
+body.girls .footer{border-top-color:#e0d5d0}
+body.girls .footer__label{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .footer__name{color:#3a3a3a;font-family:'Georgia',serif}
+body.girls .footer__role{color:#9a8a8a}
+body.girls .footer__instagram{color:#c47a8a}
+body.girls .footer__copy{color:#c0b0b0}
+body.girls .footer__avatar{border-color:#e0d5d0}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+  </style>
+</head>
+<body>
+
+  <!-- THEME TOGGLE -->
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__logo">
+      <span class="hero__logo-icon">🎓</span> AI Academy
+    </div>
+    <p class="hero__subtitle">
+      От нуля до создания AI-продуктов.<br>
+      Пошаговый путь для тех, кто никогда не кодил.
+    </p>
+  </section>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress container">
+    <div class="progress__info">
+      <span>Прогресс</span>
+      <span id="progress-text">0 из 30 уроков</span>
+    </div>
+    <div class="progress__bar">
+      <div class="progress__fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- BIG CARDS -->
+  <div class="big-cards container">
+    <a href="#stages" class="big-card">
+      <span class="big-card__icon">📚</span>
+      <span class="big-card__title">Обучение</span>
+    </a>
+    <a href="materials.html" class="big-card">
+      <span class="big-card__icon">📂</span>
+      <span class="big-card__title">Материалы</span>
+    </a>
+  </div>
+
+  <!-- STAGES WITH LESSON CARDS -->
+  <div class="stages container" id="stages">
+
+    <!-- ЭТАП 1 -->
+    <div class="stage">
+      <div class="stage__label">Этап 1</div>
+      <div class="stage__title">Фундамент</div>
+      <span class="stage__counter" data-stage="1">0/8</span>
+      <div class="stage__desc">Научишься говорить с компьютером на его языке</div>
+      <div class="lesson-grid">
+        <a href="lessons/0-0-setup.html" class="lesson-card" data-lesson="0-0-setup">
+          <span class="lesson-card__icon">⚙️</span>
+          <span class="lesson-card__name">Подготовка</span>
+        </a>
+        <a href="lessons/1-1-terminal.html" class="lesson-card" data-lesson="1-1-terminal">
+          <span class="lesson-card__icon">&gt;_</span>
+          <span class="lesson-card__name">Терминал</span>
+        </a>
+        <a href="lessons/1-2-files.html" class="lesson-card" data-lesson="1-2-files">
+          <span class="lesson-card__icon">📄</span>
+          <span class="lesson-card__name">Файлы и форматы</span>
+        </a>
+        <a href="lessons/1-3-variables.html" class="lesson-card" data-lesson="1-3-variables">
+          <span class="lesson-card__icon">🐍</span>
+          <span class="lesson-card__name">Переменные и типы</span>
+        </a>
+        <a href="lessons/1-4-conditions.html" class="lesson-card" data-lesson="1-4-conditions">
+          <span class="lesson-card__icon">🔀</span>
+          <span class="lesson-card__name">Условия и циклы</span>
+        </a>
+        <a href="lessons/1-5-functions.html" class="lesson-card" data-lesson="1-5-functions">
+          <span class="lesson-card__icon">⚡</span>
+          <span class="lesson-card__name">Функции</span>
+        </a>
+        <a href="lessons/1-6-working-files.html" class="lesson-card" data-lesson="1-6-working-files">
+          <span class="lesson-card__icon">📂</span>
+          <span class="lesson-card__name">Работа с файлами</span>
+        </a>
+        <a href="lessons/1-7-git.html" class="lesson-card" data-lesson="1-7-git">
+          <span class="lesson-card__icon">🔧</span>
+          <span class="lesson-card__name">Git и GitHub</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ЭТАП 2 -->
+    <div class="stage">
+      <div class="stage__label">Этап 2</div>
+      <div class="stage__title">Понимание AI</div>
+      <span class="stage__counter" data-stage="2">0/6</span>
+      <div class="stage__desc">Поймёшь, как работает AI изнутри</div>
+      <div class="lesson-grid">
+        <a href="lessons/2-1-llm.html" class="lesson-card" data-lesson="2-1-llm">
+          <span class="lesson-card__icon">🧠</span>
+          <span class="lesson-card__name">Что такое LLM</span>
+        </a>
+        <a href="lessons/2-2-api.html" class="lesson-card" data-lesson="2-2-api">
+          <span class="lesson-card__icon">🔌</span>
+          <span class="lesson-card__name">API — язык программ</span>
+        </a>
+        <a href="lessons/2-3-first-api.html" class="lesson-card" data-lesson="2-3-first-api">
+          <span class="lesson-card__icon">💬</span>
+          <span class="lesson-card__name">Первый вызов Claude API</span>
+        </a>
+        <a href="lessons/2-4-prompts.html" class="lesson-card" data-lesson="2-4-prompts">
+          <span class="lesson-card__icon">🎯</span>
+          <span class="lesson-card__name">Prompt Engineering</span>
+        </a>
+        <a href="lessons/2-5-tokens.html" class="lesson-card" data-lesson="2-5-tokens">
+          <span class="lesson-card__icon">🪙</span>
+          <span class="lesson-card__name">Токены и стоимость</span>
+        </a>
+        <a href="lessons/2-6-scripts.html" class="lesson-card" data-lesson="2-6-scripts">
+          <span class="lesson-card__icon">🛠️</span>
+          <span class="lesson-card__name">Скрипты с Claude API</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ЭТАП 3 -->
+    <div class="stage">
+      <div class="stage__label">Этап 3</div>
+      <div class="stage__title">AI-агенты</div>
+      <span class="stage__counter" data-stage="3">0/5</span>
+      <div class="stage__desc">Создашь AI, который сам выполняет задачи</div>
+      <div class="lesson-grid">
+        <a href="lessons/3-1-chatbot-vs-agent.html" class="lesson-card" data-lesson="3-1-chatbot-vs-agent">
+          <span class="lesson-card__icon">🤖</span>
+          <span class="lesson-card__name">Чат-бот vs Агент</span>
+        </a>
+        <a href="lessons/3-2-tools.html" class="lesson-card" data-lesson="3-2-tools">
+          <span class="lesson-card__icon">🔧</span>
+          <span class="lesson-card__name">Tools — руки агента</span>
+        </a>
+        <a href="lessons/3-3-memory.html" class="lesson-card" data-lesson="3-3-memory">
+          <span class="lesson-card__icon">💾</span>
+          <span class="lesson-card__name">Память агента</span>
+        </a>
+        <a href="lessons/3-4-agent-sdk.html" class="lesson-card" data-lesson="3-4-agent-sdk">
+          <span class="lesson-card__icon">🏗️</span>
+          <span class="lesson-card__name">Первый агент (SDK)</span>
+        </a>
+        <a href="lessons/3-5-multi-step.html" class="lesson-card" data-lesson="3-5-multi-step">
+          <span class="lesson-card__icon">📋</span>
+          <span class="lesson-card__name">Мульти-шаговые задачи</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ЭТАП 4 -->
+    <div class="stage">
+      <div class="stage__label">Этап 4</div>
+      <div class="stage__title">Продукты</div>
+      <span class="stage__counter" data-stage="4">0/5</span>
+      <div class="stage__desc">Превратишь агента в реальный продукт</div>
+      <div class="lesson-grid">
+        <a href="lessons/4-1-telegram.html" class="lesson-card" data-lesson="4-1-telegram">
+          <span class="lesson-card__icon">📱</span>
+          <span class="lesson-card__name">Telegram-бот с AI</span>
+        </a>
+        <a href="lessons/4-2-databases.html" class="lesson-card" data-lesson="4-2-databases">
+          <span class="lesson-card__icon">🗄️</span>
+          <span class="lesson-card__name">Базы данных</span>
+        </a>
+        <a href="lessons/4-3-deploy.html" class="lesson-card" data-lesson="4-3-deploy">
+          <span class="lesson-card__icon">🌐</span>
+          <span class="lesson-card__name">Сервер и деплой</span>
+        </a>
+        <a href="lessons/4-4-platforms.html" class="lesson-card" data-lesson="4-4-platforms">
+          <span class="lesson-card__icon">🧩</span>
+          <span class="lesson-card__name">Платформы и OpenClaw</span>
+        </a>
+        <a href="lessons/4-5-security.html" class="lesson-card" data-lesson="4-5-security">
+          <span class="lesson-card__icon">🛡️</span>
+          <span class="lesson-card__name">Безопасность</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ЭТАП 5 -->
+    <div class="stage">
+      <div class="stage__label">Этап 5</div>
+      <div class="stage__title">Эксперт</div>
+      <span class="stage__counter" data-stage="5">0/5</span>
+      <div class="stage__desc">Будешь понимать AI глубже, чем 95% людей</div>
+      <div class="lesson-grid">
+        <a href="lessons/5-1-rag.html" class="lesson-card" data-lesson="5-1-rag">
+          <span class="lesson-card__icon">🔍</span>
+          <span class="lesson-card__name">RAG — поиск по данным</span>
+        </a>
+        <a href="lessons/5-2-multi-agent.html" class="lesson-card" data-lesson="5-2-multi-agent">
+          <span class="lesson-card__icon">👥</span>
+          <span class="lesson-card__name">Мульти-агентные системы</span>
+        </a>
+        <a href="lessons/5-3-fine-tuning.html" class="lesson-card" data-lesson="5-3-fine-tuning">
+          <span class="lesson-card__icon">🎛️</span>
+          <span class="lesson-card__name">Fine-tuning</span>
+        </a>
+        <a href="lessons/5-4-optimization.html" class="lesson-card" data-lesson="5-4-optimization">
+          <span class="lesson-card__icon">💰</span>
+          <span class="lesson-card__name">Оптимизация и стоимость</span>
+        </a>
+        <a href="lessons/5-5-architecture.html" class="lesson-card" data-lesson="5-5-architecture">
+          <span class="lesson-card__icon">🏛️</span>
+          <span class="lesson-card__name">Архитектура AI-продуктов</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__label">В создании обучения участвовали:</div>
+    <img src="img/avatar.jpg" alt="Фото" class="footer__avatar" onerror="this.style.display='none'">
+    <div class="footer__name">Имя Фамилия</div>
+    <div class="footer__role">Создатель</div>
+    <a href="https://instagram.com/" class="footer__instagram" target="_blank">📷 @instagram</a>
+    <div class="footer__copy">AI Academy · 2025</div>
+  </footer>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress',TOTAL_LESSONS=30;
+  var STAGES={1:{lessons:['0-0-setup','1-1-terminal','1-2-files','1-3-variables','1-4-conditions','1-5-functions','1-6-working-files','1-7-git'],total:8},2:{lessons:['2-1-llm','2-2-api','2-3-first-api','2-4-prompts','2-5-tokens','2-6-scripts'],total:6},3:{lessons:['3-1-chatbot-vs-agent','3-2-tools','3-3-memory','3-4-agent-sdk','3-5-multi-step'],total:5},4:{lessons:['4-1-telegram','4-2-databases','4-3-deploy','4-4-platforms','4-5-security'],total:5},5:{lessons:['5-1-rag','5-2-multi-agent','5-3-fine-tuning','5-4-optimization','5-5-architecture'],total:5}};
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function updateIndexPage(){
+    var progress=getProgress(),completedCount=Object.keys(progress).length;
+    var pt=document.getElementById('progress-text'),pf=document.getElementById('progress-fill');
+    if(pt)pt.textContent=completedCount+' из '+TOTAL_LESSONS+' уроков';
+    if(pf)pf.style.width=(completedCount/TOTAL_LESSONS*100)+'%';
+    for(var s in STAGES){var stage=STAGES[s],c=0;stage.lessons.forEach(function(l){if(progress[l])c++});var counter=document.querySelector('[data-stage="'+s+'"]');if(counter)counter.textContent=c+'/'+stage.total}
+    document.querySelectorAll('.lesson-card').forEach(function(card){var id=card.getAttribute('data-lesson');if(id&&progress[id]){card.classList.add('lesson-card--completed');if(!card.querySelector('.lesson-card__check')){var ch=document.createElement('span');ch.className='lesson-card__check';ch.textContent='\u2705';card.appendChild(ch)}}});
+  }
+  document.addEventListener('DOMContentLoaded',function(){if(document.getElementById('progress-fill'))updateIndexPage()});
+})();
+
+function toggleTheme(){
+  var body=document.body;
+  var icon=document.getElementById('theme-icon');
+  var label=document.getElementById('theme-label');
+  if(body.classList.contains('girls')){
+    body.classList.remove('girls');
+    icon.textContent='\uD83C\uDF38';
+    label.textContent='\u0434\u043b\u044f \u0434\u0435\u0432\u043e\u0447\u0435\u043a';
+    localStorage.setItem('ai-academy-theme','dark');
+  }else{
+    body.classList.add('girls');
+    icon.textContent='\uD83D\uDCAA';
+    label.textContent='\u043d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u043f\u0430\u0446\u0430\u043d';
+    localStorage.setItem('ai-academy-theme','girls');
+  }
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved==='girls'){
+    document.body.classList.add('girls');
+    var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');
+    if(i)i.textContent='\uD83D\uDCAA';if(l)l.textContent='\u043d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u043f\u0430\u0446\u0430\u043d';
+  }
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG — поиск по данным — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 5 · Урок 1 из 5</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 5.1 — RAG: поиск по своим данным</h1>
+<blockquote>
+<p>Claude знает много — но не знает содержимое твоих файлов, внутренних документов компании или вчерашнего отчёта. LLM обучена на публичных данных до определённой даты. Всё, что произошло после обучения, или всё, что никогда не было в интернете — для модели не существует. RAG решает эту проблему: он даёт модели доступ к твоим данным в момент запроса.</p>
+</blockquote>
+<hr />
+<h2>Проблема: модель не знает твои данные</h2>
+<p>LLM знает огромный объём информации — но у неё три ограничения:</p>
+<pre class="highlight"><code>1. Дата обучения (knowledge cutoff)
+   Модель не знает, что произошло после обучения.
+   &quot;Какие продажи были в прошлом месяце?&quot; → не знает
+
+2. Приватные данные
+   Модель не видела внутреннюю документацию, переписку, базу знаний.
+   &quot;Что написано в нашей политике возврата?&quot; → не знает
+
+3. Галлюцинации
+   Если модель не знает ответ — она может придумать правдоподобный,
+   но неверный ответ, вместо того чтобы сказать &quot;не знаю&quot;.
+</code></pre>
+
+<p><strong>Аналогия.</strong> Представь очень умного консультанта, который прочитал все книги в мире — но не видел ни одного документа из твоего офиса. Он может блестяще рассуждать, но на вопрос «Какой у нас график работы в праздники?» ответит неправильно или придумает.</p>
+<hr />
+<h2>Что такое RAG</h2>
+<p><strong>RAG (Retrieval-Augmented Generation)</strong> — Генерация с дополненным поиском. Термин придумали исследователи из Meta (Facebook) в 2020 году.</p>
+<p>Идея простая: <strong>перед тем как спросить модель — найди релевантную информацию в своих данных и вложи её в запрос</strong>.</p>
+<pre class="highlight"><code>Без RAG:
+  Вопрос → LLM → Ответ (на основе обучения)
+  &quot;Когда платить аренду?&quot; → &quot;Обычно 1-го числа&quot; (угадывает)
+
+С RAG:
+  Вопрос → Поиск по документам → Найденный фрагмент + Вопрос → LLM → Ответ
+  &quot;Когда платить аренду?&quot; → [находит: &quot;Аренда до 15-го числа&quot;] →
+  Claude получает: &quot;Вот документ: {аренда до 15-го}. Вопрос: когда платить?&quot; →
+  &quot;Согласно документу, аренда оплачивается до 15-го числа.&quot;
+</code></pre>
+
+<p><strong>Аналогия.</strong> RAG — это как подсказка на экзамене, только легальная. Студент (модель) умный, но не может помнить всё. Вместо того чтобы зубрить каждый факт, он получает доступ к конспекту (твои документы) и находит нужную страницу перед ответом.</p>
+<hr />
+<h2>RAG vs Fine-tuning: две стратегии</h2>
+<p>Есть два способа дать модели новые знания. Они решают разные задачи:</p>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────────────┐
+│                    RAG vs FINE-TUNING                             │
+│                                                                   │
+│  RAG (поиск)                    Fine-tuning (дообучение)         │
+│  ─────────────                  ──────────────────────           │
+│  Данные: в отдельной базе       Данные: &quot;вшиты&quot; в модель         │
+│  Обновление: мгновенное         Обновление: нужно переобучать    │
+│  Стоимость: дешевле             Стоимость: дорого                │
+│  Точность: высокая (есть        Точность: модель может           │
+│    источник)                      &quot;запомнить&quot; неточно             │
+│  Когда: факты, документы,       Когда: стиль, формат,           │
+│    база знаний                    специфическая терминология      │
+│                                                                   │
+│  Пример: бот отвечает           Пример: модель пишет             │
+│    по документации компании       в стиле юридических договоров   │
+└──────────────────────────────────────────────────────────────────┘
+</code></pre>
+
+<p>Для большинства задач <strong>RAG — правильный выбор</strong>. Fine-tuning нужен редко и стоит дорого.</p>
+<pre class="highlight"><code>Источник: Lewis et al. — &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks&quot; (2020)
+https://arxiv.org/abs/2005.11401
+</code></pre>
+
+<hr />
+<h2>Как работает RAG: 5 шагов</h2>
+<pre class="highlight"><code>         ПОДГОТОВКА (один раз)                    ЗАПРОС (каждый раз)
+ ┌────────────────────────────────┐    ┌────────────────────────────────┐
+ │                                │    │                                │
+ │  1. Загрузить документы        │    │  4. Поиск: найти похожие       │
+ │     ↓                          │    │     фрагменты по вопросу       │
+ │  2. Разбить на фрагменты       │    │     ↓                          │
+ │     (chunking)                 │    │  5. Генерация: отправить       │
+ │     ↓                          │    │     фрагменты + вопрос         │
+ │  3. Превратить в векторы       │    │     в Claude                   │
+ │     (embeddings)               │    │                                │
+ │     → сохранить в базу         │    │                                │
+ │                                │    │                                │
+ └────────────────────────────────┘    └────────────────────────────────┘
+</code></pre>
+
+<p>Разберём каждый шаг.</p>
+<hr />
+<h2>Шаг 1: Загрузить документы</h2>
+<p>Данные для RAG — это любой текст: файлы <code>.txt</code>, <code>.md</code>, <code>.pdf</code>, <code>.docx</code>, страницы сайтов, записи из базы данных. Главное — превратить их в строки Python.</p>
+<pre class="highlight"><code class="language-python"># Простейший вариант — текстовые файлы
+def load_documents(folder_path):
+    &quot;&quot;&quot;Загружает все .txt и .md файлы из папки.&quot;&quot;&quot;
+    import os
+    documents = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith(('.txt', '.md')):
+            filepath = os.path.join(folder_path, filename)
+            with open(filepath, 'r', encoding='utf-8') as f:
+                documents.append({
+                    'text': f.read(),
+                    'source': filename  # запоминаем откуда взяли
+                })
+    return documents
+</code></pre>
+
+<hr />
+<h2>Шаг 2: Разбить на фрагменты (chunking)</h2>
+<p>Документ может быть огромным — 100 страниц. Нельзя отправить всё целиком в Claude: не влезет в контекстное окно, будет дорого, а модель будет искать иголку в стоге сена.</p>
+<p>Решение — <strong>разбить документ на маленькие кусочки (chunks)</strong>. Каждый кусочек — один факт, один параграф, одна мысль.</p>
+<p><strong>Аналогия.</strong> Представь учебник на 500 страниц. Если кто-то спросит «Что такое фотосинтез?» — не нужно отправлять все 500 страниц. Достаточно найти один параграф на стр. 47, где это объяснено. Chunking — это индексация учебника по параграфам.</p>
+<h3>Стратегии chunking</h3>
+<pre class="highlight"><code>1. По фиксированному размеру (самый простой)
+   Каждый чанк — 500 символов. Если мысль попала на границу — разрежет.
+   Плюс: просто реализовать
+   Минус: может разрезать предложение пополам
+
+2. По предложениям / параграфам
+   Чанк = один или несколько параграфов.
+   Плюс: не рвёт мысль
+   Минус: параграфы бывают разной длины
+
+3. С перекрытием (overlap)
+   Каждый чанк на 50-100 символов заходит на территорию соседнего.
+   Плюс: если факт попал на границу — он будет в обоих чанках
+   Минус: чуть больше данных
+</code></pre>
+
+<p><strong>Рекомендуемый размер чанка</strong>: 200–1000 символов. Слишком маленькие — теряется контекст. Слишком большие — поиск становится неточным.</p>
+<pre class="highlight"><code class="language-python">def split_into_chunks(text, chunk_size=500, overlap=50):
+    &quot;&quot;&quot;
+    Разбивает текст на чанки с перекрытием.
+
+    chunk_size: максимальный размер одного чанка (символы)
+    overlap: сколько символов перекрывается между соседними чанками
+    &quot;&quot;&quot;
+    chunks = []
+    start = 0
+    while start &lt; len(text):
+        end = start + chunk_size
+
+        # Попробуем разрезать по точке или переносу строки
+        if end &lt; len(text):
+            # Ищем ближайший конец предложения
+            last_period = text.rfind('.', start, end)
+            last_newline = text.rfind('\n', start, end)
+            best_break = max(last_period, last_newline)
+
+            if best_break &gt; start:  # нашли хорошее место для разреза
+                end = best_break + 1
+
+        chunks.append(text[start:end].strip())
+        start = end - overlap  # перекрытие
+
+    return [c for c in chunks if c]  # убрать пустые
+</code></pre>
+
+<hr />
+<h2>Шаг 3: Превратить в векторы (embeddings)</h2>
+<p>Это ключевой шаг. Чтобы искать «по смыслу», нужно превратить текст в числа — <strong>векторы</strong>. Этот процесс называется <strong>embedding</strong> (встраивание).</p>
+<h3>Что такое embedding</h3>
+<p>Embedding — это представление текста в виде списка чисел (вектора). Каждое число отражает какой-то аспект смысла текста.</p>
+<pre class="highlight"><code>Текст: &quot;Кошка спит на диване&quot;
+Embedding: [0.12, -0.34, 0.56, 0.78, -0.23, ... ]  ← 384-1536 чисел
+</code></pre>
+
+<p>Эти числа — не случайные. Они расположены так, что <strong>похожие по смыслу тексты получают похожие векторы</strong>.</p>
+<pre class="highlight"><code>&quot;Кот лежит на софе&quot;        → [0.11, -0.33, 0.55, 0.77, -0.22, ...]
+&quot;Кошка спит на диване&quot;     → [0.12, -0.34, 0.56, 0.78, -0.23, ...]
+&quot;Квантовая физика атома&quot;   → [0.89, 0.45, -0.67, 0.12, 0.91, ...]
+
+Первые два вектора БЛИЗКИ друг к другу (смысл похож).
+Третий вектор ДАЛЁК от первых двух (смысл другой).
+</code></pre>
+
+<h3>Аналогия: GPS-координаты для текста</h3>
+<p>Представь, что каждому тексту присваиваются координаты на карте. Тексты про кошек оказываются в одном районе. Тексты про физику — в другом. Тексты про программирование — в третьем.</p>
+<p>Когда приходит вопрос «Где купить корм для кота?» — он тоже получает координаты. И эти координаты оказываются рядом с районом «кошки». Поиск сводится к вопросу: <strong>какие точки на карте ближе всего к моему вопросу?</strong></p>
+<pre class="highlight"><code>                    &quot;Карта смыслов&quot; (упрощённо)
+
+     Физика                        Кулинария
+       •                              •
+   •       •                      •       •
+       •                              •
+
+
+        Программирование          Домашние животные
+           •                         •  ← &quot;кот лежит на софе&quot;
+       •       •                  •  ← &quot;кошка спит на диване&quot;
+           •                      •
+                                  ★  ← &quot;где купить корм для кота?&quot;
+                                       (попадает в тот же район!)
+</code></pre>
+
+<h3>Как получить embedding</h3>
+<p>Embedding создаёт специальная модель (не Claude — отдельная, маленькая модель). Самые популярные:</p>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Кто сделал</th>
+<th>Размер вектора</th>
+<th>Цена</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text-embedding-3-small</code></td>
+<td>OpenAI</td>
+<td>1536</td>
+<td>$0.02 / 1M токенов</td>
+</tr>
+<tr>
+<td><code>text-embedding-3-large</code></td>
+<td>OpenAI</td>
+<td>3072</td>
+<td>$0.13 / 1M токенов</td>
+</tr>
+<tr>
+<td>Voyage AI</td>
+<td>Anthropic рекомендует</td>
+<td>1024</td>
+<td>есть бесплатный tier</td>
+</tr>
+<tr>
+<td>Встроенная в ChromaDB</td>
+<td>ChromaDB (локальная)</td>
+<td>384</td>
+<td>Бесплатно</td>
+</tr>
+</tbody>
+</table>
+<p>Для обучения и простых проектов <strong>встроенная модель ChromaDB</strong> — идеальный выбор: ничего не стоит, не нужен API-ключ, работает локально.</p>
+<pre class="highlight"><code>Источник: Anthropic — рекомендует Voyage AI для embeddings:
+https://docs.anthropic.com/en/docs/build-with-claude/embeddings
+</code></pre>
+
+<hr />
+<h2>Шаг 4: Поиск (retrieval)</h2>
+<p>Когда все чанки превращены в векторы и сохранены — можно искать.</p>
+<p>Поиск работает так:
+1. Получаем вопрос пользователя
+2. Превращаем вопрос в вектор (тем же способом)
+3. Ищем чанки, чьи векторы <strong>ближе всего</strong> к вектору вопроса
+4. Возвращаем top-3 или top-5 самых близких</p>
+<p><strong>Как измерить «близость» векторов?</strong> Математически это <strong>косинусное сходство (cosine similarity)</strong> — угол между двумя векторами. Если угол маленький — тексты похожи. Если большой — разные.</p>
+<p>Не нужно знать формулу — библиотеки делают это автоматически. Главное — понимать принцип: <strong>«ближе» в пространстве векторов = «похожее» по смыслу</strong>.</p>
+<hr />
+<h2>Шаг 5: Генерация с контекстом</h2>
+<p>Найденные фрагменты вставляются в промпт для Claude:</p>
+<pre class="highlight"><code class="language-python"># Формируем промпт с контекстом
+prompt = f&quot;&quot;&quot;Ответь на вопрос пользователя, используя ТОЛЬКО информацию
+из предоставленных документов. Если в документах нет ответа — скажи об этом.
+
+&lt;documents&gt;
+{found_chunks}
+&lt;/documents&gt;
+
+&lt;question&gt;
+{user_question}
+&lt;/question&gt;&quot;&quot;&quot;
+</code></pre>
+
+<p>Ключевое: инструкция <strong>«используй ТОЛЬКО информацию из документов»</strong> — это то, что предотвращает галлюцинации. Модель не придумывает — она отвечает на основе конкретных фрагментов.</p>
+<hr />
+<h2>Практика: строим RAG-систему</h2>
+<h3>Что нам нужно</h3>
+<pre class="highlight"><code class="language-bash">pip install chromadb anthropic python-dotenv
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Библиотека</th>
+<th>Зачем</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chromadb</code></td>
+<td>Векторная база данных (хранит чанки и их embeddings)</td>
+</tr>
+<tr>
+<td><code>anthropic</code></td>
+<td>Claude API для генерации ответов</td>
+</tr>
+<tr>
+<td><code>python-dotenv</code></td>
+<td>Загрузка API-ключа из <code>.env</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>ChromaDB</strong> — векторная база, которая работает прямо на компьютере, без серверов. Установил — пользуешься. Она сама превращает текст в векторы (встроенная модель) и умеет искать похожие. Идеально для обучения и небольших проектов.</p>
+<pre class="highlight"><code>Источник: ChromaDB — Getting Started
+https://docs.trychroma.com/docs/overview/getting-started
+</code></pre>
+
+<h3>Шаг 1: Подготовка данных</h3>
+<p>Создай папку <code>my-docs/</code> с несколькими текстовыми файлами — это будет база знаний:</p>
+<pre class="highlight"><code>my-rag-project/
+    my-docs/
+        faq.txt          # Часто задаваемые вопросы
+        rules.txt        # Правила компании
+        products.txt     # Описание продуктов
+    rag.py               # Основной код
+    .env                 # API-ключ Claude
+</code></pre>
+
+<p>Пример файла <code>my-docs/faq.txt</code>:</p>
+<pre class="highlight"><code>Часто задаваемые вопросы
+
+Как оформить возврат?
+Возврат товара возможен в течение 14 дней с момента покупки.
+Для оформления возврата обратитесь в службу поддержки по email: support@example.com
+или позвоните по телефону 8-800-123-45-67. Необходимо предоставить чек и товар
+в оригинальной упаковке.
+
+Какие способы оплаты доступны?
+Мы принимаем банковские карты (Visa, Mastercard, МИР), электронные кошельки
+(ЮMoney, QIWI) и наличные при доставке курьером.
+
+Сколько стоит доставка?
+Доставка бесплатная при заказе от 3000 рублей. При заказе менее 3000 рублей
+стоимость доставки — 300 рублей. Доставка по Москве — 1-2 дня,
+по России — 3-7 дней.
+</code></pre>
+
+<h3>Шаг 2: Код RAG-системы</h3>
+<pre class="highlight"><code class="language-python"># rag.py — RAG-система: поиск по своим документам + ответ от Claude
+
+import os
+from dotenv import load_dotenv
+import chromadb
+from anthropic import Anthropic
+
+load_dotenv()
+
+# === ШАГ 1: ЗАГРУЗКА ДОКУМЕНТОВ ===
+
+def load_documents(folder_path):
+    &quot;&quot;&quot;Загружает все .txt и .md файлы из папки.&quot;&quot;&quot;
+    documents = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith(('.txt', '.md')):
+            filepath = os.path.join(folder_path, filename)
+            with open(filepath, 'r', encoding='utf-8') as f:
+                text = f.read()
+                documents.append({
+                    'text': text,
+                    'source': filename
+                })
+                print(f&quot;  Загружен: {filename} ({len(text)} символов)&quot;)
+    return documents
+
+
+# === ШАГ 2: РАЗБИВКА НА ЧАНКИ ===
+
+def split_into_chunks(text, source, chunk_size=500, overlap=50):
+    &quot;&quot;&quot;
+    Разбивает текст на фрагменты.
+    Каждый фрагмент запоминает, из какого файла он взят.
+    &quot;&quot;&quot;
+    chunks = []
+    start = 0
+    chunk_number = 0
+
+    while start &lt; len(text):
+        end = start + chunk_size
+
+        # Ищем хорошее место для разреза (точка или перенос строки)
+        if end &lt; len(text):
+            last_period = text.rfind('.', start, end)
+            last_newline = text.rfind('\n\n', start, end)
+            best_break = max(last_period, last_newline)
+            if best_break &gt; start:
+                end = best_break + 1
+
+        chunk_text = text[start:end].strip()
+        if chunk_text:
+            chunks.append({
+                'text': chunk_text,
+                'source': source,
+                'chunk_id': f&quot;{source}_chunk_{chunk_number}&quot;
+            })
+            chunk_number += 1
+
+        start = end - overlap
+
+    return chunks
+
+
+# === ШАГ 3: СОЗДАНИЕ ВЕКТОРНОЙ БАЗЫ ===
+
+def create_vector_store(chunks):
+    &quot;&quot;&quot;
+    Сохраняет чанки в ChromaDB.
+    ChromaDB сама превращает текст в векторы (embeddings).
+    &quot;&quot;&quot;
+    # Создаём клиент ChromaDB (локальный, в памяти)
+    client = chromadb.Client()
+
+    # Создаём коллекцию (аналог таблицы в обычной БД)
+    collection = client.create_collection(
+        name=&quot;my_documents&quot;,
+        metadata={&quot;hnsw:space&quot;: &quot;cosine&quot;}  # искать по косинусному сходству
+    )
+
+    # Добавляем все чанки в коллекцию
+    collection.add(
+        ids=[c['chunk_id'] for c in chunks],           # уникальный ID каждого чанка
+        documents=[c['text'] for c in chunks],          # текст (ChromaDB сама сделает embedding)
+        metadatas=[{'source': c['source']} for c in chunks]  # откуда взят
+    )
+
+    print(f&quot;  Сохранено {len(chunks)} чанков в базу&quot;)
+    return collection
+
+
+# === ШАГ 4: ПОИСК ===
+
+def search(collection, query, n_results=3):
+    &quot;&quot;&quot;
+    Ищет чанки, похожие на запрос.
+    n_results: сколько фрагментов вернуть.
+    &quot;&quot;&quot;
+    results = collection.query(
+        query_texts=[query],  # ChromaDB сама превратит запрос в вектор
+        n_results=n_results
+    )
+
+    found = []
+    for i in range(len(results['documents'][0])):
+        found.append({
+            'text': results['documents'][0][i],
+            'source': results['metadatas'][0][i]['source'],
+            'distance': results['distances'][0][i]  # чем меньше — тем ближе
+        })
+
+    return found
+
+
+# === ШАГ 5: ГЕНЕРАЦИЯ ОТВЕТА ===
+
+def ask(collection, question):
+    &quot;&quot;&quot;
+    Полный цикл RAG:
+    1. Найти релевантные фрагменты
+    2. Отправить их + вопрос в Claude
+    3. Вернуть ответ
+    &quot;&quot;&quot;
+    # Поиск
+    results = search(collection, question)
+
+    # Собираем контекст из найденных фрагментов
+    context_parts = []
+    for r in results:
+        context_parts.append(
+            f&quot;[Источник: {r['source']}]\n{r['text']}&quot;
+        )
+    context = &quot;\n\n---\n\n&quot;.join(context_parts)
+
+    # Генерация
+    claude = Anthropic()
+
+    response = claude.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        max_tokens=1024,
+        system=(
+            &quot;Ты — ассистент, который отвечает на вопросы СТРОГО на основе &quot;
+            &quot;предоставленных документов. Если в документах нет ответа — &quot;
+            &quot;честно скажи: 'В предоставленных документах нет информации об этом.' &quot;
+            &quot;Указывай источник (имя файла), откуда взята информация.&quot;
+        ),
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;&quot;&quot;Вот фрагменты из документов:
+
+&lt;documents&gt;
+{context}
+&lt;/documents&gt;
+
+Вопрос: {question}&quot;&quot;&quot;
+        }]
+    )
+
+    return response.content[0].text
+
+
+# === ЗАПУСК ===
+
+if __name__ == &quot;__main__&quot;:
+    print(&quot;=== RAG-система ===\n&quot;)
+
+    # 1. Загружаем документы
+    print(&quot;Загрузка документов...&quot;)
+    docs = load_documents(&quot;my-docs&quot;)
+
+    # 2. Разбиваем на чанки
+    print(&quot;\nРазбивка на фрагменты...&quot;)
+    all_chunks = []
+    for doc in docs:
+        chunks = split_into_chunks(doc['text'], doc['source'])
+        all_chunks.extend(chunks)
+    print(f&quot;  Всего фрагментов: {len(all_chunks)}&quot;)
+
+    # 3. Создаём векторную базу
+    print(&quot;\nСоздание векторной базы...&quot;)
+    collection = create_vector_store(all_chunks)
+
+    # 4. Задаём вопросы
+    print(&quot;\n&quot; + &quot;=&quot;*50)
+    print(&quot;Готово! Задавай вопросы (введи 'выход' для завершения)&quot;)
+    print(&quot;=&quot;*50 + &quot;\n&quot;)
+
+    while True:
+        question = input(&quot;Вопрос: &quot;).strip()
+        if question.lower() in ('выход', 'exit', 'quit'):
+            break
+        if not question:
+            continue
+
+        print(&quot;\nПоиск и генерация ответа...\n&quot;)
+        answer = ask(collection, question)
+        print(f&quot;Ответ: {answer}\n&quot;)
+</code></pre>
+
+<h3>Как запустить</h3>
+<pre class="highlight"><code class="language-bash"># 1. Убедись, что .env содержит ANTHROPIC_API_KEY
+# 2. Создай папку my-docs/ с текстовыми файлами
+# 3. Запусти:
+python rag.py
+</code></pre>
+
+<p>Пример работы:</p>
+<pre class="highlight"><code>=== RAG-система ===
+
+Загрузка документов...
+  Загружен: faq.txt (612 символов)
+  Загружен: rules.txt (445 символов)
+
+Разбивка на фрагменты...
+  Всего фрагментов: 5
+
+Создание векторной базы...
+  Сохранено 5 чанков в базу
+
+==================================================
+Готово! Задавай вопросы (введи 'выход' для завершения)
+==================================================
+
+Вопрос: Как вернуть товар?
+
+Поиск и генерация ответа...
+
+Ответ: Согласно документу faq.txt, возврат товара возможен в течение
+14 дней с момента покупки. Для оформления возврата нужно обратиться
+в поддержку по email support@example.com или по телефону 8-800-123-45-67.
+Необходимо предоставить чек и товар в оригинальной упаковке.
+</code></pre>
+
+<hr />
+<h2>Разбор кода: что делает каждая часть</h2>
+<h3>ChromaDB — векторная база</h3>
+<pre class="highlight"><code class="language-python">client = chromadb.Client()  # создаёт локальную базу (в оперативной памяти)
+</code></pre>
+
+<p><code>Client()</code> без параметров — база живёт в памяти и исчезает при завершении. Для постоянного хранения:</p>
+<pre class="highlight"><code class="language-python"># Постоянная база (сохраняется на диск)
+client = chromadb.PersistentClient(path=&quot;./chroma_db&quot;)
+</code></pre>
+
+<pre class="highlight"><code class="language-python">collection = client.create_collection(name=&quot;my_documents&quot;)
+</code></pre>
+
+<p><strong>Коллекция</strong> — как таблица в обычной базе данных (урок 4.2). Но вместо SQL-запросов — поиск по похожести.</p>
+<pre class="highlight"><code class="language-python">collection.add(
+    ids=[&quot;doc1&quot;, &quot;doc2&quot;],           # уникальные ID
+    documents=[&quot;текст 1&quot;, &quot;текст 2&quot;],  # тексты (ChromaDB сама сделает embedding)
+    metadatas=[{&quot;source&quot;: &quot;file.txt&quot;}, {&quot;source&quot;: &quot;file2.txt&quot;}]  # метаданные
+)
+</code></pre>
+
+<p><code>add()</code> — добавить документы. ChromaDB автоматически:
+1. Превращает каждый текст в вектор (embedding)
+2. Сохраняет вектор + текст + метаданные</p>
+<pre class="highlight"><code class="language-python">results = collection.query(
+    query_texts=[&quot;мой вопрос&quot;],  # что ищем
+    n_results=3                  # сколько результатов
+)
+</code></pre>
+
+<p><code>query()</code> — поиск. ChromaDB:
+1. Превращает вопрос в вектор
+2. Находит 3 ближайших вектора в базе
+3. Возвращает их тексты, метаданные и расстояния</p>
+<h3>Промпт для Claude</h3>
+<pre class="highlight"><code class="language-python">system = (&quot;Ты — ассистент, который отвечает СТРОГО на основе &quot;
+          &quot;предоставленных документов...&quot;)
+</code></pre>
+
+<p>Ключевое слово — <strong>«СТРОГО на основе документов»</strong>. Без этого Claude может добавить информацию из своих знаний, что нежелательно в RAG.</p>
+<pre class="highlight"><code class="language-python">content = f&quot;&quot;&quot;&lt;documents&gt;{context}&lt;/documents&gt;
+Вопрос: {question}&quot;&quot;&quot;
+</code></pre>
+
+<p>XML-теги <code>&lt;documents&gt;</code> отделяют контекст от вопроса — рекомендация Anthropic из урока 4.5.</p>
+<hr />
+<h2>Карта векторных баз данных</h2>
+<p>ChromaDB — не единственная векторная база. Вот обзор популярных:</p>
+<pre class="highlight"><code>Что тебе нужно?
+│
+├── Учёба, эксперименты, простые проекты
+│   → ChromaDB (pip install, работает локально, бесплатно)
+│
+├── Продакшн, много данных (миллионы документов)
+│   → Pinecone (облачный сервис, масштабируемый)
+│   → Weaviate (self-hosted или облако)
+│
+├── Максимальная скорость, исследования
+│   → FAISS (от Meta, только поиск, без хранения)
+│
+├── Уже используешь PostgreSQL
+│   → pgvector (расширение для PostgreSQL)
+│
+└── Всё в одном (база + API + интерфейс)
+    → Qdrant (Rust, быстрый, open-source)
+</code></pre>
+
+<p>Для этого курса ChromaDB — правильный выбор. Она покрывает задачи до десятков тысяч документов.</p>
+<hr />
+<h2>Когда RAG не работает (и что делать)</h2>
+<h3>Проблема 1: Плохое качество поиска</h3>
+<pre class="highlight"><code>Симптом: Модель отвечает &quot;В документах нет информации&quot;, хотя она там есть.
+Причина: Чанки слишком большие или слишком маленькие.
+Решение: Попробовать размер 300-500 символов с overlap 50.
+</code></pre>
+
+<h3>Проблема 2: Ответ неточный</h3>
+<pre class="highlight"><code>Симптом: Модель находит фрагмент, но отвечает некорректно.
+Причина: Фрагмент обрезан на середине мысли (chunking разрезал).
+Решение: Увеличить overlap или использовать разбивку по параграфам.
+</code></pre>
+
+<h3>Проблема 3: Слишком дорого</h3>
+<pre class="highlight"><code>Симптом: Каждый вопрос стоит дорого.
+Причина: Отправляешь слишком много фрагментов в промпт.
+Решение: Использовать n_results=3 (не 10), модель haiku, max_tokens=1024.
+</code></pre>
+
+<h3>Проблема 4: Данные устарели</h3>
+<pre class="highlight"><code>Симптом: Ответы основаны на старых данных.
+Причина: Документы обновились, но в базе — старые чанки.
+Решение: Пересоздавать базу при обновлении документов
+         (удалить коллекцию → загрузить заново).
+</code></pre>
+
+<hr />
+<h2>RAG в реальном мире</h2>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│              ГДЕ ИСПОЛЬЗУЕТСЯ RAG                         │
+│                                                           │
+│  Поддержка клиентов                                      │
+│    Бот отвечает по документации продукта.                 │
+│    Не нужно обучать людей — бот знает всё.               │
+│                                                           │
+│  Внутренняя база знаний компании                         │
+│    Сотрудник спрашивает: &quot;Как оформить отпуск?&quot;          │
+│    Бот находит ответ в HR-документах.                    │
+│                                                           │
+│  Юридический поиск                                       │
+│    Юрист загружает 100 договоров → спрашивает:           │
+│    &quot;В каких договорах есть штраф за просрочку?&quot;          │
+│                                                           │
+│  Медицина                                                │
+│    Врач загружает справочники → спрашивает               │
+│    о взаимодействии препаратов.                          │
+│                                                           │
+│  Образование                                             │
+│    Студент загружает учебник → задаёт вопросы            │
+│    по конкретным главам.                                 │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Базовый RAG</h3>
+<p>Создай папку <code>my-docs/</code> с 2-3 текстовыми файлами на любую тему (правила компании, рецепты, описание продуктов). Запусти <code>rag.py</code> и задай несколько вопросов. Убедись, что ответы основаны на документах, а не на знаниях Claude.</p>
+<h3>Задание 2: Проверка на галлюцинации</h3>
+<p>Задай вопрос, ответа на который НЕТ в документах. Например, если в документах — правила магазина, спроси про погоду. Модель должна ответить «В документах нет информации». Если она придумывает ответ — усиль системный промпт.</p>
+<h3>Задание 3: Постоянная база</h3>
+<p>Замени <code>chromadb.Client()</code> на <code>chromadb.PersistentClient(path="./chroma_db")</code>. Запусти программу дважды — убедись, что при втором запуске данные уже в базе (не нужно загружать заново). Подсказка: при втором запуске используй <code>get_or_create_collection()</code> вместо <code>create_collection()</code>.</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что делает RAG?</p>
+<details>
+<summary>Ответ</summary>
+
+RAG (Retrieval-Augmented Generation) — это подход, при котором перед запросом к языковой модели происходит поиск релевантных фрагментов в собственных данных. Найденные фрагменты добавляются в промпт, и модель отвечает на основе этих конкретных данных, а не своих общих знаний. Это решает проблему «модель не знает мои данные» и снижает галлюцинации.
+</details>
+
+<p><strong>Задача 2:</strong> Зачем разбивать документ на чанки?</p>
+<details>
+<summary>Ответ</summary>
+
+Документ может быть очень длинным (100+ страниц). Отправлять весь документ в каждый запрос — дорого (много токенов) и неэффективно (модель ищет иголку в стоге сена). Чанки позволяют найти только релевантный фрагмент и отправить именно его. Это и дешевле, и точнее.
+</details>
+
+<p><strong>Задача 3:</strong> Что такое embedding?</p>
+<details>
+<summary>Ответ</summary>
+
+Embedding — представление текста в виде списка чисел (вектора). Специальная модель превращает текст в вектор так, что тексты с похожим смыслом получают близкие векторы. Это позволяет искать «по смыслу», а не по точному совпадению слов: вопрос «как вернуть покупку» найдёт фрагмент, где написано «оформление возврата товара», хотя слова разные.
+</details>
+
+<p><strong>Задача 4:</strong> В чём разница между RAG и fine-tuning?</p>
+<details>
+<summary>Ответ</summary>
+
+RAG — поиск информации в базе данных в момент запроса. Данные хранятся отдельно и обновляются мгновенно. Fine-tuning — дообучение модели на новых данных, которые «вшиваются» в модель. Обновление требует переобучения (дорого и долго). RAG подходит для фактов и документов, fine-tuning — для обучения стилю или формату. Для большинства задач RAG — правильный выбор.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RAG</strong></td>
+<td>Retrieval-Augmented Generation — генерация ответа с предварительным поиском по своим данным</td>
+</tr>
+<tr>
+<td><strong>Embedding</strong></td>
+<td>Представление текста в виде вектора (списка чисел), где похожие тексты → близкие векторы</td>
+</tr>
+<tr>
+<td><strong>Вектор</strong></td>
+<td>Список чисел, представляющий смысл текста в «пространстве значений»</td>
+</tr>
+<tr>
+<td><strong>Chunk (чанк)</strong></td>
+<td>Фрагмент документа, на которые разбивается текст для индексации</td>
+</tr>
+<tr>
+<td><strong>Chunking</strong></td>
+<td>Процесс разбивки документа на чанки</td>
+</tr>
+<tr>
+<td><strong>Overlap (перекрытие)</strong></td>
+<td>Часть текста, общая между соседними чанками — защита от разрезания мысли</td>
+</tr>
+<tr>
+<td><strong>Векторная база данных</strong></td>
+<td>База, которая хранит векторы и умеет искать по похожести (ChromaDB, Pinecone, FAISS)</td>
+</tr>
+<tr>
+<td><strong>ChromaDB</strong></td>
+<td>Простая векторная база на Python — работает локально, бесплатная</td>
+</tr>
+<tr>
+<td><strong>Cosine similarity</strong></td>
+<td>Метрика похожести двух векторов — чем ближе к 1, тем более похожи тексты</td>
+</tr>
+<tr>
+<td><strong>Collection</strong></td>
+<td>Коллекция в ChromaDB — аналог таблицы в обычной базе данных</td>
+</tr>
+<tr>
+<td><strong>Fine-tuning</strong></td>
+<td>Дообучение модели на своих данных — данные «вшиваются» в модель</td>
+</tr>
+<tr>
+<td><strong>Knowledge cutoff</strong></td>
+<td>Дата, после которой модель не имеет данных (всё, что позже — не знает)</td>
+</tr>
+<tr>
+<td><strong>Галлюцинации</strong></td>
+<td>Когда модель уверенно генерирует неверную информацию</td>
+</tr>
+<tr>
+<td><strong>Retrieval</strong></td>
+<td>Этап поиска релевантных документов перед генерацией ответа</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Проблема:
+  LLM не знает твои данные (документы, базы, записи)
+  LLM может придумывать ответы (галлюцинации)
+
+Решение — RAG:
+  1. Загрузить документы
+  2. Разбить на чанки (фрагменты по 300-500 символов)
+  3. Превратить в векторы (embeddings) → сохранить в ChromaDB
+  4. При вопросе: найти похожие чанки → отправить их + вопрос в Claude
+  5. Claude отвечает на основе найденных фрагментов
+
+Ключевые принципы:
+  • Embedding = GPS-координаты для текста (похожие тексты → рядом)
+  • ChromaDB = простейшая векторная база (pip install, бесплатно)
+  • Системный промпт: &quot;отвечай СТРОГО на основе документов&quot;
+  • Чанки: 300-500 символов с overlap 50
+
+RAG vs Fine-tuning:
+  RAG = подсказка на экзамене (данные в базе, обновляются мгновенно)
+  Fine-tuning = зубрёжка (данные в модели, обновляются дорого)
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>RAG работает с одним агентом — он ищет и отвечает. Но что если задача требует нескольких агентов? Один ищет, другой анализирует, третий пишет отчёт. В следующем уроке — <strong>мульти-агентные системы</strong>: как несколько AI-агентов работают вместе над сложными задачами.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="4-5-security.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="5-2-multi-agent.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

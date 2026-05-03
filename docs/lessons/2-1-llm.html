@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Что такое LLM — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 2 · Урок 1 из 6</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 2.1 — Что такое LLM</h1>
+<blockquote>
+<p>LLM (Large Language Model) — это программа, которая предсказывает следующее слово. Вся "магия" AI — это предсказание слов, одного за другим, очень быстро и очень точно.</p>
+</blockquote>
+<hr />
+<h2>Почему это важно</h2>
+<p>Ты хочешь создавать AI-продукты. Для этого нужно понимать, что AI на самом деле делает — не на уровне "он умный", а на уровне "как он работает внутри". Когда ты понимаешь механику, ты можешь:</p>
+<ul>
+<li>Правильно формулировать задачи для AI</li>
+<li>Понимать, почему он ошибается</li>
+<li>Выбирать правильную модель для своего продукта</li>
+</ul>
+<hr />
+<h2>Как LLM генерирует текст</h2>
+<p>Представь: ты пишешь сообщение в Telegram. Набираешь "Привет, как твои..." — и клавиатура предлагает следующее слово: "дела". Она предсказала его, потому что видела миллионы сообщений, где после "как твои" идёт "дела".</p>
+<p>LLM делает то же самое, но на совершенно другом уровне:</p>
+<table>
+<thead>
+<tr>
+<th>Автозаполнение в телефоне</th>
+<th>LLM (Claude, GPT)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Предсказывает 1-2 слова</td>
+<td>Предсказывает целые абзацы, статьи, код</td>
+</tr>
+<tr>
+<td>Обучена на твоих сообщениях</td>
+<td>Обучена на огромной части интернета</td>
+</tr>
+<tr>
+<td>Знает простые шаблоны</td>
+<td>Понимает контекст, логику, стиль</td>
+</tr>
+<tr>
+<td>Не понимает смысл</td>
+<td>Улавливает связи между идеями</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Принцип один и тот же</strong> — предсказание следующего слова. Разница — в масштабе и глубине.</p>
+<hr />
+<h2>Как LLM учится</h2>
+<p>LLM не программируют вручную. Её обучают — показывают огромное количество текстов, и она сама находит закономерности.</p>
+<h3>Этап 1: Предобучение (Pre-training)</h3>
+<p>Модели показывают миллиарды текстов — книги, статьи, код, сайты, форумы. Из каждого предложения убирают слово, и модель пытается его угадать.</p>
+<pre class="highlight"><code>Текст: &quot;Столица Франции — ___&quot;
+Модель угадывает: &quot;Париж&quot; (с вероятностью 97%)
+
+Текст: &quot;Чтобы установить пакет в Python, используй команду ___&quot;
+Модель угадывает: &quot;pip install&quot; (с вероятностью 89%)
+</code></pre>
+
+<p>Так, после триллионов таких угадываний, модель запоминает:
+- Факты ("столица Франции — Париж")
+- Грамматику ("после 'я' идёт глагол")
+- Логику ("если условие истинно, выполни код")
+- Шаблоны кода ("после <code>def</code> идёт имя функции")</p>
+<h3>Этап 2: Выравнивание (Alignment)</h3>
+<p>После предобучения модель умеет продолжать текст, но не умеет быть помощником. Она может написать продолжение статьи, но не ответить на вопрос.</p>
+<p>Поэтому её дополнительно обучают на примерах диалогов:</p>
+<pre class="highlight"><code>Пользователь: Как создать список в Python?
+Помощник: Используй квадратные скобки: my_list = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+</code></pre>
+
+<p>Людям показывают несколько ответов модели, и они выбирают лучший. Так модель учится быть полезной, а не просто продолжать текст.</p>
+<p><strong>Аналогия:</strong> Представь, что ты наняла стажёра. Этап 1 — он прочитал все книги и статьи по теме (знает много). Этап 2 — ты показываешь ему как отвечать клиентам: "вот так хорошо, а вот так нет" (учится быть полезным).</p>
+<hr />
+<h2>Что внутри LLM</h2>
+<p>LLM — это нейронная сеть. Не нужно знать математику, чтобы понять принцип:</p>
+<h3>Параметры (веса)</h3>
+<p>Параметры — это "знания" модели. Каждый параметр — число, которое влияет на предсказание.</p>
+<pre class="highlight"><code>Claude Haiku  — ~20 миллиардов параметров (быстрая, дешёвая)
+Claude Sonnet — ~70 миллиардов параметров (баланс скорость/качество)
+Claude Opus   — ~200+ миллиардов параметров (самая умная, дорогая)
+</code></pre>
+
+<p><strong>Аналогия:</strong> Параметры — как нейроны в мозге. Чем больше нейронов задействовано, тем глубже и точнее ответ. Маленькая модель — как студент-первокурсник: быстро отвечает, но может ошибаться в сложных вопросах. Большая модель — как профессор: думает дольше, но разбирается в тонкостях.</p>
+<h3>Почему размер важен для тебя</h3>
+<p>Когда ты будешь делать AI-продукт, ты будешь выбирать модель:</p>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>Какую модель взять</th>
+<th>Почему</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Быстрые ответы в чат-боте</td>
+<td>Haiku</td>
+<td>Дешёвая, быстрая, для простых задач хватает</td>
+</tr>
+<tr>
+<td>Анализ текста, работа с данными</td>
+<td>Sonnet</td>
+<td>Хороший баланс цены и качества</td>
+</tr>
+<tr>
+<td>Сложные рассуждения, код</td>
+<td>Opus</td>
+<td>Самая умная, но дороже</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что LLM может и чего не может</h2>
+<h3>Может:</h3>
+<ul>
+<li>Генерировать текст, код, переводы</li>
+<li>Анализировать и суммировать документы</li>
+<li>Отвечать на вопросы по контексту</li>
+<li>Писать в разных стилях и форматах</li>
+<li>Рассуждать и решать задачи</li>
+</ul>
+<h3>Не может:</h3>
+<ul>
+<li><strong>Помнить предыдущие разговоры</strong> — каждый новый запрос начинается с нуля (если не дать ей контекст)</li>
+<li><strong>Искать в интернете</strong> — она знает только то, на чём обучена (если не подключить инструменты)</li>
+<li><strong>Быть уверенной</strong> — иногда "галлюцинирует" (уверенно говорит неправду)</li>
+<li><strong>Обучаться на твоих сообщениях</strong> — она не меняется от разговора с тобой</li>
+</ul>
+<p><strong>Аналогия:</strong> LLM — как очень умный собеседник с амнезией. Он знает невероятно много, может помочь с чем угодно — но каждый раз, когда ты начинаешь новый чат, он тебя не помнит. И иногда он настолько уверен в себе, что выдумывает факты, лишь бы не молчать.</p>
+<hr />
+<h2>Контекстное окно</h2>
+<p>Когда ты пишешь AI, он видит не только твоё последнее сообщение — он видит весь разговор. Но у него есть лимит — <strong>контекстное окно</strong>.</p>
+<pre class="highlight"><code>Claude Sonnet — до 200,000 токенов (~500 страниц текста)
+GPT-4         — до 128,000 токенов (~300 страниц текста)
+</code></pre>
+
+<p><strong>Что такое токен</strong> — примерно ¾ слова. "Привет, как дела?" = ~5 токенов.</p>
+<p>Когда разговор превышает контекстное окно — модель "забывает" начало. Как если бы ты читала книгу, но помнила только последние 500 страниц.</p>
+<p>Подробнее про токены и стоимость — в уроке 2.5.</p>
+<hr />
+<h2>Как это выглядит изнутри</h2>
+<p>Когда ты отправляешь сообщение Claude, вот что происходит:</p>
+<pre class="highlight"><code>1. Ты пишешь: &quot;Напиши функцию для подсчёта лайков&quot;
+
+2. Твой текст разбивается на токены:
+   [&quot;Нап&quot;, &quot;иши&quot;, &quot; функ&quot;, &quot;цию&quot;, &quot; для&quot;, &quot; под&quot;, &quot;счёта&quot;, &quot; лай&quot;, &quot;ков&quot;]
+
+3. Модель предсказывает первый токен ответа:
+   &quot;def&quot; (вероятность 73%)
+
+4. Добавляет &quot;def&quot; к контексту и предсказывает следующий:
+   &quot; count&quot; (вероятность 61%)
+
+5. И так далее, токен за токеном:
+   &quot;def count_likes(posts):\n    total = 0\n    for post in posts:...&quot;
+
+6. Генерация заканчивается, когда модель предсказывает специальный токен &quot;конец&quot;.
+</code></pre>
+
+<p>Весь ответ — это цепочка предсказаний, одно за другим. Поэтому AI иногда "думает" медленно при длинных ответах — он генерирует каждый токен по очереди.</p>
+<hr />
+<h2>Закрытые и открытые модели</h2>
+<p>Все LLM делятся на два типа:</p>
+<h3>Закрытые (proprietary)</h3>
+<p>Код и веса модели принадлежат компании. Ты <strong>не можешь</strong> скачать модель на свой компьютер. Доступ только через API — отправляешь запрос на серверы компании, получаешь ответ.</p>
+<p><strong>Аналогия:</strong> Netflix. Ты смотришь фильмы, но не можешь скачать их и поставить на свой сервер. Ты зависишь от Netflix — если они поднимут цену или уберут фильм, ты ничего не сделаешь.</p>
+<p>Примеры:
+- <strong>Claude</strong> (Anthropic) — наш основной инструмент
+- <strong>GPT-4, GPT-4o</strong> (OpenAI) — популярная альтернатива
+- <strong>Gemini</strong> (Google) — интегрирован в Google-сервисы</p>
+<h3>Открытые (open source / open weights)</h3>
+<p>Компания публикует веса модели. Ты <strong>можешь</strong> скачать модель и запустить на своём сервере. Бесплатно, без API, без зависимости от чужих серверов.</p>
+<p><strong>Аналогия:</strong> Скачанный фильм. Он на твоём жёстком диске, ты смотришь его когда хочешь, без интернета, без подписки. Никто не может его у тебя забрать.</p>
+<p>Примеры:
+- <strong>Llama</strong> (Meta) — одна из самых мощных открытых моделей
+- <strong>Mistral</strong> (Mistral AI) — сильная европейская модель</p>
+<h3>Когда какую использовать</h3>
+<table>
+<thead>
+<tr>
+<th>Критерий</th>
+<th>Закрытая (Claude, GPT)</th>
+<th>Открытая (Llama, Mistral)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Качество ответов</td>
+<td>Обычно выше</td>
+<td>Догоняют, но пока слабее в сложных задачах</td>
+</tr>
+<tr>
+<td>Нужен свой сервер?</td>
+<td>Нет, работает через API</td>
+<td>Да, нужен мощный сервер с GPU</td>
+</tr>
+<tr>
+<td>Приватность данных</td>
+<td>Данные уходят на серверы компании</td>
+<td>Данные остаются у тебя</td>
+</tr>
+<tr>
+<td>Стоимость</td>
+<td>Платишь за каждый запрос</td>
+<td>Бесплатно, но платишь за сервер</td>
+</tr>
+<tr>
+<td>Настройка</td>
+<td>Берёшь как есть</td>
+<td>Можно дообучить под себя</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Для наших проектов</strong> мы используем <strong>Claude</strong> — ты уже работаешь с ним, и у тебя уже есть API-ключ. Открытые модели пригодятся позже, когда захочешь полный контроль над данными или снизить расходы.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Проверь предсказание</h3>
+<p>Открой любой чат с Claude или ChatGPT. Напиши начало предложения и попроси продолжить:</p>
+<pre class="highlight"><code>Продолжи предложение: &quot;Когда я открыла терминал и набрала команду git...&quot;
+</code></pre>
+
+<p>Посмотри, как модель предсказала продолжение. Попробуй 3 разных начала и сравни ответы.</p>
+<h3>Задание 2: Поймай галлюцинацию</h3>
+<p>Спроси AI что-то очень конкретное, что можно проверить:</p>
+<pre class="highlight"><code>Кто основал компанию Gonka.AI и в каком году?
+</code></pre>
+
+<p>Проверь ответ. Скорее всего модель либо ответит неточно, либо выдумает — потому что это не в её обучающих данных.</p>
+<h3>Задание 3: Сравни модели</h3>
+<p>Если у тебя есть доступ к разным моделям, задай одинаковый сложный вопрос (например, "Объясни квантовые вычисления простыми словами") — и сравни глубину и качество ответа.</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что делает LLM, когда ты задаёшь ей вопрос?</p>
+<details>
+<summary>Ответ</summary>
+
+Предсказывает следующий токен (часть слова), один за другим, пока не сгенерирует полный ответ. Она не "понимает" вопрос как человек — она вычисляет наиболее вероятное продолжение текста на основе триллионов текстов, на которых была обучена.
+</details>
+
+<p><strong>Задача 2:</strong> Почему AI иногда уверенно говорит неправду?</p>
+<details>
+<summary>Ответ</summary>
+
+Потому что LLM предсказывает наиболее вероятный текст, а не проверяет факты. Если в обучающих данных было много похожих паттернов, модель может сгенерировать убедительный, но неверный ответ. Это называется "галлюцинация".
+</details>
+
+<p><strong>Задача 3:</strong> Ты делаешь Telegram-бота для ответов на частые вопросы клиентов (типа "какой у вас график работы?"). Какую модель выберешь — Haiku, Sonnet или Opus? Почему?</p>
+<details>
+<summary>Ответ</summary>
+
+Haiku. Вопросы простые и шаблонные, не требуют глубоких рассуждений. Haiku ответит быстро и дёшево. Opus для таких задач — пустая трата денег.
+</details>
+
+<p><strong>Задача 4:</strong> У Claude контекстное окно 200,000 токенов. Ты отправляешь ему книгу на 600 страниц (~240,000 токенов). Что произойдёт?</p>
+<details>
+<summary>Ответ</summary>
+
+Книга не поместится целиком в контекстное окно. Нужно будет либо отправлять частями, либо использовать RAG (поиск по документу) — об этом узнаем в уроке 5.1.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>LLM — это предсказатель слов.</strong> Очень мощный, обученный на огромных данных, но в основе — предсказание следующего токена.</li>
+<li><strong>Больше параметров = умнее, но дороже.</strong> Выбирай модель по задаче: Haiku для простого, Opus для сложного.</li>
+<li><strong>AI не помнит тебя.</strong> Каждый новый запрос — с чистого листа (если не дать контекст).</li>
+<li><strong>AI может врать уверенно.</strong> Всегда проверяй важные факты.</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM (Large Language Model)</td>
+<td>Большая языковая модель — программа, обученная на огромном количестве текста предсказывать следующее слово.</td>
+</tr>
+<tr>
+<td>Токен</td>
+<td>Минимальная единица текста, с которой работает модель — это может быть слово, часть слова или знак препинания.</td>
+</tr>
+<tr>
+<td>Нейронная сеть</td>
+<td>Математическая структура, вдохновлённая мозгом, которая лежит в основе LLM и позволяет ей обучаться на данных.</td>
+</tr>
+<tr>
+<td>Обучение (training)</td>
+<td>Процесс, при котором модель читает огромное количество текста и настраивает свои параметры, чтобы лучше предсказывать слова.</td>
+</tr>
+<tr>
+<td>Inference</td>
+<td>Момент, когда уже обученная модель получает твой запрос и генерирует ответ.</td>
+</tr>
+<tr>
+<td>Параметры модели</td>
+<td>Числа внутри нейронной сети, которые определяют её "знания" — чем больше параметров, тем умнее модель.</td>
+</tr>
+<tr>
+<td>Open-source модель</td>
+<td>Модель с открытым кодом и весами, которую можно скачать и запустить на своём компьютере (например, LLaMA).</td>
+</tr>
+<tr>
+<td>Закрытая модель</td>
+<td>Модель, доступная только через API — нельзя скачать или посмотреть, как она устроена (например, Claude, GPT).</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td>Параметр, который управляет "креативностью" модели: 0 — строгие ответы, 1 — более случайные и разнообразные.</td>
+</tr>
+<tr>
+<td>Галлюцинация</td>
+<td>Ситуация, когда модель уверенно выдаёт неправильную или выдуманную информацию.</td>
+</tr>
+<tr>
+<td>Контекстное окно</td>
+<td>Максимальный объём текста (в токенах), который модель может "видеть" за один раз — и запрос, и ответ.</td>
+</tr>
+<tr>
+<td>Foundation model</td>
+<td>Базовая модель, обученная на общих данных, которую потом адаптируют под конкретные задачи.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>API: язык программ</strong>. Узнаешь, как программы общаются друг с другом — и как ты будешь отправлять запросы к Claude из кода.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="1-7-git.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="2-2-api.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram-бот с AI — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 4 · Урок 1 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 4.1 — Telegram-бот с AI</h1>
+<blockquote>
+<p>До сих пор AI-агенты работали в терминале — ты запускала скрипт, он печатал ответ. Но реальные продукты работают там, где люди: в мессенджерах, на сайтах, в приложениях. В этом уроке мы подключим Claude к Telegram — и получим AI-ассистента, которым можно пользоваться с телефона.</p>
+</blockquote>
+<hr />
+<h2>Что мы будем строить</h2>
+<pre class="highlight"><code>Пользователь (Telegram)          Твой сервер              Anthropic
+┌─────────────┐              ┌──────────────┐         ┌──────────┐
+│ Пишет       │  ──────►     │ Python-бот   │ ──────► │ Claude   │
+│ сообщение   │              │ получает     │         │ думает   │
+│ в Telegram  │  ◄──────     │ текст,       │ ◄────── │ отвечает │
+│ Видит ответ │              │ отправляет   │         │          │
+└─────────────┘              │ в Claude,    │         └──────────┘
+                             │ возвращает   │
+                             │ ответ        │
+                             └──────────────┘
+</code></pre>
+
+<p>Бот получает сообщение из Telegram → отправляет его в Claude API → получает ответ → отправляет обратно в Telegram. Три компонента, простая цепочка.</p>
+<hr />
+<h2>Шаг 1: Создать бота в Telegram</h2>
+<p>Боты в Telegram создаются через специального бота — <strong>@BotFather</strong>. Это официальный бот от Telegram для управления ботами.</p>
+<h3>Инструкция</h3>
+<ol>
+<li>Открой Telegram, найди <strong>@BotFather</strong> (с синей галочкой — это верификация)</li>
+<li>Нажми <strong>Start</strong> (или отправь <code>/start</code>)</li>
+<li>Отправь команду: <code>/newbot</code></li>
+<li>BotFather спросит <strong>имя</strong> бота — напиши любое (например, "My AI Helper")</li>
+<li>BotFather спросит <strong>username</strong> — должен заканчиваться на <code>_bot</code> (например, <code>katya_ai_helper_bot</code>)</li>
+<li>BotFather отправит <strong>токен</strong> — строка вида <code>4839574812:AAFD39kkdpWt3ywyRZergyOLMaJhac60qc</code></li>
+</ol>
+<p><strong>Этот токен — ключ к твоему боту.</strong> Кто имеет токен — управляет ботом. Не публикуй его.</p>
+<pre class="highlight"><code>Источник: Telegram Official — &quot;From BotFather to Hello World&quot;
+https://core.telegram.org/bots/tutorial
+</code></pre>
+
+<hr />
+<h2>Шаг 2: Установить библиотеки</h2>
+<pre class="highlight"><code class="language-bash">pip install python-telegram-bot anthropic python-dotenv
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Библиотека</th>
+<th>Зачем</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python-telegram-bot</code></td>
+<td>SDK для Telegram (как <code>anthropic</code> для Claude)</td>
+</tr>
+<tr>
+<td><code>anthropic</code></td>
+<td>SDK для Claude API (из урока 2.3)</td>
+</tr>
+<tr>
+<td><code>python-dotenv</code></td>
+<td>Загружает токены из файла <code>.env</code></td>
+</tr>
+</tbody>
+</table>
+<p>Помнишь из урока 3.4 — SDK это готовая библиотека от создателей сервиса? <code>python-telegram-bot</code> — это SDK для Telegram: он знает все URL, форматы и нюансы общения с сервером Telegram.</p>
+<hr />
+<h2>Шаг 3: Файл с ключами (.env)</h2>
+<p>Создай файл <code>.env</code> (точка в начале — это важно):</p>
+<pre class="highlight"><code>TELEGRAM_BOT_TOKEN=4839574812:AAFD39kkdpWt3ywyRZergyOLMaJhac60qc
+ANTHROPIC_API_KEY=sk-ant-api03-...
+</code></pre>
+
+<p>Почему не писать токены прямо в коде? Потому что код часто попадает в GitHub, а токены — это пароли. Файл <code>.env</code> остаётся локально и не загружается в git (если добавить его в <code>.gitignore</code> — урок 1.7).</p>
+<hr />
+<h2>Шаг 4: Простой бот (без AI)</h2>
+<p>Сначала убедимся, что бот вообще работает — без Claude, просто эхо:</p>
+<pre class="highlight"><code class="language-python"># echo_bot.py — бот, который повторяет сообщения
+
+import os
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+
+load_dotenv()  # загружает переменные из .env
+
+# Команда /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(&quot;Привет! Я бот. Напиши мне что-нибудь!&quot;)
+
+# Любое текстовое сообщение
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(update.message.text)  # повторяет то же самое
+
+# Запуск
+app = ApplicationBuilder().token(os.environ[&quot;TELEGRAM_BOT_TOKEN&quot;]).build()
+app.add_handler(CommandHandler(&quot;start&quot;, start))       # реагирует на /start
+app.add_handler(MessageHandler(filters.TEXT &amp; ~filters.COMMAND, echo))  # реагирует на текст
+app.run_polling()  # запускает бота
+</code></pre>
+
+<h3>Разбор кода</h3>
+<pre class="highlight"><code class="language-python">from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+</code></pre>
+
+<p>Импортируем из Telegram SDK. <code>Update</code> — входящее сообщение, <code>CommandHandler</code> — обработчик команд (<code>/start</code>), <code>MessageHandler</code> — обработчик обычных сообщений.</p>
+<pre class="highlight"><code class="language-python">async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(&quot;Привет!&quot;)
+</code></pre>
+
+<p>Функция-обработчик. Когда кто-то отправит <code>/start</code>, бот ответит "Привет!". <code>async def</code> — потому что Telegram SDK работает асинхронно (как Claude Agent SDK из урока 3.4).</p>
+<pre class="highlight"><code class="language-python">app = ApplicationBuilder().token(os.environ[&quot;TELEGRAM_BOT_TOKEN&quot;]).build()
+</code></pre>
+
+<p>Создаёт приложение бота с нашим токеном.</p>
+<pre class="highlight"><code class="language-python">app.add_handler(CommandHandler(&quot;start&quot;, start))
+app.add_handler(MessageHandler(filters.TEXT &amp; ~filters.COMMAND, echo))
+</code></pre>
+
+<p>Регистрирует обработчики: <code>/start</code> → функция <code>start</code>, любой текст (кроме команд) → функция <code>echo</code>.</p>
+<pre class="highlight"><code class="language-python">app.run_polling()
+</code></pre>
+
+<p>Запускает бота. <strong>Polling</strong> — бот каждые несколько секунд спрашивает Telegram: "Есть новые сообщения?"</p>
+<h3>Как запустить</h3>
+<pre class="highlight"><code class="language-bash">python echo_bot.py
+</code></pre>
+
+<p>Открой Telegram, найди своего бота по username, нажми Start, напиши сообщение. Бот повторит его.</p>
+<p><strong>Чтобы остановить</strong> — нажми <code>Ctrl+C</code> в терминале.</p>
+<hr />
+<h2>Шаг 5: Подключаем Claude</h2>
+<p>Теперь заменим эхо на Claude — бот будет думать и отвечать:</p>
+<pre class="highlight"><code class="language-python"># ai_bot.py — Telegram-бот с Claude
+
+import os
+import logging
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from anthropic import Anthropic
+
+load_dotenv()
+
+# Настройка логов (чтобы видеть ошибки)
+logging.basicConfig(level=logging.INFO)
+
+# Claude-клиент
+claude = Anthropic(api_key=os.environ[&quot;ANTHROPIC_API_KEY&quot;])
+
+# История разговоров для каждого пользователя
+conversations = {}
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    conversations[user_id] = []  # очистить историю
+    await update.message.reply_text(
+        &quot;Привет! Я AI-ассистент на базе Claude. Задай мне любой вопрос!&quot;
+    )
+
+async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    conversations[user_id] = []
+    await update.message.reply_text(&quot;История очищена. Начнём сначала!&quot;)
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    user_text = update.message.text
+
+    # Инициализировать историю для нового пользователя
+    if user_id not in conversations:
+        conversations[user_id] = []
+
+    # Добавить сообщение пользователя в историю
+    conversations[user_id].append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_text})
+
+    # Ограничить историю (чтобы не тратить слишком много токенов)
+    if len(conversations[user_id]) &gt; 20:
+        conversations[user_id] = conversations[user_id][-20:]
+
+    try:
+        # Показать &quot;печатает...&quot; в Telegram
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id,
+            action=&quot;typing&quot;
+        )
+
+        # Отправить запрос в Claude
+        response = claude.messages.create(
+            model=&quot;claude-sonnet-4-5&quot;,
+            max_tokens=1024,
+            system=&quot;Ты — полезный ассистент в Telegram-чате. Отвечай кратко и по делу.&quot;,
+            messages=conversations[user_id]
+        )
+
+        reply = response.content[0].text
+
+        # Сохранить ответ в историю
+        conversations[user_id].append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: reply})
+
+        # Telegram ограничивает сообщения до 4096 символов
+        if len(reply) &gt; 4000:
+            for i in range(0, len(reply), 4000):
+                await update.message.reply_text(reply[i:i+4000])
+        else:
+            await update.message.reply_text(reply)
+
+    except Exception as e:
+        logging.error(f&quot;Ошибка Claude API: {e}&quot;)
+        await update.message.reply_text(&quot;Произошла ошибка. Попробуй ещё раз.&quot;)
+
+# Запуск
+app = ApplicationBuilder().token(os.environ[&quot;TELEGRAM_BOT_TOKEN&quot;]).build()
+app.add_handler(CommandHandler(&quot;start&quot;, start))
+app.add_handler(CommandHandler(&quot;clear&quot;, clear))
+app.add_handler(MessageHandler(filters.TEXT &amp; ~filters.COMMAND, handle_message))
+
+print(&quot;Бот запущен!&quot;)
+app.run_polling()
+</code></pre>
+
+<h3>Что нового по сравнению с эхо-ботом</h3>
+<p><strong>1. История разговоров:</strong></p>
+<pre class="highlight"><code class="language-python">conversations = {}  # словарь: user_id → список сообщений
+</code></pre>
+
+<p>Каждый пользователь имеет свою историю. Это краткосрочная память из урока 3.3 — список <code>messages</code>, который растёт с каждым сообщением.</p>
+<p><strong>2. Ограничение истории:</strong></p>
+<pre class="highlight"><code class="language-python">if len(conversations[user_id]) &gt; 20:
+    conversations[user_id] = conversations[user_id][-20:]
+</code></pre>
+
+<p>Храним только последние 20 сообщений. Больше = дороже (урок 2.5) и медленнее.</p>
+<p><strong>3. Индикатор "печатает...":</strong></p>
+<pre class="highlight"><code class="language-python">await context.bot.send_chat_action(chat_id=..., action=&quot;typing&quot;)
+</code></pre>
+
+<p>Пока Claude думает, пользователь видит "бот печатает...". Без этого кажется, что бот завис.</p>
+<p><strong>4. Разбивка длинных ответов:</strong></p>
+<pre class="highlight"><code class="language-python">if len(reply) &gt; 4000:
+    for i in range(0, len(reply), 4000):
+        await update.message.reply_text(reply[i:i+4000])
+</code></pre>
+
+<p>Telegram ограничивает одно сообщение до 4096 символов. Claude может ответить длиннее — разбиваем на части.</p>
+<p><strong>5. Обработка ошибок:</strong></p>
+<pre class="highlight"><code class="language-python">except Exception as e:
+    await update.message.reply_text(&quot;Произошла ошибка. Попробуй ещё раз.&quot;)
+</code></pre>
+
+<p>Если Claude API недоступен или лимит исчерпан — бот не падает, а сообщает об ошибке.</p>
+<hr />
+<h2>Структура проекта</h2>
+<pre class="highlight"><code>my-telegram-bot/
+    echo_bot.py        # Простой эхо-бот (шаг 4)
+    ai_bot.py          # Бот с Claude (шаг 5)
+    .env               # Токены (НЕ загружать в git!)
+    .env.example        # Шаблон без реальных ключей (можно загружать)
+    requirements.txt   # Зависимости
+    .gitignore         # Файлы, которые git игнорирует
+</code></pre>
+
+<p><strong>requirements.txt:</strong></p>
+<pre class="highlight"><code>python-telegram-bot&gt;=22.0
+anthropic&gt;=0.80.0
+python-dotenv&gt;=1.0.0
+</code></pre>
+
+<p><strong>.env.example</strong> (шаблон для других — без реальных ключей):</p>
+<pre class="highlight"><code>TELEGRAM_BOT_TOKEN=your-telegram-token-here
+ANTHROPIC_API_KEY=your-anthropic-key-here
+</code></pre>
+
+<p><strong>.gitignore</strong> (обязательно!):</p>
+<pre class="highlight"><code>.env
+__pycache__/
+</code></pre>
+
+<hr />
+<h2>Polling vs Webhook</h2>
+<p>Есть два способа получать сообщения из Telegram:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Polling</th>
+<th>Webhook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Как работает</strong></td>
+<td>Бот спрашивает Telegram: "Новые сообщения?"</td>
+<td>Telegram сам присылает сообщения на твой сервер</td>
+</tr>
+<tr>
+<td><strong>Аналогия</strong></td>
+<td>Проверять почтовый ящик каждые 5 секунд</td>
+<td>Почтальон приносит почту к двери</td>
+</tr>
+<tr>
+<td><strong>Нужен сервер?</strong></td>
+<td>Нет — работает на ноутбуке</td>
+<td>Да — нужен публичный URL с HTTPS</td>
+</tr>
+<tr>
+<td><strong>Сложность</strong></td>
+<td>Простой</td>
+<td>Сложнее (нужен домен, SSL)</td>
+</tr>
+<tr>
+<td><strong>Для кого</strong></td>
+<td>Разработка, обучение, личные боты</td>
+<td>Продакшн, много пользователей</td>
+</tr>
+</tbody>
+</table>
+<p>Мы используем <strong>polling</strong> (<code>app.run_polling()</code>) — он проще и работает где угодно. Webhook нужен для продакшна — это тема урока 4.3 (деплой).</p>
+<hr />
+<h2>Частые ошибки</h2>
+<h3>1. Бот не отвечает</h3>
+<pre class="highlight"><code>Причина: бот не запущен или неправильный токен
+Решение: проверь, что python ai_bot.py работает в терминале
+         и токен в .env правильный (без пробелов)
+</code></pre>
+
+<h3>2. <code>RuntimeError: event loop is already running</code></h3>
+<pre class="highlight"><code>Причина: запускаешь в Jupyter Notebook
+Решение: запускай из обычного .py файла через терминал
+</code></pre>
+
+<h3>3. Старые примеры из интернета не работают</h3>
+<pre class="highlight"><code>Причина: библиотека python-telegram-bot версии 20+ изменила API
+Решение: используй ApplicationBuilder (не Updater),
+         все функции — async def (не обычные def)
+</code></pre>
+
+<h3>4. Claude отвечает слишком дорого</h3>
+<pre class="highlight"><code>Причина: модель claude-opus стоит $15-25 за миллион токенов
+Решение: используй claude-sonnet или claude-haiku для бота
+         (урок 2.5 — выбор модели по цене)
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Эхо-бот</h3>
+<p>Создай бота через BotFather, получи токен, запусти <code>echo_bot.py</code>. Убедись, что бот повторяет сообщения.</p>
+<h3>Задание 2: AI-бот</h3>
+<p>Замени эхо на Claude (<code>ai_bot.py</code>). Задай боту несколько вопросов подряд — убедись, что он помнит контекст (спроси "как меня зовут" после того, как представишься).</p>
+<h3>Задание 3: Добавь системный промпт</h3>
+<p>Измени <code>system</code> в вызове Claude, чтобы бот вёл себя по-другому:</p>
+<pre class="highlight"><code class="language-python"># Вариант 1: бот-переводчик
+system=&quot;Ты — переводчик. Переводи всё, что пишет пользователь, на английский.&quot;
+
+# Вариант 2: бот-учитель
+system=&quot;Ты — учитель Python. Объясняй всё простыми словами с примерами кода.&quot;
+
+# Вариант 3: бот с характером
+system=&quot;Ты — пират. Говори как пират, но при этом давай полезные ответы.&quot;
+</code></pre>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Зачем нужен файл <code>.env</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+Файл `.env` хранит секретные данные (токены, API-ключи) отдельно от кода. Код можно безопасно загрузить в GitHub, а `.env` остаётся только на твоём компьютере (если добавить его в `.gitignore`). Это защита от утечки ключей.
+</details>
+
+<p><strong>Задача 2:</strong> Зачем ограничивать историю до 20 сообщений?</p>
+<details>
+<summary>Ответ</summary>
+
+Каждое сообщение в истории — это токены, а токены стоят денег (урок 2.5). Если хранить всю историю, через 100 сообщений каждый запрос будет стоить в 100 раз дороже. Ограничение в 20 сообщений — баланс между памятью и стоимостью.
+</details>
+
+<p><strong>Задача 3:</strong> В чём разница между polling и webhook?</p>
+<details>
+<summary>Ответ</summary>
+
+Polling — бот сам спрашивает Telegram о новых сообщениях (проверяет почтовый ящик). Webhook — Telegram сам присылает сообщения на адрес сервера (почтальон приносит). Polling проще (не нужен сервер), webhook эффективнее для продакшна.
+</details>
+
+<p><strong>Задача 4:</strong> Что произойдёт, если Claude вернёт ответ на 5000 символов?</p>
+<details>
+<summary>Ответ</summary>
+
+Telegram ограничивает одно сообщение до 4096 символов. Поэтому в коде есть проверка: если ответ длиннее 4000 символов, он разбивается на части и отправляется несколькими сообщениями. Без этой проверки бот получил бы ошибку от Telegram.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>@BotFather</strong></td>
+<td>Официальный бот Telegram для создания и управления ботами</td>
+</tr>
+<tr>
+<td><strong>Токен бота</strong></td>
+<td>Секретный ключ для управления ботом (как API-ключ для Claude)</td>
+</tr>
+<tr>
+<td><strong>python-telegram-bot</strong></td>
+<td>SDK (библиотека) для создания Telegram-ботов на Python</td>
+</tr>
+<tr>
+<td><strong>Polling</strong></td>
+<td>Способ получения сообщений: бот сам спрашивает Telegram</td>
+</tr>
+<tr>
+<td><strong>Webhook</strong></td>
+<td>Способ получения сообщений: Telegram сам присылает на сервер</td>
+</tr>
+<tr>
+<td><strong>Handler</strong></td>
+<td>Обработчик — функция, которая реагирует на определённый тип сообщения</td>
+</tr>
+<tr>
+<td><strong>CommandHandler</strong></td>
+<td>Обработчик команд (<code>/start</code>, <code>/clear</code>)</td>
+</tr>
+<tr>
+<td><strong>MessageHandler</strong></td>
+<td>Обработчик обычных текстовых сообщений</td>
+</tr>
+<tr>
+<td><strong><code>.env</code></strong></td>
+<td>Файл с секретными переменными (токены, ключи)</td>
+</tr>
+<tr>
+<td><strong><code>.gitignore</code></strong></td>
+<td>Файл, который говорит git: "не загружай это"</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Telegram-бот с AI — это три части:
+  1. Telegram SDK — получает/отправляет сообщения
+  2. Claude SDK — думает и генерирует ответ
+  3. Твой код — соединяет первое со вторым
+
+Минимальный бот:
+  1. Создать бота через @BotFather → получить токен
+  2. pip install python-telegram-bot anthropic python-dotenv
+  3. Написать обработчик: получить текст → отправить в Claude → вернуть ответ
+  4. python ai_bot.py → бот работает!
+
+Безопасность:
+  ✓ Токены в .env (не в коде)
+  ✓ .env в .gitignore (не в git)
+  ✓ История ограничена (не тратить деньги)
+  ✓ Ошибки обрабатываются (бот не падает)
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Сейчас бот работает, пока запущен на твоём компьютере. Закрыла терминал — бот умер. В следующих уроках — как дать боту <strong>постоянную память</strong> (база данных) и <strong>постоянную жизнь</strong> (сервер, который работает 24/7).</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="3-5-multi-step.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="4-2-databases.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Работа с файлами — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 7 из 8</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 1.6 — Python: работа с файлами</h1>
+<blockquote>
+<p>Программа работает с данными. Но когда программа завершается — всё, что было в переменных, исчезает. Файлы решают эту проблему: записал данные в файл — они сохранились навсегда.</p>
+</blockquote>
+<hr />
+<h2>Зачем программе работать с файлами</h2>
+<p>Когда ты закрываешь Telegram и открываешь снова — сообщения на месте. Они не исчезли, потому что были сохранены в файл (или базу данных, но принцип тот же).</p>
+<p>Без файлов:
+- Настройки сбрасываются при каждом запуске
+- История действий теряется
+- AI-агент забывает всё, что знал</p>
+<p>С файлами:
+- Агент помнит предыдущие разговоры
+- Настройки сохраняются между запусками
+- Логи записываются для анализа</p>
+<hr />
+<h2>Чтение файла</h2>
+<pre class="highlight"><code class="language-python"># open() — открыть файл
+# &quot;r&quot; = read = &quot;для чтения&quot;
+
+file = open(&quot;notes.txt&quot;, &quot;r&quot;)
+content = file.read()       # .read() — прочитать всё содержимое
+file.close()                # .close() — закрыть файл (обязательно!)
+
+print(content)
+</code></pre>
+
+<h3>Лучший способ — with</h3>
+<pre class="highlight"><code class="language-python"># with автоматически закрывает файл, когда блок заканчивается
+# Не нужно помнить про .close()
+
+with open(&quot;notes.txt&quot;, &quot;r&quot;) as file:
+    content = file.read()
+
+print(content)
+
+# &quot;as file&quot; = &quot;назовём открытый файл словом file&quot;
+# Всё что с отступом — работа с файлом
+# Когда отступ заканчивается — файл автоматически закрыт
+</code></pre>
+
+<h3>Чтение по строкам</h3>
+<pre class="highlight"><code class="language-python"># Если файл большой — читаем по строкам, а не весь целиком
+
+with open(&quot;messages.txt&quot;, &quot;r&quot;) as file:
+    for line in file:
+        print(line)
+        # line — одна строка из файла
+        # Цикл проходит по каждой строке по очереди
+</code></pre>
+
+<hr />
+<h2>Запись в файл</h2>
+<pre class="highlight"><code class="language-python"># &quot;w&quot; = write = &quot;для записи&quot;
+# ВАЖНО: &quot;w&quot; полностью перезаписывает файл! Старое содержимое удаляется.
+
+with open(&quot;notes.txt&quot;, &quot;w&quot;) as file:
+    file.write(&quot;Первая строка\n&quot;)
+    file.write(&quot;Вторая строка\n&quot;)
+    # \n = перенос строки (без него всё слипнется в одну строку)
+
+# Теперь в notes.txt:
+# Первая строка
+# Вторая строка
+</code></pre>
+
+<h3>Добавление в конец файла</h3>
+<pre class="highlight"><code class="language-python"># &quot;a&quot; = append = &quot;добавить в конец&quot;
+# Не стирает старое, а дописывает после
+
+with open(&quot;log.txt&quot;, &quot;a&quot;) as file:
+    file.write(&quot;Пользователь зашёл в 10:00\n&quot;)
+    file.write(&quot;Пользователь нажал кнопку\n&quot;)
+
+# Каждый запуск программы — новые строки добавляются в конец
+</code></pre>
+
+<p><strong>Аналогия:</strong>
+- <code>"w"</code> — стереть доску и написать заново
+- <code>"a"</code> — дописать на доску, не стирая</p>
+<hr />
+<h2>Работа с JSON-файлами</h2>
+<p>JSON — самый популярный формат для хранения данных в AI-проектах. Настройки, память агента, ответы API — всё это JSON.</p>
+<h3>Чтение JSON</h3>
+<pre class="highlight"><code class="language-python">import json
+# import = &quot;подключить библиотеку&quot;
+# json — встроенная библиотека Python для работы с JSON
+
+with open(&quot;config.json&quot;, &quot;r&quot;) as file:
+    data = json.load(file)
+    # json.load() — прочитать JSON и превратить в Python-словарь
+
+print(data[&quot;name&quot;])
+print(data[&quot;age&quot;])
+</code></pre>
+
+<h3>Запись JSON</h3>
+<pre class="highlight"><code class="language-python">import json
+
+user = {
+    &quot;name&quot;: &quot;Катя&quot;,
+    &quot;age&quot;: 25,
+    &quot;skills&quot;: [&quot;Python&quot;, &quot;терминал&quot;],
+    &quot;is_learning&quot;: True
+}
+
+with open(&quot;user.json&quot;, &quot;w&quot;) as file:
+    json.dump(user, file, ensure_ascii=False, indent=4)
+    # json.dump() — записать словарь в файл как JSON
+    # ensure_ascii=False — чтобы русские буквы не превращались в коды
+    # indent=4 — отступы для читаемости
+
+# В файле user.json теперь:
+# {
+#     &quot;name&quot;: &quot;Катя&quot;,
+#     &quot;age&quot;: 25,
+#     &quot;skills&quot;: [&quot;Python&quot;, &quot;терминал&quot;],
+#     &quot;is_learning&quot;: true
+# }
+</code></pre>
+
+<hr />
+<h2>Работа с .env файлами</h2>
+<p>API-ключи хранятся в <code>.env</code>. Чтобы читать их из Python — нужна библиотека <code>python-dotenv</code>.</p>
+<pre class="highlight"><code class="language-bash"># Сначала установи библиотеку (в терминале)
+pip install python-dotenv
+</code></pre>
+
+<pre class="highlight"><code class="language-python"># файл: .env
+# ANTHROPIC_API_KEY=sk-ant-abc123
+</code></pre>
+
+<pre class="highlight"><code class="language-python"># файл: app.py
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+# load_dotenv() — читает .env файл и загружает переменные
+
+api_key = os.getenv(&quot;ANTHROPIC_API_KEY&quot;)
+# os.getenv() — получить значение переменной окружения
+
+print(f&quot;Ключ загружен: {api_key[:10]}...&quot;)
+# [:10] — показываем только первые 10 символов (не светим ключ целиком)
+</code></pre>
+
+<hr />
+<h2>Проверка: существует ли файл</h2>
+<pre class="highlight"><code class="language-python">import os
+
+# os.path.exists() — проверяет, есть ли файл или папка
+if os.path.exists(&quot;config.json&quot;):
+    print(&quot;Файл найден&quot;)
+else:
+    print(&quot;Файла нет&quot;)
+</code></pre>
+
+<hr />
+<h2>Реальный пример: память AI-агента</h2>
+<p>Агент должен помнить информацию между запусками. Вот как это работает:</p>
+<pre class="highlight"><code class="language-python">import json
+import os
+
+MEMORY_FILE = &quot;memory.json&quot;
+
+def load_memory():
+    # Если файл памяти существует — читаем
+    if os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, &quot;r&quot;) as file:
+            return json.load(file)
+    # Если нет — возвращаем пустую память
+    return {&quot;user_name&quot;: None, &quot;facts&quot;: []}
+
+def save_memory(memory):
+    with open(MEMORY_FILE, &quot;w&quot;) as file:
+        json.dump(memory, file, ensure_ascii=False, indent=4)
+
+def remember_fact(memory, fact):
+    memory[&quot;facts&quot;].append(fact)
+    save_memory(memory)
+
+# Использование
+memory = load_memory()
+
+if memory[&quot;user_name&quot;] is None:
+    memory[&quot;user_name&quot;] = &quot;Катя&quot;
+    save_memory(memory)
+    print(&quot;Приятно познакомиться, Катя!&quot;)
+else:
+    print(f&quot;С возвращением, {memory['user_name']}!&quot;)
+
+remember_fact(memory, &quot;Изучает Python&quot;)
+remember_fact(memory, &quot;Хочет создавать AI-агентов&quot;)
+
+print(f&quot;Я помню о тебе: {memory['facts']}&quot;)
+</code></pre>
+
+<p>Первый запуск: <code>Приятно познакомиться, Катя!</code>
+Второй запуск: <code>С возвращением, Катя!</code> — потому что имя уже сохранено в файле.</p>
+<hr />
+<h2>Практика</h2>
+<p>Создай файл <code>diary.py</code>:</p>
+<pre class="highlight"><code class="language-python">import json
+import os
+
+DIARY_FILE = &quot;diary.json&quot;
+
+def load_diary():
+    if os.path.exists(DIARY_FILE):
+        with open(DIARY_FILE, &quot;r&quot;) as file:
+            return json.load(file)
+    return []
+
+def save_diary(entries):
+    with open(DIARY_FILE, &quot;w&quot;) as file:
+        json.dump(entries, file, ensure_ascii=False, indent=4)
+
+def add_entry(entries, text):
+    entries.append(text)
+    save_diary(entries)
+    print(f&quot;Записано: {text}&quot;)
+
+# Загружаем дневник
+entries = load_diary()
+
+# Добавляем записи
+add_entry(entries, &quot;Начала изучать Python&quot;)
+add_entry(entries, &quot;Узнала что такое функции&quot;)
+add_entry(entries, &quot;Научилась работать с файлами&quot;)
+
+# Показываем все записи
+print(&quot;\nМой дневник:&quot;)
+for i, entry in enumerate(entries, 1):
+    print(f&quot;  {i}. {entry}&quot;)
+    # enumerate(entries, 1) — нумерует элементы начиная с 1
+</code></pre>
+
+<p>Запусти: <code>python3 diary.py</code>
+Запусти ещё раз — записи сохранятся!</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> В чём разница между <code>"w"</code> и <code>"a"</code> при открытии файла?</p>
+<details>
+<summary>Ответ</summary>
+
+`"w"` (write) — стирает всё и пишет заново. Старое содержимое удаляется.
+`"a"` (append) — добавляет в конец файла. Старое остаётся.
+</details>
+
+<p><strong>Задача 2:</strong> Напиши код, который читает файл <code>data.json</code> и выводит значение поля <code>"name"</code>.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">import json
+
+with open(&quot;data.json&quot;, &quot;r&quot;) as file:
+    data = json.load(file)
+
+print(data[&quot;name&quot;])
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 3:</strong> Напиши функцию <code>save_settings(settings)</code>, которая принимает словарь и сохраняет его в <code>settings.json</code>.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">import json
+
+def save_settings(settings):
+    with open(&quot;settings.json&quot;, &quot;w&quot;) as file:
+        json.dump(settings, file, ensure_ascii=False, indent=4)
+
+save_settings({&quot;theme&quot;: &quot;dark&quot;, &quot;language&quot;: &quot;ru&quot;, &quot;notifications&quot;: True})
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Зачем нужен <code>with</code> при работе с файлами? Что будет без него?</p>
+<details>
+<summary>Ответ</summary>
+
+`with` автоматически закрывает файл, когда блок кода заканчивается. Без него нужно вручную вызывать `file.close()`. Если забыть — файл останется открытым, данные могут не сохраниться, а программа будет тратить ресурсы.
+</details>
+
+<p><strong>Задача 5:</strong> Напиши программу, которая добавляет новую строку в файл <code>log.txt</code> каждый раз при запуске.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">with open(&quot;log.txt&quot;, &quot;a&quot;) as file:
+    file.write(&quot;Программа запущена\n&quot;)
+
+with open(&quot;log.txt&quot;, &quot;r&quot;) as file:
+    print(file.read())
+</code></pre>
+
+
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>open()</td>
+<td>Функция для открытия файла — указываешь имя, режим и кодировку</td>
+</tr>
+<tr>
+<td>read()</td>
+<td>Метод, который читает всё содержимое открытого файла целиком</td>
+</tr>
+<tr>
+<td>write()</td>
+<td>Метод, который записывает текст в открытый файл</td>
+</tr>
+<tr>
+<td>with</td>
+<td>Конструкция, которая автоматически закрывает файл после окончания работы с ним</td>
+</tr>
+<tr>
+<td>Режим "r" / "w" / "a"</td>
+<td>Режимы открытия файла: чтение (read), запись с нуля (write), дозапись в конец (append)</td>
+</tr>
+<tr>
+<td>encoding</td>
+<td>Параметр кодировки — указывай "utf-8", чтобы русские буквы читались правильно</td>
+</tr>
+<tr>
+<td>json.load()</td>
+<td>Функция, которая читает JSON-файл и превращает его в словарь Python</td>
+</tr>
+<tr>
+<td>json.dump()</td>
+<td>Функция, которая записывает словарь Python в файл в формате JSON</td>
+</tr>
+<tr>
+<td>.env</td>
+<td>Файл для хранения секретов (ключей, паролей), который не попадает в Git</td>
+</tr>
+<tr>
+<td>dotenv</td>
+<td>Библиотека python-dotenv для загрузки переменных из файла .env</td>
+</tr>
+<tr>
+<td>load_dotenv()</td>
+<td>Функция, которая загружает переменные из .env в окружение программы</td>
+</tr>
+<tr>
+<td>os.getenv()</td>
+<td>Функция, которая достаёт значение переменной окружения по имени</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>1. open() открывает файл, with — гарантирует, что файл закроется автоматически.
+2. Режимы: &quot;r&quot; — читать, &quot;w&quot; — писать с нуля, &quot;a&quot; — дописать в конец.
+3. Всегда указывай encoding=&quot;utf-8&quot; — иначе русский текст может сломаться.
+4. read() читает весь файл, write() записывает строку в файл.
+5. JSON — универсальный формат для структурированных данных (настройки, ответы API).
+6. json.load() читает JSON из файла, json.dump() записывает в файл.
+7. Секреты (API-ключи, пароли) хранятся в .env и загружаются через load_dotenv().
+8. os.getenv(&quot;ИМЯ&quot;) достаёт значение секрета — в коде ключ никогда не пишется напрямую.
+9. .env добавляй в .gitignore, чтобы секреты не попали в GitHub.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Git и GitHub</strong>. Научишься сохранять версии кода, откатываться к предыдущим и делиться проектом с другими.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="1-5-functions.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="1-7-git.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

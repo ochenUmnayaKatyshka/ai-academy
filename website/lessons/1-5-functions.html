@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Функции — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 6 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 1.5 — Python: функции</h1>
+<blockquote>
+<p>Функция — это действие. Каждая кнопка в любом приложении — это вызов функции. Нажала "отправить" — вызвалась функция отправки. Нажала "лайк" — вызвалась функция лайка.</p>
+</blockquote>
+<hr />
+<h2>Что такое функция</h2>
+<p>Ты пишешь код, который выполняет конкретное действие, даёшь ему имя — и теперь можешь вызывать это действие откуда угодно, просто написав имя.</p>
+<p><strong>Аналогия:</strong> Кнопка "Отправить" в Telegram. Ты не знаешь, что происходит внутри, когда её нажимаешь. Ты просто нажимаешь — и сообщение отправляется. Внутри этой кнопки — функция. Она принимает текст и получателя, делает своё дело и возвращает результат (отправлено / ошибка).</p>
+<hr />
+<h2>Создаём и вызываем функцию</h2>
+<pre class="highlight"><code class="language-python"># def = &quot;я создаю функцию&quot; (define = определить)
+# &quot;send_message&quot; = имя действия
+# (to, text) = что функция принимает на вход (параметры)
+
+def send_message(to, text):
+    print(f&quot;Сообщение для {to}: {text}&quot;)
+
+# Вызываем — выполняем действие
+send_message(&quot;Аня&quot;, &quot;Привет!&quot;)
+# → Сообщение для Аня: Привет!
+
+send_message(&quot;Макс&quot;, &quot;Когда встреча?&quot;)
+# → Сообщение для Макс: Когда встреча?
+
+# Одна функция, вызываем сколько угодно раз с разными данными
+</code></pre>
+
+<hr />
+<h2>Параметры — что функция принимает на вход</h2>
+<p>Параметры — это данные, которые ты передаёшь функции, чтобы она знала, с чем работать.</p>
+<pre class="highlight"><code class="language-python"># Без параметров — функция делает одно и то же каждый раз
+def say_hello():
+    print(&quot;Привет!&quot;)
+
+say_hello()   # → Привет!
+say_hello()   # → Привет!  (всегда одинаково)
+
+
+# С параметрами — функция работает с разными данными
+def say_hello_to(name):
+    print(f&quot;Привет, {name}!&quot;)
+
+say_hello_to(&quot;Катя&quot;)   # → Привет, Катя!
+say_hello_to(&quot;Дима&quot;)    # → Привет, Дима!
+</code></pre>
+
+<p><strong>Аналогия:</strong> Uber. Действие одно — "заказать такси". Но каждый раз ты передаёшь разные параметры: откуда, куда, тип машины. Функция <code>заказать_такси(откуда, куда)</code> — одна, а результат зависит от того, что ты в неё передала.</p>
+<hr />
+<h2>return — что функция отдаёт обратно</h2>
+<p>Функция может не просто делать действие, а <strong>возвращать результат</strong>. Этот результат можно сохранить в переменную и использовать дальше.</p>
+<pre class="highlight"><code class="language-python"># Функция считает скидку и ВОЗВРАЩАЕТ результат
+def calculate_discount(price, percent):
+    discount = price * percent / 100
+    final_price = price - discount
+    return final_price
+    # return = &quot;верни это значение тому, кто вызвал&quot;
+
+# Вызываем и сохраняем результат в переменную
+new_price = calculate_discount(1000, 20)
+print(f&quot;Цена со скидкой: {new_price}&quot;)
+# → Цена со скидкой: 800.0
+
+# Можно вызвать с другими данными
+vip_price = calculate_discount(5000, 50)
+print(f&quot;VIP цена: {vip_price}&quot;)
+# → VIP цена: 2500.0
+</code></pre>
+
+<p><strong>Разница между print и return:</strong></p>
+<pre class="highlight"><code class="language-python"># print — просто показывает текст на экране. Всё.
+# return — отдаёт значение обратно в код, чтобы с ним можно было работать дальше.
+
+def with_print(a, b):
+    print(a + b)      # показал и забыл
+
+def with_return(a, b):
+    return a + b       # вернул значение
+
+with_print(2, 3)       # → 5 (на экране), но сохранить нельзя
+result = with_return(2, 3)   # ничего на экране, но result = 5
+print(result * 10)     # → 50 (можно использовать дальше)
+</code></pre>
+
+<hr />
+<h2>Функция вызывает функцию</h2>
+<p>Функции могут вызывать друг друга. Так строятся сложные программы — из простых действий.</p>
+<pre class="highlight"><code class="language-python"># Маленькие действия
+def get_greeting(name):
+    return f&quot;Привет, {name}!&quot;
+
+def get_time():
+    return &quot;10:00&quot;
+
+# Большое действие, использующее маленькие
+def send_morning_message(name):
+    greeting = get_greeting(name)
+    time = get_time()
+    print(f&quot;[{time}] {greeting}&quot;)
+
+send_morning_message(&quot;Катя&quot;)
+# → [10:00] Привет, Катя!
+</code></pre>
+
+<p><strong>Аналогия:</strong> Заказ в приложении доставки. Когда ты нажимаешь "Заказать", внутри вызываются несколько функций по очереди: <code>проверить_корзину()</code> → <code>списать_оплату()</code> → <code>найти_курьера()</code> → <code>отправить_уведомление()</code>. Каждая делает своё дело, а вместе — полный заказ.</p>
+<hr />
+<h2>Значения по умолчанию</h2>
+<p>Можно задать параметру значение "на случай, если не передали":</p>
+<pre class="highlight"><code class="language-python">def create_post(text, visibility=&quot;public&quot;):
+    print(f&quot;Пост: {text} [{visibility}]&quot;)
+    # visibility = &quot;public&quot; по умолчанию
+    # Если при вызове не указать — будет &quot;public&quot;
+
+create_post(&quot;Доброе утро!&quot;)
+# → Пост: Доброе утро! [public]
+
+create_post(&quot;Личная заметка&quot;, &quot;private&quot;)
+# → Пост: Личная заметка [private]
+</code></pre>
+
+<hr />
+<h2>Реальный пример: система уведомлений</h2>
+<pre class="highlight"><code class="language-python">def format_notification(notif_type, sender):
+    if notif_type == &quot;like&quot;:
+        return f&quot;Лайк от {sender}&quot;
+    elif notif_type == &quot;comment&quot;:
+        return f&quot;Комментарий от {sender}&quot;
+    elif notif_type == &quot;follow&quot;:
+        return f&quot;Подписка от {sender}&quot;
+    else:
+        return f&quot;Уведомление от {sender}&quot;
+
+def process_notifications(notifications):
+    for notif in notifications:
+        message = format_notification(notif[&quot;type&quot;], notif[&quot;from&quot;])
+        print(message)
+
+# Данные
+my_notifications = [
+    {&quot;type&quot;: &quot;like&quot;, &quot;from&quot;: &quot;Аня&quot;},
+    {&quot;type&quot;: &quot;comment&quot;, &quot;from&quot;: &quot;Макс&quot;},
+    {&quot;type&quot;: &quot;follow&quot;, &quot;from&quot;: &quot;Дима&quot;},
+]
+
+# Одна строка — и всё работает
+process_notifications(my_notifications)
+# → Лайк от Аня
+# → Комментарий от Макс
+# → Подписка от Дима
+</code></pre>
+
+<hr />
+<h2>Встроенные функции Python</h2>
+<p>Python уже имеет готовые функции. Ты их уже использовала:</p>
+<pre class="highlight"><code class="language-python"># print() — вывести на экран
+print(&quot;Привет&quot;)
+
+# len() — узнать длину (количество элементов)
+friends = [&quot;Аня&quot;, &quot;Макс&quot;, &quot;Дима&quot;]
+print(len(friends))   # → 3
+
+# type() — узнать тип данных
+print(type(42))       # → &lt;class 'int'&gt;
+
+# input() — спросить пользователя (ввод с клавиатуры)
+name = input(&quot;Как тебя зовут? &quot;)
+print(f&quot;Привет, {name}!&quot;)
+
+# range() — создать последовательность чисел
+for i in range(3):
+    print(i)   # → 0, 1, 2
+
+# int(), str(), float() — преобразовать тип
+age_text = &quot;25&quot;           # это строка
+age_number = int(&quot;25&quot;)    # теперь число, можно считать
+print(age_number + 5)     # → 30
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<p>Создай файл <code>functions.py</code>:</p>
+<pre class="highlight"><code class="language-python"># Калькулятор доставки
+
+def calculate_delivery(distance, is_express):
+    base_price = distance * 50
+    if is_express:
+        total = base_price * 2
+    else:
+        total = base_price
+    return total
+
+def format_order(item, distance, is_express):
+    price = calculate_delivery(distance, is_express)
+    delivery_type = &quot;экспресс&quot; if is_express else &quot;обычная&quot;
+    return f&quot;{item} | {delivery_type} доставка | {distance} км | {price} руб&quot;
+
+# Тестируем
+print(format_order(&quot;Кроссовки&quot;, 5, False))
+print(format_order(&quot;Телефон&quot;, 10, True))
+print(format_order(&quot;Книга&quot;, 2, False))
+</code></pre>
+
+<p>Запусти: <code>python3 functions.py</code></p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Напиши функцию <code>double(n)</code>, которая принимает число и возвращает его удвоенным.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">def double(n):
+    return n * 2
+
+print(double(5))    # → 10
+print(double(100))  # → 200
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 2:</strong> Напиши функцию <code>is_adult(age)</code>, которая возвращает <code>True</code> если возраст &gt;= 18, иначе <code>False</code>.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">def is_adult(age):
+    return age &gt;= 18
+
+print(is_adult(25))   # → True
+print(is_adult(14))   # → False
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 3:</strong> Напиши функцию <code>greet(name, time="утро")</code>, которая возвращает приветствие. Если время не передано — по умолчанию "утро".</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">def greet(name, time=&quot;утро&quot;):
+    return f&quot;Доброе {time}, {name}!&quot;
+
+print(greet(&quot;Катя&quot;))            # → Доброе утро, Катя!
+print(greet(&quot;Катя&quot;, &quot;вечер&quot;))   # → Доброе вечер, Катя!
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Что выведет этот код и почему?</p>
+<pre class="highlight"><code class="language-python">def add(a, b):
+    return a + b
+
+result = add(3, 4)
+print(result)
+print(add(&quot;Привет, &quot;, &quot;мир!&quot;))
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code>7
+Привет, мир!
+</code></pre>
+
+
+Первый вызов: 3 + 4 = 7 (числа складываются).
+Второй вызов: "Привет, " + "мир!" = "Привет, мир!" (строки склеиваются).
+Оператор `+` работает по-разному в зависимости от типа данных.
+</details>
+
+<p><strong>Задача 5:</strong> Напиши функцию <code>filter_adults(users)</code>, которая принимает список словарей с полями "name" и "age", и выводит только тех, кому &gt;= 18.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">def filter_adults(users):
+    for user in users:
+        if user[&quot;age&quot;] &gt;= 18:
+            print(f&quot;{user['name']} — {user['age']} лет&quot;)
+
+people = [
+    {&quot;name&quot;: &quot;Аня&quot;, &quot;age&quot;: 22},
+    {&quot;name&quot;: &quot;Макс&quot;, &quot;age&quot;: 16},
+    {&quot;name&quot;: &quot;Дима&quot;, &quot;age&quot;: 30},
+]
+
+filter_adults(people)
+# → Аня — 22 лет
+# → Дима — 30 лет
+</code></pre>
+
+
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Функция</td>
+<td>Именованный блок кода, который можно вызывать многократно, как кнопка с действием</td>
+</tr>
+<tr>
+<td>def</td>
+<td>Ключевое слово Python для создания (определения) функции</td>
+</tr>
+<tr>
+<td>Параметр (аргумент)</td>
+<td>Входное значение, которое функция принимает при вызове для работы с ним</td>
+</tr>
+<tr>
+<td>return</td>
+<td>Команда, которая возвращает результат из функции обратно в вызывающий код</td>
+</tr>
+<tr>
+<td>Вызов функции</td>
+<td>Использование функции по имени с круглыми скобками, например greet("Аня")</td>
+</tr>
+<tr>
+<td>Значение по умолчанию</td>
+<td>Значение параметра, которое используется, если при вызове его не передали</td>
+</tr>
+<tr>
+<td>Область видимости</td>
+<td>Зона, в которой переменная «живёт» — внутри функции или снаружи</td>
+</tr>
+<tr>
+<td>Встроенная функция</td>
+<td>Функция, которая уже есть в Python и работает без импорта: print(), len(), type()</td>
+</tr>
+<tr>
+<td>import</td>
+<td>Команда для подключения модуля (библиотеки) с дополнительными функциями</td>
+</tr>
+<tr>
+<td>Модуль</td>
+<td>Файл с готовыми функциями, который можно подключить через import</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>1. Функция — это именованный блок кода: один раз написал, вызываешь сколько угодно раз.
+2. Создаётся через def имя(параметры): — двоеточие и отступ обязательны.
+3. Параметры — входные данные функции, аргументы — конкретные значения при вызове.
+4. return возвращает результат. Без return функция возвращает None.
+5. Значения по умолчанию позволяют вызывать функцию без некоторых аргументов.
+6. Переменные внутри функции не видны снаружи — это область видимости.
+7. Python имеет десятки встроенных функций: print(), len(), type(), range(), input().
+8. import подключает модули — файлы с готовыми функциями для любых задач.
+9. Хорошая функция делает одну вещь и имеет понятное имя.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Python: работа с файлами</strong>. Научишься читать и записывать данные в файлы — это нужно для хранения настроек, логов и данных агента.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="1-4-conditions.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="1-6-working-files.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

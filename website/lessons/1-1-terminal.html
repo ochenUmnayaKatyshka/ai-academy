@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Терминал — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 2 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 1.1 — Терминал и командная строка</h1>
+<blockquote>
+<p>Терминал — это текстовый пульт управления компьютером. Всё, что ты делаешь мышкой — можно сделать текстом. И при работе с AI и кодом — это основной инструмент.</p>
+</blockquote>
+<hr />
+<h2>Что такое терминал</h2>
+<p>Когда ты открываешь папку на компьютере — ты кликаешь по иконке. Терминал делает то же самое, но текстом. Набрала команду → компьютер выполнил.</p>
+<p><strong>Зачем:</strong> Все инструменты для работы с AI (Claude Code, OpenClaw, Python) запускаются через терминал. Без него — никуда.</p>
+<p><strong>Аналогия:</strong> Поисковая строка Google. Ты не кликаешь по кнопкам — ты пишешь текст и получаешь результат. Терминал — то же самое, но для твоего компьютера.</p>
+<hr />
+<h2>Где открыть</h2>
+<table>
+<thead>
+<tr>
+<th>Система</th>
+<th>Как</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>macOS</strong></td>
+<td>Cmd+Пробел → набери "Terminal" → Enter</td>
+</tr>
+<tr>
+<td><strong>Windows</strong></td>
+<td>Поиск → "PowerShell"</td>
+</tr>
+<tr>
+<td><strong>Linux</strong></td>
+<td>Ctrl+Alt+T</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Команды</h2>
+<h3>Узнать, где я сейчас — <code>pwd</code></h3>
+<pre class="highlight"><code class="language-bash">pwd
+# pwd = print working directory = &quot;напечатай текущую папку&quot;
+# Результат: /Users/katya/Documents
+# Это полный адрес папки, в которой ты сейчас находишься
+</code></pre>
+
+<hr />
+<h3>Посмотреть, что здесь лежит — <code>ls</code></h3>
+<pre class="highlight"><code class="language-bash">ls
+# ls = list = &quot;покажи список&quot;
+# Показывает файлы и папки в текущей директории
+
+ls -la
+# -la = два флага: -l (подробно) и -a (всё, включая скрытые)
+# Скрытые файлы начинаются с точки: .env, .git
+</code></pre>
+
+<hr />
+<h3>Перейти в другую папку — <code>cd</code></h3>
+<pre class="highlight"><code class="language-bash">cd Documents
+# cd = change directory = &quot;сменить папку&quot;
+# Заходишь в папку Documents
+
+cd ..
+# .. = &quot;на уровень вверх&quot; (в родительскую папку)
+
+cd ~
+# ~ = домашняя папка (/Users/katya)
+</code></pre>
+
+<p><strong>Аналогия:</strong> Навигация в файловом менеджере телефона. <code>cd</code> — нажать на папку. <code>cd ..</code> — кнопка "назад".</p>
+<hr />
+<h3>Создать папку — <code>mkdir</code></h3>
+<pre class="highlight"><code class="language-bash">mkdir my-project
+# mkdir = make directory = &quot;создать папку&quot;
+# Создаёт папку my-project в текущей директории
+</code></pre>
+
+<hr />
+<h3>Создать файл — <code>touch</code></h3>
+<pre class="highlight"><code class="language-bash">touch app.py
+# touch = &quot;создать пустой файл&quot;
+# Создаёт файл app.py (пустой, без содержимого)
+</code></pre>
+
+<hr />
+<h3>Посмотреть содержимое файла — <code>cat</code></h3>
+<pre class="highlight"><code class="language-bash">cat app.py
+# cat = concatenate, но используется как &quot;покажи что внутри файла&quot;
+# Выводит содержимое файла прямо в терминал
+</code></pre>
+
+<hr />
+<h3>Удалить — <code>rm</code></h3>
+<pre class="highlight"><code class="language-bash">rm file.txt
+# rm = remove = &quot;удалить файл&quot;
+
+rm -r folder
+# -r = recursive = &quot;удалить папку и всё внутри неё&quot;
+</code></pre>
+
+<p><strong>Важно:</strong> Терминал удаляет сразу. Нет корзины. Нет "вы уверены?". Удалила = удалила.</p>
+<hr />
+<h3>Копировать — <code>cp</code></h3>
+<pre class="highlight"><code class="language-bash">cp original.txt copy.txt
+# cp = copy = &quot;скопировать файл&quot;
+# Первый аргумент — откуда, второй — куда
+</code></pre>
+
+<hr />
+<h3>Переместить или переименовать — <code>mv</code></h3>
+<pre class="highlight"><code class="language-bash">mv old-name.py new-name.py
+# mv = move = &quot;переместить&quot;
+# Если оба файла в одной папке — это переименование
+</code></pre>
+
+<hr />
+<h3>Очистить экран — <code>clear</code></h3>
+<pre class="highlight"><code class="language-bash">clear
+# Просто очищает терминал от предыдущих команд
+</code></pre>
+
+<hr />
+<h2>Путь к файлу (path)</h2>
+<p>Каждый файл имеет адрес — <strong>путь</strong>:</p>
+<pre class="highlight"><code>/Users/katya/Documents/Projects/app.py
+</code></pre>
+
+<p>Разбираем:
+- <code>/</code> — корень (самый верх, начало всего)
+- <code>Users/katya</code> — домашняя папка
+- <code>Documents/Projects</code> — вложенные папки
+- <code>app.py</code> — сам файл</p>
+<p><strong>Абсолютный путь</strong> — полный адрес от корня: <code>/Users/katya/app.py</code>
+<strong>Относительный путь</strong> — от того, где ты сейчас: <code>./app.py</code></p>
+<p><strong>Аналогия:</strong> Абсолютный = полный адрес доставки (страна, город, улица, дом, квартира). Относительный = "в соседней комнате" (понятно только если знаешь, где ты сейчас).</p>
+<hr />
+<h2>Горячие клавиши в терминале</h2>
+<table>
+<thead>
+<tr>
+<th>Клавиша</th>
+<th>Что делает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tab</code></td>
+<td>Автодополнение — начни набирать имя файла и нажми Tab</td>
+</tr>
+<tr>
+<td><code>Ctrl+C</code></td>
+<td>Остановить текущую команду</td>
+</tr>
+<tr>
+<td><code>↑</code></td>
+<td>Предыдущая команда (не нужно печатать заново)</td>
+</tr>
+<tr>
+<td><code>Ctrl+L</code></td>
+<td>Очистить экран</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Практика</h2>
+<p>Открой терминал и выполни по порядку:</p>
+<pre class="highlight"><code class="language-bash"># 1. Где я?
+pwd
+
+# 2. Что тут лежит?
+ls
+
+# 3. Создай папку
+mkdir ai-learning
+
+# 4. Зайди в неё
+cd ai-learning
+
+# 5. Проверь что ты внутри
+pwd
+
+# 6. Создай файл
+touch hello.py
+
+# 7. Убедись что он появился
+ls
+</code></pre>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Ты в папке <code>/Users/katya</code>. Тебе нужно попасть в <code>/Users/katya/Documents/Projects</code>. Какие команды напишешь?</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-bash">cd Documents/Projects
+</code></pre>
+
+
+Или по шагам:
+
+<pre class="highlight"><code class="language-bash">cd Documents
+cd Projects
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 2:</strong> Ты создала файл <code>test.py</code>, но хочешь переименовать его в <code>app.py</code>. Какая команда?</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-bash">mv test.py app.py
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 3:</strong> Ты хочешь удалить папку <code>old-project</code> со всем содержимым. Какая команда?</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-bash">rm -r old-project
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Ты набираешь <code>ls</code> и видишь файлы. Но подруга говорит, что там ещё есть файл <code>.env</code>. Почему ты его не видишь и как увидеть?</p>
+<details>
+<summary>Ответ</summary>
+
+`.env` — скрытый файл (начинается с точки). Обычный `ls` его не показывает. Нужно:
+
+<pre class="highlight"><code class="language-bash">ls -la
+</code></pre>
+
+
+Флаг `-a` показывает все файлы, включая скрытые.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Терминал</strong></td>
+<td>Программа, в которой ты управляешь компьютером с помощью текстовых команд, а не мышкой</td>
+</tr>
+<tr>
+<td><strong>Командная строка</strong></td>
+<td>Место в терминале, где ты вводишь команды — по сути синоним терминала</td>
+</tr>
+<tr>
+<td><strong>Директория</strong></td>
+<td>Папка на компьютере, только так её называют в терминале</td>
+</tr>
+<tr>
+<td><strong>pwd</strong></td>
+<td>Команда «покажи, где я сейчас нахожусь» — выводит путь текущей директории</td>
+</tr>
+<tr>
+<td><strong>ls</strong></td>
+<td>Команда «покажи, что здесь лежит» — выводит список файлов и папок</td>
+</tr>
+<tr>
+<td><strong>cd</strong></td>
+<td>Команда «перейди в другую папку» — меняет текущую директорию</td>
+</tr>
+<tr>
+<td><strong>mkdir</strong></td>
+<td>Команда «создай папку» — создаёт новую директорию с указанным именем</td>
+</tr>
+<tr>
+<td><strong>rm</strong></td>
+<td>Команда «удали» — удаляет файлы, а с флагом <code>-r</code> — папки вместе с содержимым</td>
+</tr>
+<tr>
+<td><strong>Флаг</strong></td>
+<td>Дополнение к команде, которое меняет её поведение, обычно начинается с <code>-</code> или <code>--</code></td>
+</tr>
+<tr>
+<td><strong>Путь (path)</strong></td>
+<td>Адрес файла или папки на компьютере, например <code>/Users/katya/projects/app.py</code></td>
+</tr>
+<tr>
+<td><strong>Домашняя директория</strong></td>
+<td>Твоя личная папка на компьютере, обозначается символом <code>~</code></td>
+</tr>
+<tr>
+<td><strong>Root</strong></td>
+<td>Корневая директория <code>/</code> — самая верхняя точка файловой системы, из которой начинаются все пути</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Терминал — текстовый пульт управления компьютером.
+Всё, что ты делаешь мышкой, можно сделать командами.
+
+Ключевые команды:
+  pwd          — где я?
+  ls           — что здесь лежит?
+  ls -la       — показать всё, включая скрытые файлы
+  cd папка     — зайти в папку
+  cd ..        — подняться на уровень вверх
+  cd ~         — вернуться домой
+  mkdir имя    — создать папку
+  touch имя    — создать пустой файл
+  rm файл      — удалить файл
+  rm -r папка  — удалить папку с содержимым
+  mv A B       — переименовать или переместить
+  cp A B       — скопировать
+
+Путь — это адрес файла. Бывает абсолютный (/Users/katya/file.py)
+и относительный (./file.py — от текущей папки).
+
+Точка (.)  — текущая папка.
+Две точки (..) — папка уровнем выше.
+Тильда (~) — домашняя директория.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке разберём <strong>форматы файлов</strong> — что такое <code>.py</code>, <code>.json</code>, <code>.env</code>, <code>.md</code> и зачем каждый из них нужен.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="0-0-setup.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="1-2-files.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

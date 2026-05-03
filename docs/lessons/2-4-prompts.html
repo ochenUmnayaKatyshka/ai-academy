@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Engineering — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 2 · Урок 4 из 6</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 2.4 — Prompt Engineering</h1>
+<blockquote>
+<p>Prompt Engineering — это умение давать задачи AI так, чтобы получать именно тот результат, который нужен. Один и тот же AI может выдать бесполезный ответ или гениальный — зависит от того, как ты спросила.</p>
+<p>Этот урок собран на основе официальных гайдов Anthropic и OpenAI по prompt engineering — то есть рекомендаций от самих создателей Claude и ChatGPT.</p>
+</blockquote>
+<hr />
+<h2>Зачем это нужно</h2>
+<p>Ты уже умеешь отправлять запросы к Claude из кода (урок 2.3). Но качество ответа зависит не от кода — а от того, ЧТО ты пишешь в <code>content</code>. Это и есть prompt (промпт) — текст, который ты отправляешь AI.</p>
+<p>Prompt Engineering — один из самых ценных навыков в AI. Люди, которые умеют правильно формулировать задачи для AI, получают результат в 10 раз лучше, чем те, кто пишет "ну сделай что-нибудь".</p>
+<hr />
+<h2>6 стратегий из официальных гайдов</h2>
+<p>Anthropic и OpenAI выделяют одни и те же ключевые стратегии. Вот они — с примерами под твои проекты.</p>
+<hr />
+<h3>Стратегия 1: Пиши чёткие и конкретные инструкции</h3>
+<p><strong>Из гайда OpenAI:</strong> "Модель не умеет читать мысли. Размытый промпт = размытый ответ."</p>
+<p><strong>Из гайда Anthropic:</strong> "Чем точнее твой запрос, тем лучше ответ."</p>
+<pre class="highlight"><code>Плохо:
+&quot;Напиши пост&quot;
+
+Хорошо:
+&quot;Напиши пост для Instagram про AI в бизнесе.
+Целевая аудитория — предприниматели 25-40 лет.
+Тон — дружелюбный, но экспертный.
+Длина — 3-4 абзаца.
+В конце — вопрос для вовлечения.&quot;
+</code></pre>
+
+<h4>Формула хорошего промпта:</h4>
+<pre class="highlight"><code>[РОЛЬ]         Ты — {кто}.
+[КОНТЕКСТ]     Вот данные: {данные}.
+[ЗАДАЧА]       Сделай {что именно}.
+[ФОРМАТ]       Ответь в формате {формат}.
+[ОГРАНИЧЕНИЯ]  Не делай {чего}. Длина — {сколько}.
+[ПРИМЕРЫ]      Вот пример: {пример}.
+</code></pre>
+
+<p>Не обязательно использовать все 6 пунктов каждый раз. Но чем больше ты дашь — тем точнее результат.</p>
+<h4>Роль — кто ты, Claude?</h4>
+<pre class="highlight"><code class="language-python"># Без роли — общий ответ
+&quot;Как увеличить продажи?&quot;
+
+# С ролью — экспертный ответ с конкретикой
+system = &quot;Ты — директор по маркетингу с 15-летним опытом в digital.&quot;
+&quot;Как увеличить продажи?&quot;
+</code></pre>
+
+<p>Примеры ролей:</p>
+<pre class="highlight"><code class="language-python">&quot;Ты — бизнес-аналитик. Отвечай цифрами и фактами.&quot;
+&quot;Ты — senior Python-разработчик. Пиши чистый код с комментариями.&quot;
+&quot;Ты — копирайтер для Instagram. Пишешь цепляющие короткие тексты.&quot;
+&quot;Ты — терпеливый учитель. Объясняешь сложное простым языком с аналогиями.&quot;
+</code></pre>
+
+<h4>Формат — как должен выглядеть ответ</h4>
+<pre class="highlight"><code class="language-python">&quot;Ответь в виде таблицы с колонками: Проблема | Причина | Решение&quot;
+&quot;Дай 5 пунктов, каждый — одно предложение&quot;
+&quot;Верни ответ в формате JSON: {name, email, company}&quot;
+&quot;Напиши только код, без объяснений&quot;
+</code></pre>
+
+<h4>Ограничения — чего НЕ делать</h4>
+<p><strong>Из гайда Anthropic:</strong> "Запреты так же важны, как и указания. Без них Claude может добавить лишнее."</p>
+<pre class="highlight"><code class="language-python">&quot;Объясни квантовые вычисления.
+НЕ используй математические формулы.
+НЕ упоминай конкретные квантовые компьютеры.
+Объясняй только через аналогии из повседневной жизни.&quot;
+</code></pre>
+
+<hr />
+<h3>Стратегия 2: Давай примеры (Few-shot Prompting)</h3>
+<p><strong>Из гайда Anthropic:</strong> "Примеры — самый надёжный способ показать Claude, ЧТО именно ты хочешь."</p>
+<p><strong>Из гайда OpenAI:</strong> "Покажите модели формат ответа, который вы хотите."</p>
+<p>Вместо того чтобы объяснять словами — покажи 2-3 примера. AI поймёт паттерн и повторит.</p>
+<pre class="highlight"><code class="language-python">system = &quot;&quot;&quot;Ты классифицируешь сообщения из чата.
+
+Примеры:
+
+Сообщение: &quot;Продаём 10 ASIC S19, цена договорная, пишите @miner_ivan&quot;
+Категория: Продажа оборудования
+
+Сообщение: &quot;Кто-нибудь знает почему хешрейт упал после обновления?&quot;
+Категория: Техническая проблема
+
+Сообщение: &quot;Привет всем, как дела?&quot;
+Категория: Общение (не заносить)
+
+Теперь классифицируй новое сообщение по такому же принципу.&quot;&quot;&quot;
+</code></pre>
+
+<p>Ещё пример — извлечение данных:</p>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;Извлеки данные из текста.
+
+Пример:
+Текст: &quot;Иван Смирнов, @ivan_s, ищу поставщика на 100 ASIC&quot;
+Результат: {&quot;name&quot;: &quot;Иван Смирнов&quot;, &quot;contact&quot;: &quot;@ivan_s&quot;, &quot;request&quot;: &quot;ищет поставщика на 100 ASIC&quot;}
+
+Пример:
+Текст: &quot;Народ, какой пул сейчас лучше?&quot;
+Результат: НЕ ЛИД
+
+Теперь обработай:
+Текст: &quot;Khachatur Ghukasyan, kh.ghukasyan@ardshinbank.am, @kh_ghukas — хочет собрать согласие на инвестицию 20М+ в майнинг&quot;
+Результат:&quot;&quot;&quot;
+</code></pre>
+
+<hr />
+<h3>Стратегия 3: Дай модели "время подумать" (Chain of Thought)</h3>
+<p><strong>Из гайда OpenAI:</strong> "Если просить сразу ответ — модель чаще ошибается."</p>
+<p><strong>Из гайда Anthropic:</strong> "Когда модель рассуждает вслух, она делает меньше ошибок — как человек, который записывает решение задачи, а не считает в уме."</p>
+<pre class="highlight"><code>Без chain of thought:
+&quot;Сколько будет стоить запуск AI-бота на 1000 пользователей в месяц?&quot;
+
+С chain of thought:
+&quot;Рассчитай стоимость запуска AI-бота на 1000 пользователей в месяц.
+Рассуждай пошагово:
+1. Сколько сообщений в среднем отправляет один пользователь?
+2. Сколько токенов на одно сообщение?
+3. Какая цена за токен у Claude Sonnet?
+4. Итоговая сумма.&quot;
+</code></pre>
+
+<h4>Тег <code>&lt;thinking&gt;</code> — рекомендация Anthropic</h4>
+<p>Anthropic рекомендует использовать тег <code>&lt;thinking&gt;</code> чтобы отделить рассуждения от финального ответа:</p>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;Проанализируй, стоит ли инвестировать в этот проект.
+
+Сначала рассуждай в теге &lt;thinking&gt; — пошагово разбери все за и против.
+Потом дай финальный ответ после тега &lt;answer&gt;.
+
+&lt;thinking&gt;
+[Здесь Claude рассуждает — ты видишь его логику]
+&lt;/thinking&gt;
+
+&lt;answer&gt;
+[Здесь итоговый ответ]
+&lt;/answer&gt;&quot;&quot;&quot;
+</code></pre>
+
+<hr />
+<h3>Стратегия 4: Используй структуру и разделители</h3>
+<p><strong>Из гайда Anthropic:</strong> "Claude отлично понимает XML-разметку. Это самый надёжный способ структурировать сложный промпт."</p>
+<p><strong>Из гайда OpenAI:</strong> "Используйте разделители (```, \"\"\", ---, XML-теги) чтобы отделить инструкцию от данных."</p>
+<h4>XML-теги — фишка Claude</h4>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;
+&lt;instructions&gt;
+Проанализируй отзыв клиента.
+Определи тональность и главную проблему.
+&lt;/instructions&gt;
+
+&lt;format&gt;
+Тональность: позитивная / негативная / нейтральная
+Проблема: [одно предложение]
+Рекомендация: [что делать]
+&lt;/format&gt;
+
+&lt;review&gt;
+Заказал доставку на 12:00, привезли в 15:30. Еда холодная,
+курьер даже не извинился. Больше не буду заказывать.
+&lt;/review&gt;
+&quot;&quot;&quot;
+# &lt;instructions&gt; — что делать
+# &lt;format&gt; — как отвечать
+# &lt;review&gt; — данные для анализа
+</code></pre>
+
+<h4>Разделители для простых случаев</h4>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;Переведи текст ниже на английский.
+---
+Привет, как дела? Сегодня отличная погода!
+---
+Дай только перевод, без пояснений.&quot;&quot;&quot;
+</code></pre>
+
+<p>Без разделителей Claude может перепутать инструкцию с данными.</p>
+<h4>Данные сначала, инструкция потом</h4>
+<p><strong>Из гайда Anthropic:</strong> "Если даёшь Claude длинный текст — размести его В НАЧАЛЕ, а инструкции В КОНЦЕ. Claude лучше запоминает то, что идёт последним."</p>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;
+&lt;document&gt;
+[здесь длинный текст контракта на 5 страниц]
+&lt;/document&gt;
+
+На основе документа выше, ответь:
+1. Какая сумма сделки?
+2. Какие сроки?
+3. Есть ли штрафные санкции?
+Ответь простым языком, без юридического жаргона.&quot;&quot;&quot;
+</code></pre>
+
+<hr />
+<h3>Стратегия 5: Давай справочный текст (снижай галлюцинации)</h3>
+<p><strong>Из гайда OpenAI:</strong> "Модель может уверенно выдумывать факты. Чтобы этого избежать — прикладывайте текст-источник."</p>
+<p>Если тебе нужны точные факты — дай Claude текст-источник и скажи отвечать <strong>только</strong> на его основе:</p>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;Используя ТОЛЬКО текст ниже, ответь на вопрос.
+Если ответа нет в тексте — скажи &quot;информация не найдена&quot;.
+НЕ придумывай и НЕ дополняй от себя.
+
+&lt;source&gt;
+Тарифы API Claude:
+- Haiku: $0.25 / 1M input tokens, $1.25 / 1M output tokens
+- Sonnet: $3 / 1M input tokens, $15 / 1M output tokens
+- Opus: $15 / 1M input tokens, $75 / 1M output tokens
+&lt;/source&gt;
+
+Вопрос: Сколько стоит использование Claude Sonnet?&quot;&quot;&quot;
+</code></pre>
+
+<p>Это критично для продуктов, где точность важна — юридические документы, медицина, финансы.</p>
+<hr />
+<h3>Стратегия 6: Разбивай сложные задачи на подзадачи</h3>
+<p><strong>Из гайда OpenAI:</strong> "Одна огромная задача = больше ошибок. Маленькие шаги = точнее результат."</p>
+<p><strong>Из гайда Anthropic:</strong> "Как в программировании: одна функция — одна задача."</p>
+<pre class="highlight"><code>Плохо — всё в одном промпте:
+&quot;Напиши бизнес-план, сделай лендинг, придумай название
+и рассчитай юнит-экономику&quot;
+
+Хорошо — разбей на цепочку:
+Запрос 1: &quot;Придумай 10 названий для AI-бота анализа крипто-чатов&quot;
+Запрос 2: &quot;Напиши структуру лендинга для [выбранное название]&quot;
+Запрос 3: &quot;Рассчитай юнит-экономику при 1000 пользователей&quot;
+</code></pre>
+
+<h4>Классификация → Обработка</h4>
+<p><strong>Из гайда OpenAI:</strong> "Сначала определите тип запроса, потом обработайте его по нужному сценарию."</p>
+<pre class="highlight"><code class="language-python">system = &quot;&quot;&quot;Ты обрабатываешь входящие заявки.
+
+Шаг 1: Определи тип заявки:
+- &quot;покупка&quot; — клиент хочет купить
+- &quot;продажа&quot; — клиент хочет продать
+- &quot;вопрос&quot; — клиент задаёт вопрос
+- &quot;мусор&quot; — спам или нерелевантное
+
+Шаг 2: Если покупка или продажа — извлеки данные в JSON.
+Если вопрос — сформулируй ответ.
+Если мусор — ответь &quot;SKIP&quot;.&quot;&quot;&quot;
+</code></pre>
+
+<hr />
+<h2>Дополнительные техники</h2>
+<h3>Самопроверка</h3>
+<p><strong>Из гайда Anthropic:</strong> "Попросите модель перепроверить свой ответ. Самопроверка снижает процент ошибок."</p>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;Переведи этот текст на английский.
+
+Текст: [текст]
+
+После перевода перепроверь:
+- Все ли предложения переведены?
+- Нет ли грамматических ошибок?
+- Сохранён ли смысл оригинала?
+Если нашёл ошибки — исправь и покажи финальную версию.&quot;&quot;&quot;
+</code></pre>
+
+<h3>Prefill — начни ответ за Claude</h3>
+<p><strong>Из гайда Anthropic:</strong> В API можно задать начало ответа — и Claude продолжит в нужном формате.</p>
+<pre class="highlight"><code class="language-python"># В API можно начать ответ за Claude:
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=1024,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Извлеки имя и email из текста: Иван Петров, ivan@mail.com&quot;},
+        {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: '{&quot;name&quot;: &quot;'}
+        # Claude продолжит в JSON, потому что мы начали за него
+    ]
+)
+</code></pre>
+
+<h3>Итерация — нормально менять промпт</h3>
+<p><strong>Из обоих гайдов:</strong> Первый промпт редко идеален. Prompt engineering — итеративный процесс:</p>
+<ol>
+<li>Напиши простой промпт</li>
+<li>Посмотри результат</li>
+<li>Добавь детали, примеры, ограничения</li>
+<li>Повтори, пока не получишь то, что нужно</li>
+</ol>
+<hr />
+<h2>Реальные примеры для твоих проектов</h2>
+<h3>Для мониторинга чата майнеров</h3>
+<pre class="highlight"><code class="language-python">system = &quot;&quot;&quot;Ты анализируешь сообщения из Telegram-чата про майнинг.
+
+&lt;instructions&gt;
+Определи, является ли сообщение бизнес-лидом.
+Лид — когда в сообщении есть имя/компания + контакт + запрос.
+Обычные разговоры — игнорируй.
+&lt;/instructions&gt;
+
+&lt;examples&gt;
+Сообщение: &quot;Иван Смирнов, @ivan_s, ищу поставщика на 100 ASIC&quot;
+Ответ: {&quot;opportunity&quot;: &quot;Иван Смирнов&quot;, &quot;contact&quot;: &quot;@ivan_s&quot;, &quot;notes&quot;: &quot;ищет поставщика на 100 ASIC&quot;}
+
+Сообщение: &quot;Народ, какой пул сейчас лучше?&quot;
+Ответ: НЕ ЛИД
+
+Сообщение: &quot;Продаю 5 S19, б/у, Москва, писать @miner_alex&quot;
+Ответ: {&quot;opportunity&quot;: &quot;@miner_alex&quot;, &quot;contact&quot;: &quot;@miner_alex&quot;, &quot;notes&quot;: &quot;продаёт 5 S19, б/у, Москва&quot;}
+&lt;/examples&gt;
+
+Классифицируй новое сообщение по этим правилам.&quot;&quot;&quot;
+</code></pre>
+
+<h3>Для Instagram-контента</h3>
+<pre class="highlight"><code class="language-python">system = &quot;&quot;&quot;Ты — копирайтер для Instagram-аккаунта про AI и технологии.
+
+&lt;rules&gt;
+Аудитория: предприниматели 25-40 лет
+Тон: экспертный, но простой, без технического жаргона
+НЕ используй: &quot;в современном мире&quot;, &quot;в эпоху технологий&quot; и подобные клише
+&lt;/rules&gt;
+
+&lt;format&gt;
+1. Цепляющий первый абзац (hook) — максимум 2 предложения
+2. 2-3 абзаца основной мысли с конкретным примером
+3. Вопрос в конце для вовлечения
+4. 5-7 хештегов
+&lt;/format&gt;&quot;&quot;&quot;
+</code></pre>
+
+<h3>Для анализа документов</h3>
+<pre class="highlight"><code class="language-python">content = &quot;&quot;&quot;
+&lt;document&gt;
+[текст контракта]
+&lt;/document&gt;
+
+&lt;instructions&gt;
+На основе документа выше, ответь:
+1. Какая сумма сделки?
+2. Какие сроки?
+3. Есть ли штрафные санкции? Если да — какие?
+4. Какие риски ты видишь для покупателя?
+
+Если информация отсутствует в документе — напиши &quot;не указано&quot;.
+НЕ додумывай то, чего нет в тексте.
+Ответь в виде таблицы, простым языком.
+&lt;/instructions&gt;&quot;&quot;&quot;
+</code></pre>
+
+<hr />
+<h2>Prompt Engineering в коде</h2>
+<p>Вот как выглядит хороший промпт в чате из урока 2.3:</p>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+
+client = Anthropic()
+history = []
+
+system_prompt = &quot;&quot;&quot;Ты — AI-ассистент для предпринимателей в сфере AI.
+
+&lt;rules&gt;
+- Отвечай конкретно, с цифрами и примерами
+- Если не знаешь — честно скажи, не выдумывай
+- Предлагай конкретные следующие шаги
+- НЕ используй общие фразы типа &quot;это зависит от многих факторов&quot;
+&lt;/rules&gt;
+
+&lt;format&gt;
+- Короткий ответ на вопрос (2-3 предложения)
+- Конкретный пример или расчёт
+- Что делать дальше (1-2 пункта)
+&lt;/format&gt;&quot;&quot;&quot;
+
+while True:
+    user_input = input(&quot;\nТы: &quot;)
+    if user_input.lower() == &quot;выход&quot;:
+        break
+
+    history.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_input})
+
+    response = client.messages.create(
+        model=&quot;claude-sonnet-4-6&quot;,
+        max_tokens=1024,
+        system=system_prompt,
+        messages=history
+    )
+
+    reply = response.content[0].text
+    history.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: reply})
+    print(f&quot;\nAI: {reply}&quot;)
+</code></pre>
+
+<hr />
+<h2>Типичные ошибки (из гайдов Anthropic и OpenAI)</h2>
+<table>
+<thead>
+<tr>
+<th>Ошибка</th>
+<th>Как исправить</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Слишком размытый промпт ("напиши что-нибудь про AI")</td>
+<td>Добавить контекст, формат, аудиторию, длину</td>
+</tr>
+<tr>
+<td>Нет примеров</td>
+<td>Добавить 2-3 примера желаемого ответа (few-shot)</td>
+</tr>
+<tr>
+<td>Всё в одном промпте</td>
+<td>Разбить на цепочку маленьких задач</td>
+</tr>
+<tr>
+<td>Требовать точные факты без источника</td>
+<td>Приложить справочный текст</td>
+</tr>
+<tr>
+<td>Нет ограничений</td>
+<td>Явно сказать, чего НЕ делать</td>
+</tr>
+<tr>
+<td>Не указан формат ответа</td>
+<td>Описать формат: JSON, список, таблица</td>
+</tr>
+<tr>
+<td>Не итерируешь</td>
+<td>Менять промпт, если ответ не устраивает — это нормально</td>
+</tr>
+<tr>
+<td>Данные и инструкции смешаны</td>
+<td>Использовать разделители или XML-теги</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Шпаргалка: все техники в одном месте</h2>
+<table>
+<thead>
+<tr>
+<th>Техника</th>
+<th>Когда использовать</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Роль (system)</td>
+<td>Всегда</td>
+<td>"Ты — бизнес-аналитик"</td>
+</tr>
+<tr>
+<td>Few-shot</td>
+<td>Когда нужен точный формат</td>
+<td>Показать 2-3 примера ответа</td>
+</tr>
+<tr>
+<td>Chain of thought</td>
+<td>Сложные задачи, расчёты</td>
+<td>"Рассуждай пошагово"</td>
+</tr>
+<tr>
+<td>XML-теги</td>
+<td>Сложные промпты с данными</td>
+<td><code>&lt;instructions&gt;</code>, <code>&lt;document&gt;</code></td>
+</tr>
+<tr>
+<td>Разделители</td>
+<td>Отделить данные от инструкции</td>
+<td><code>---</code> или <code>"""</code></td>
+</tr>
+<tr>
+<td>Справочный текст</td>
+<td>Нужны точные факты</td>
+<td>"Отвечай ТОЛЬКО на основе текста"</td>
+</tr>
+<tr>
+<td>Самопроверка</td>
+<td>Критичные задачи</td>
+<td>"Перепроверь свой ответ"</td>
+</tr>
+<tr>
+<td>Prefill</td>
+<td>Нужен строгий формат</td>
+<td>Начать ответ за Claude</td>
+</tr>
+<tr>
+<td>Подзадачи</td>
+<td>Большая задача</td>
+<td>Разбить на 3-4 запроса</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Улучши промпт</h3>
+<p>Возьми плохой промпт и сделай из него хороший по формуле (роль + контекст + задача + формат + ограничения + примеры):</p>
+<pre class="highlight"><code>Плохой: &quot;Напиши код для бота&quot;
+</code></pre>
+
+<h3>Задание 2: Few-shot в коде</h3>
+<p>Добавь в свой чат (урок 2.3) <code>system</code> промпт с 2-3 примерами. Например, бот который классифицирует вопросы на "технический" / "бизнес" / "общий".</p>
+<h3>Задание 3: Chain of thought vs Прямой ответ</h3>
+<p>Задай Claude сложный вопрос двумя способами:
+1. Просто вопрос
+2. Тот же вопрос + "Рассуждай пошагово в теге <code>&lt;thinking&gt;</code>"</p>
+<p>Сравни качество ответов.</p>
+<h3>Задание 4: XML-теги</h3>
+<p>Перепиши один из примеров ниже, используя XML-теги <code>&lt;instructions&gt;</code>, <code>&lt;context&gt;</code>, <code>&lt;format&gt;</code>:</p>
+<pre class="highlight"><code>&quot;Проанализируй 3 конкурентов: Notion, Obsidian, Roam.
+Для каждого укажи цену, аудиторию, главное преимущество.
+Формат — таблица.&quot;
+</code></pre>
+
+<h3>Задание 5: Свой промпт для проекта</h3>
+<p>Напиши <code>system</code> промпт для одного из своих проектов:
+- Анализатор чата майнеров (лиды в таблицу)
+- Генератор постов для Instagram
+- Бот-ментор для обучения AI</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что такое few-shot prompting?</p>
+<details>
+<summary>Ответ</summary>
+
+Техника, при которой ты даёшь AI 2-3 примера желаемого ответа. AI видит паттерн и повторяет его для новых данных. По рекомендации Anthropic — это самый надёжный способ показать Claude, что ты хочешь.
+</details>
+
+<p><strong>Задача 2:</strong> Почему "Рассуждай пошагово" улучшает ответ?</p>
+<details>
+<summary>Ответ</summary>
+
+Когда AI генерирует рассуждения шаг за шагом, каждый следующий шаг учитывает предыдущий. Это снижает вероятность ошибки — как человек, который записывает решение, а не считает в уме.
+</details>
+
+<p><strong>Задача 3:</strong> Зачем нужны XML-теги в промпте?</p>
+<details>
+<summary>Ответ</summary>
+
+XML-теги (`<instructions>`, `<document>`, `<format>`) помогают Claude чётко разделить "что делать" от "с чем работать" от "в каком формате отвечать". Anthropic рекомендует их для сложных промптов с данными.
+</details>
+
+<p><strong>Задача 4:</strong> Клиент жалуется, что твой AI-бот иногда выдумывает факты. Какую технику использовать?</p>
+<details>
+<summary>Ответ</summary>
+
+Справочный текст + ограничения. Дай боту текст-источник и скажи: "Отвечай ТОЛЬКО на основе предоставленного текста. Если ответа нет — скажи 'информация не найдена'. НЕ додумывай." Это рекомендация OpenAI для снижения галлюцинаций.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>Промпт = роль + контекст + задача + формат + ограничения + примеры</strong></li>
+<li><strong>Few-shot</strong> — покажи 2-3 примера, AI повторит паттерн</li>
+<li><strong>Chain of thought</strong> — попроси думать пошагово (тег <code>&lt;thinking&gt;</code>)</li>
+<li><strong>XML-теги</strong> — структурируй сложные промпты (<code>&lt;instructions&gt;</code>, <code>&lt;document&gt;</code>)</li>
+<li><strong>Справочный текст</strong> — снижает галлюцинации ("отвечай ТОЛЬКО по тексту")</li>
+<li><strong>Подзадачи</strong> — разбивай большие задачи на маленькие</li>
+<li><strong>Итерация</strong> — менять промпт нормально, первый вариант редко идеален</li>
+</ul>
+<hr />
+<h2>Источники</h2>
+<ul>
+<li>Anthropic: Prompt Engineering Overview &amp; Techniques (docs.anthropic.com)</li>
+<li>OpenAI: Prompt Engineering Guide (platform.openai.com/docs/guides/prompt-engineering)</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Промпт</td>
+<td>Текст-инструкция, которую ты отправляешь модели, чтобы получить нужный ответ.</td>
+</tr>
+<tr>
+<td>Системный промпт</td>
+<td>Специальная инструкция, которая задаёт роль и правила поведения модели на весь разговор.</td>
+</tr>
+<tr>
+<td>Few-shot</td>
+<td>Техника, при которой ты показываешь модели 2-3 примера нужного результата, и она повторяет паттерн.</td>
+</tr>
+<tr>
+<td>Zero-shot</td>
+<td>Техника, при которой ты даёшь задачу без примеров — модель должна справиться сама.</td>
+</tr>
+<tr>
+<td>Chain of thought</td>
+<td>Техника, при которой ты просишь модель рассуждать пошагово, что улучшает качество сложных ответов.</td>
+</tr>
+<tr>
+<td>Role prompting</td>
+<td>Приём, при котором ты назначаешь модели роль (эксперт, учитель, редактор), чтобы она отвечала в нужном стиле.</td>
+</tr>
+<tr>
+<td>XML-теги</td>
+<td>Специальные метки вроде <code>&lt;instructions&gt;</code> и <code>&lt;document&gt;</code>, которые помогают структурировать сложные промпты.</td>
+</tr>
+<tr>
+<td>Температура</td>
+<td>Параметр, управляющий случайностью ответов: низкая — точные и предсказуемые, высокая — творческие и разнообразные.</td>
+</tr>
+<tr>
+<td>Контекст</td>
+<td>Вся информация, которую модель "видит" при генерации ответа — твои сообщения, системный промпт и история.</td>
+</tr>
+<tr>
+<td>Инструкция</td>
+<td>Чёткое указание модели, что именно нужно сделать — главная часть любого промпта.</td>
+</tr>
+<tr>
+<td>Ограничение (constraint)</td>
+<td>Правило, которое запрещает модели что-то делать — например, "не используй жаргон" или "отвечай только по тексту".</td>
+</tr>
+<tr>
+<td>Формат вывода</td>
+<td>Указание, в каком виде модель должна дать ответ — список, таблица, JSON, короткий абзац и т.д.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Tokens, контекст, стоимость</strong>. Ты узнаешь, сколько стоит каждый запрос к AI и как оптимизировать расходы при создании AI-продуктов.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="2-3-first-api.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="2-5-tokens.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

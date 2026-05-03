@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Токены и стоимость — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 2 · Урок 5 из 6</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 2.5 — Tokens, контекст, стоимость</h1>
+<blockquote>
+<p>Каждый раз, когда ты отправляешь сообщение Claude через API — ты платишь. Не за сообщение, а за <strong>токены</strong>. Чем больше токенов — тем дороже. Этот урок — про то, как считать расходы и не переплачивать.</p>
+</blockquote>
+<hr />
+<h2>Что такое токен</h2>
+<p>Токен — это кусочек текста, который AI обрабатывает за один шаг. Не слово, не буква — что-то между.</p>
+<pre class="highlight"><code>&quot;Привет, как дела?&quot; → 5 токенов
+&quot;Hello, how are you?&quot; → 5 токенов
+&quot;Напиши функцию для подсчёта лайков&quot; → ~8 токенов
+</code></pre>
+
+<h3>Правило для быстрой оценки:</h3>
+<pre class="highlight"><code>Английский: 1 токен ≈ 4 символа ≈ ¾ слова
+Русский:    1 токен ≈ 1-2 слова (русский &quot;дороже&quot; — символы длиннее)
+</code></pre>
+
+<pre class="highlight"><code>1000 токенов ≈ 750 слов на английском
+1000 токенов ≈ 400-500 слов на русском
+</code></pre>
+
+<p><strong>Аналогия:</strong> Токены — как единицы мобильного трафика. Ты не платишь "за звонок" — ты платишь за минуты. В AI ты не платишь "за вопрос" — ты платишь за токены.</p>
+<h3>Почему русский дороже?</h3>
+<p>Русские буквы занимают больше байтов, чем английские. Слово "привет" = 2-3 токена, а "hello" = 1 токен. Поэтому один и тот же вопрос на русском стоит примерно в 1.5-2 раза дороже, чем на английском.</p>
+<hr />
+<h2>Входные и выходные токены</h2>
+<p>Каждый запрос к API тратит два типа токенов:</p>
+<pre class="highlight"><code>Входные (input)  — то, что ты отправляешь Claude (вопрос + история чата)
+Выходные (output) — то, что Claude отвечает
+</code></pre>
+
+<p><strong>Выходные токены всегда дороже входных</strong> — потому что генерация ответа требует больше вычислений, чем чтение вопроса.</p>
+<p>В уроке 2.3 ты добавляла строку для отслеживания:</p>
+<pre class="highlight"><code class="language-python">print(f&quot;[токены: {response.usage.input_tokens} вход + {response.usage.output_tokens} выход]&quot;)
+</code></pre>
+
+<hr />
+<h2>Сколько стоит Claude API</h2>
+<blockquote>
+<p>Цены актуальны на март 2026. Проверяй актуальные на anthropic.com/pricing</p>
+</blockquote>
+<h3>Цена за 1 миллион токенов</h3>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Input (вход)</th>
+<th>Output (выход)</th>
+<th>Контекст</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Haiku</strong></td>
+<td>$0.80</td>
+<td>$4.00</td>
+<td>200K токенов</td>
+</tr>
+<tr>
+<td><strong>Sonnet</strong></td>
+<td>$3.00</td>
+<td>$15.00</td>
+<td>200K токенов</td>
+</tr>
+<tr>
+<td><strong>Opus</strong></td>
+<td>$15.00</td>
+<td>$75.00</td>
+<td>200K токенов</td>
+</tr>
+</tbody>
+</table>
+<h3>Что это значит в реальных деньгах</h3>
+<p>Переведём в понятные числа — <strong>цена за один запрос</strong>:</p>
+<pre class="highlight"><code>Типичный запрос: ~500 входных + ~300 выходных токенов
+
+Haiku:
+  вход:  500 × $0.80 / 1,000,000 = $0.0004
+  выход: 300 × $4.00 / 1,000,000 = $0.0012
+  ИТОГО: $0.0016 за запрос (~0.16 центов)
+
+Sonnet:
+  вход:  500 × $3.00 / 1,000,000 = $0.0015
+  выход: 300 × $15.00 / 1,000,000 = $0.0045
+  ИТОГО: $0.006 за запрос (~0.6 центов)
+
+Opus:
+  вход:  500 × $15.00 / 1,000,000 = $0.0075
+  выход: 300 × $75.00 / 1,000,000 = $0.0225
+  ИТОГО: $0.03 за запрос (~3 цента)
+</code></pre>
+
+<h3>Сколько это в месяц?</h3>
+<table>
+<thead>
+<tr>
+<th>Сценарий</th>
+<th>Haiku</th>
+<th>Sonnet</th>
+<th>Opus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 запросов в день (личный бот)</td>
+<td>~$0.50/мес</td>
+<td>~$1.80/мес</td>
+<td>~$9/мес</td>
+</tr>
+<tr>
+<td>100 запросов в день (маленький продукт)</td>
+<td>~$5/мес</td>
+<td>~$18/мес</td>
+<td>~$90/мес</td>
+</tr>
+<tr>
+<td>1000 запросов в день (средний продукт)</td>
+<td>~$50/мес</td>
+<td>~$180/мес</td>
+<td>~$900/мес</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Для сравнения:</strong> подписка на ChatGPT Plus = $20/мес, Claude Pro = $20/мес. Через API маленький проект обходится <strong>в разы дешевле</strong>.</p>
+<hr />
+<h2>Контекстное окно</h2>
+<p>Контекстное окно — это максимум токенов, которые Claude может "видеть" за один раз. Сюда входит всё: system prompt + вся история чата + текущий вопрос + ответ.</p>
+<pre class="highlight"><code>Claude (все модели): 200,000 токенов
+</code></pre>
+
+<h3>Что помещается в 200K токенов?</h3>
+<pre class="highlight"><code>~500 страниц текста (книга)
+~150,000 слов на английском
+~80,000-100,000 слов на русском
+</code></pre>
+
+<h3>Почему это важно</h3>
+<p>Помнишь, в уроке 2.3 мы отправляли <code>history</code> с каждым запросом? С каждым сообщением <code>history</code> растёт:</p>
+<pre class="highlight"><code>Сообщение 1:  history = 100 токенов
+Сообщение 5:  history = 2,000 токенов
+Сообщение 20: history = 15,000 токенов
+Сообщение 50: history = 50,000 токенов
+</code></pre>
+
+<p>Два последствия:
+1. <strong>Каждый запрос дорожает</strong> — потому что входные токены растут
+2. <strong>Когда history превысит 200K</strong> — Claude "забудет" начало разговора</p>
+<p><strong>Аналогия:</strong> Представь, что ты читаешь книгу, но можешь держать в голове только 500 страниц. Если книга длиннее — ты забываешь первые главы.</p>
+<hr />
+<h2>Как считать стоимость в коде</h2>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+
+client = Anthropic()
+
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=1024,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Что такое токен?&quot;}]
+)
+
+# Считаем стоимость (цены Sonnet)
+input_cost = response.usage.input_tokens * 3.00 / 1_000_000
+output_cost = response.usage.output_tokens * 15.00 / 1_000_000
+total_cost = input_cost + output_cost
+
+print(f&quot;Ответ: {response.content[0].text}&quot;)
+print(f&quot;Входные токены: {response.usage.input_tokens}&quot;)
+print(f&quot;Выходные токены: {response.usage.output_tokens}&quot;)
+print(f&quot;Стоимость: ${total_cost:.6f}&quot;)
+# .6f — показывает 6 знаков после запятой (для маленьких сумм)
+</code></pre>
+
+<hr />
+<h2>API vs Подписка — что выгоднее?</h2>
+<table>
+<thead>
+<tr>
+<th>Критерий</th>
+<th>Подписка (Claude Pro)</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Цена</td>
+<td>$20/мес фиксированно</td>
+<td>Платишь только за использование</td>
+</tr>
+<tr>
+<td>Лимиты</td>
+<td>Есть ограничения на кол-во сообщений</td>
+<td>Нет ограничений (пока есть деньги)</td>
+</tr>
+<tr>
+<td>Для кого</td>
+<td>Личное использование через сайт</td>
+<td>Для продуктов, ботов, автоматизации</td>
+</tr>
+<tr>
+<td>Контроль</td>
+<td>Никакого — пользуешься как есть</td>
+<td>Полный — модель, промпт, формат</td>
+</tr>
+<tr>
+<td>Экономия</td>
+<td>Выгоднее при активном личном использовании</td>
+<td>Выгоднее для ботов с малым трафиком</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Для бота с 10 запросами в день на Sonnet:</strong>
+- Подписка: $20/мес
+- API: ~$1.80/мес</p>
+<p>API в 11 раз дешевле.</p>
+<p><strong>Для активного личного использования (50+ запросов в день):</strong>
+- Подписка: $20/мес
+- API: ~$9+/мес (и растёт с длиной разговоров)</p>
+<p>Подписка стабильнее и проще.</p>
+<hr />
+<h2>Как оптимизировать расходы</h2>
+<h3>1. Выбирай правильную модель</h3>
+<p>Не все задачи требуют Opus. Большинство задач решаются Sonnet или Haiku.</p>
+<pre class="highlight"><code class="language-python"># Простая классификация — Haiku ($0.80/1M input)
+# Анализ текста, генерация — Sonnet ($3/1M input)
+# Сложные рассуждения, код — Opus ($15/1M input)
+</code></pre>
+
+<p><strong>Правило:</strong> начни с Haiku. Если качество не устраивает — переключись на Sonnet. Opus — только для самых сложных задач.</p>
+<h3>2. Ограничивай длину ответа</h3>
+<pre class="highlight"><code class="language-python"># Не ставь max_tokens больше, чем нужно
+max_tokens=200   # для короткого ответа (классификация, перевод)
+max_tokens=1024  # для среднего ответа (обычный диалог)
+max_tokens=4096  # для длинного ответа (статья, код)
+</code></pre>
+
+<h3>3. Управляй историей чата</h3>
+<p>Не отправляй всю историю — отправляй только последние N сообщений:</p>
+<pre class="highlight"><code class="language-python"># Вместо:
+messages=history          # вся история — дорого при длинном чате
+
+# Лучше:
+messages=history[-20:]    # только последние 20 сообщений
+# [-20:] — срез списка: взять последние 20 элементов (урок 1.4)
+</code></pre>
+
+<h3>4. Пиши промпты на английском (если можно)</h3>
+<pre class="highlight"><code class="language-python"># Русский: &quot;Переведи этот текст на английский&quot; → ~8 токенов
+# English: &quot;Translate this text to English&quot; → ~5 токенов
+</code></pre>
+
+<p>Если твой бот работает с данными, а не с пользователем напрямую — system prompt можно писать на английском. Экономия ~30-40% на входных токенах.</p>
+<h3>5. Используй prompt caching (Anthropic)</h3>
+<p>Если ты отправляешь одинаковый system prompt в каждом запросе, Anthropic предлагает <strong>кэширование</strong> — повторный system prompt стоит в 10 раз дешевле:</p>
+<pre class="highlight"><code>Обычная цена input (Sonnet):     $3.00 / 1M токенов
+Кэшированный input (Sonnet):     $0.30 / 1M токенов (в 10 раз дешевле!)
+</code></pre>
+
+<p>Это полезно для ботов, где system prompt длинный и не меняется.</p>
+<h3>6. Batch API — скидка 50%</h3>
+<p>Если тебе не нужен моментальный ответ (например, обработка данных за ночь), используй <strong>Batch API</strong> — все цены снижаются на 50%.</p>
+<hr />
+<h2>Реальный расчёт: бот для чата майнеров</h2>
+<p>Давай посчитаем, сколько будет стоить твой бот OpenClaw, который мониторит чат:</p>
+<pre class="highlight"><code>Исходные данные:
+- В чате ~200 сообщений в день
+- Из них ~10% — потенциальные лиды (20 сообщений)
+- Бот анализирует каждое сообщение
+- Используем Haiku (задача простая — классификация)
+
+Расчёт:
+- System prompt: ~300 токенов (один раз)
+- Одно сообщение: ~100 входных + ~50 выходных токенов
+- 200 сообщений в день: 200 × 150 = 30,000 токенов/день
+
+Стоимость в день:
+  Input:  20,000 × $0.80 / 1,000,000 = $0.016
+  Output: 10,000 × $4.00 / 1,000,000 = $0.040
+  Итого:  $0.056/день
+
+Стоимость в месяц: $0.056 × 30 = $1.68/мес
+</code></pre>
+
+<p><strong>$1.68 в месяц</strong> за автоматический мониторинг чата и извлечение лидов. Для сравнения — нанять человека для этой работы стоило бы десятки тысяч рублей.</p>
+<hr />
+<h2>Где смотреть расходы</h2>
+<ol>
+<li><strong>В коде</strong> — <code>response.usage.input_tokens</code> и <code>response.usage.output_tokens</code></li>
+<li><strong>В консоли Anthropic</strong> — console.anthropic.com → Usage</li>
+<li><strong>Лимиты</strong> — можно настроить максимальный месячный бюджет в console.anthropic.com</li>
+</ol>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Посчитай токены</h3>
+<p>Запусти чат из урока 2.3 с подсчётом токенов. Поговори 10 сообщений и запиши:
+- Сколько входных токенов в первом сообщении?
+- Сколько в десятом?
+- Во сколько раз выросло?</p>
+<h3>Задание 2: Сравни модели по цене</h3>
+<p>Отправь один и тот же вопрос на Haiku и Sonnet. Сравни:
+- Качество ответа
+- Количество токенов
+- Стоимость</p>
+<h3>Задание 3: Рассчитай свой проект</h3>
+<p>Придумай AI-продукт (или возьми один из своих) и рассчитай:
+- Сколько запросов в день?
+- Какая модель подходит?
+- Сколько токенов на запрос?
+- Стоимость в месяц?</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Почему текст на русском стоит дороже, чем на английском?</p>
+<details>
+<summary>Ответ</summary>
+
+Русские буквы занимают больше байтов. Одно русское слово = 2-3 токена, одно английское = 1 токен. Тот же вопрос на русском содержит в 1.5-2 раза больше токенов.
+</details>
+
+<p><strong>Задача 2:</strong> Ты делаешь чат-бота. После 50 сообщений он стал отвечать заметно дороже. Почему?</p>
+<details>
+<summary>Ответ</summary>
+
+Потому что с каждым сообщением `history` растёт, и мы отправляем её целиком. На 50-м сообщении входные токены включают ВСЮ предыдущую переписку. Решение — отправлять только последние 10-20 сообщений: `messages=history[-20:]`.
+</details>
+
+<p><strong>Задача 3:</strong> Бот отвечает на вопросы FAQ (простые, шаблонные ответы). Какую модель выбрать?</p>
+<details>
+<summary>Ответ</summary>
+
+Haiku. Для простых FAQ не нужна мощная модель. Haiku дешевле Sonnet в ~4 раза и дешевле Opus в ~19 раз, а для шаблонных ответов качества хватит.
+</details>
+
+<p><strong>Задача 4:</strong> У тебя API-бюджет $10 в месяц. Сколько запросов в день ты можешь делать на Sonnet (500 input + 300 output токенов на запрос)?</p>
+<details>
+<summary>Ответ</summary>
+
+Один запрос ≈ $0.006.
+$10 / $0.006 = ~1,666 запросов в месяц.
+1,666 / 30 = ~55 запросов в день.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>Токен ≈ ¾ слова</strong> (английский), <strong>≈ ½ слова</strong> (русский)</li>
+<li><strong>Выходные токены дороже входных</strong> в 3-5 раз</li>
+<li><strong>Haiku = дёшево</strong>, <strong>Sonnet = баланс</strong>, <strong>Opus = дорого но умно</strong></li>
+<li><strong>API дешевле подписки</strong> для ботов с малым трафиком</li>
+<li><strong>История чата растёт</strong> — управляй длиной, чтобы не переплачивать</li>
+<li><strong>Начни с Haiku</strong> — переключайся на Sonnet/Opus только если нужно качество</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Токен</td>
+<td>Минимальная единица текста для модели — примерно ¾ английского слова или ½ русского слова.</td>
+</tr>
+<tr>
+<td>Входные токены (input)</td>
+<td>Токены в твоём запросе — то, что ты отправляешь модели (промпт, контекст, история).</td>
+</tr>
+<tr>
+<td>Выходные токены (output)</td>
+<td>Токены в ответе модели — то, что Claude генерирует для тебя, они стоят дороже входных.</td>
+</tr>
+<tr>
+<td>Контекстное окно</td>
+<td>Максимальный объём текста (в токенах), который модель может обработать за один запрос — и вход, и выход вместе.</td>
+</tr>
+<tr>
+<td>max_tokens</td>
+<td>Параметр, ограничивающий максимальную длину ответа модели в токенах.</td>
+</tr>
+<tr>
+<td>Стоимость за 1M токенов</td>
+<td>Единица измерения цены API — сколько стоит обработать один миллион токенов.</td>
+</tr>
+<tr>
+<td>Haiku / Sonnet / Opus</td>
+<td>Три модели Claude разного уровня: Haiku — быстрая и дешёвая, Sonnet — баланс, Opus — самая умная и дорогая.</td>
+</tr>
+<tr>
+<td>Rate limit</td>
+<td>Ограничение на количество запросов или токенов, которые можно отправить за определённый период времени.</td>
+</tr>
+<tr>
+<td>Usage (объект)</td>
+<td>Часть ответа API, которая показывает, сколько входных и выходных токенов было использовано в запросе.</td>
+</tr>
+<tr>
+<td>Кеширование промптов</td>
+<td>Техника, при которой повторяющиеся части промпта сохраняются, чтобы не платить за них заново.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>Этап 2 завершён! Ты теперь понимаешь:
+- Что такое LLM и как она работает (урок 2.1)
+- Как программы общаются через API (урок 2.2)
+- Как создать свой AI-чат из кода (урок 2.3)
+- Как правильно формулировать задачи для AI (урок 2.4)
+- Сколько это стоит и как оптимизировать (урок 2.5)</p>
+<p>В <strong>Этапе 3</strong> мы перейдём к созданию AI-агентов — программ, которые не просто отвечают на вопросы, а сами выполняют задачи: ищут информацию, пишут в базы данных, отправляют сообщения.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="2-4-prompts.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="2-6-scripts.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

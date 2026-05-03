@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Память агента — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 3 · Урок 3 из 5</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 3.3 — Память агента</h1>
+<blockquote>
+<p>AI-модель по умолчанию ничего не помнит. Каждый запрос — как разговор с незнакомцем. Чтобы агент запоминал предыдущие разговоры, предпочтения и факты — ему нужно дать <strong>память</strong>. Без памяти агент полезен на один сеанс. С памятью — он становится постоянным ассистентом.</p>
+</blockquote>
+<hr />
+<h2>Почему модель ничего не помнит</h2>
+<p>В уроке 2.3 мы делали чат с историей сообщений. Каждый раз, когда отправляли запрос, прикладывали <code>messages=history</code> — всю переписку. Это работает <strong>внутри одного разговора</strong>. Но стоит закрыть программу — и всё пропало.</p>
+<p>Почему? Потому что Claude API — это <strong>stateless</strong> (без состояния). API не хранит историю. Каждый запрос — отдельный, изолированный. Claude не знает, что вчера с ним говорили.</p>
+<pre class="highlight"><code>Сессия 1 (утро):
+  Пользователь: Меня зовут Алексей, я работаю в маркетинге
+  Claude: Приятно познакомиться, Алексей!
+
+Сессия 2 (вечер):
+  Пользователь: Как меня зовут?
+  Claude: Я не знаю, как вас зовут. Вы не сообщали мне эту информацию.
+</code></pre>
+
+<p>Claude не забыл — он <strong>никогда не знал</strong>. Второй запрос не содержал первый разговор.</p>
+<p><strong>Аналогия:</strong> API — как ресторан, где официант меняется каждый раз. Новый официант не знает, что ты заказывал вчера. Чтобы он знал — нужна <strong>записная книжка</strong> (память).</p>
+<hr />
+<h2>Три вида памяти</h2>
+<p>Память агента можно разделить на три вида — по тому, как долго и что хранится:</p>
+<h3>1. Краткосрочная память (история чата)</h3>
+<p>Это <code>messages</code> — список сообщений в текущем разговоре. Она уже знакома из урока 2.3.</p>
+<pre class="highlight"><code class="language-python">messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Привет, я Алексей&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Привет, Алексей!&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Как меня зовут?&quot;},
+]
+# Claude увидит всю переписку и ответит: &quot;Алексей&quot;
+</code></pre>
+
+<p><strong>Плюс:</strong> просто, работает из коробки.
+<strong>Минус:</strong> исчезает при закрытии программы. Растёт с каждым сообщением → дорожает (урок 2.5).</p>
+<h3>2. Долгосрочная память (файлы / база данных)</h3>
+<p>Факты, которые нужно помнить между сессиями: имя пользователя, предпочтения, история взаимодействий.</p>
+<pre class="highlight"><code class="language-python"># Сохраняем в файл
+memory = {
+    &quot;user_name&quot;: &quot;Алексей&quot;,
+    &quot;role&quot;: &quot;маркетолог&quot;,
+    &quot;preferences&quot;: [&quot;краткие ответы&quot;, &quot;примеры из маркетинга&quot;],
+    &quot;last_topic&quot;: &quot;анализ конкурентов&quot;
+}
+
+import json
+with open(&quot;memory.json&quot;, &quot;w&quot;) as f:
+    json.dump(memory, f, ensure_ascii=False)
+
+# При следующем запуске — загружаем
+with open(&quot;memory.json&quot;, &quot;r&quot;) as f:
+    memory = json.load(f)
+</code></pre>
+
+<p><strong>Плюс:</strong> сохраняется между сессиями.
+<strong>Минус:</strong> нужно самому решать, что сохранять и когда.</p>
+<h3>3. Контекстная память (system prompt)</h3>
+<p>Постоянная информация, которая загружается в каждый запрос: кто агент, как себя вести, какие правила соблюдать.</p>
+<pre class="highlight"><code class="language-python">system_prompt = &quot;&quot;&quot;
+Ты — бизнес-ассистент.
+Пользователь: Алексей, маркетолог, предпочитает краткие ответы.
+Всегда приводи примеры из маркетинга.
+Не используй технический жаргон без объяснения.
+&quot;&quot;&quot;
+</code></pre>
+
+<p><strong>Плюс:</strong> Claude "знает" это при каждом запросе.
+<strong>Минус:</strong> занимает токены, нужно обновлять вручную.</p>
+<hr />
+<h2>Как работает память на практике</h2>
+<p>Вот полный пример агента с памятью, которая сохраняется между запусками:</p>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+import json
+import os
+
+client = Anthropic()
+
+MEMORY_FILE = &quot;agent_memory.json&quot;
+
+# --- Загрузка памяти ---
+
+def load_memory():
+    if os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, &quot;r&quot;) as f:
+            return json.load(f)
+    return {&quot;facts&quot;: [], &quot;preferences&quot;: [], &quot;history_summary&quot;: &quot;&quot;}
+    # facts — запомненные факты о пользователе
+    # preferences — предпочтения
+    # history_summary — краткое содержание прошлых разговоров
+
+def save_memory(memory):
+    with open(MEMORY_FILE, &quot;w&quot;) as f:
+        json.dump(memory, f, ensure_ascii=False, indent=2)
+
+# --- Формирование system prompt с памятью ---
+
+def build_system_prompt(memory):
+    prompt = &quot;Ты — персональный AI-ассистент с памятью.\n\n&quot;
+
+    if memory[&quot;facts&quot;]:
+        prompt += &quot;Что ты знаешь о пользователе:\n&quot;
+        for fact in memory[&quot;facts&quot;]:
+            prompt += f&quot;- {fact}\n&quot;
+        prompt += &quot;\n&quot;
+
+    if memory[&quot;preferences&quot;]:
+        prompt += &quot;Предпочтения пользователя:\n&quot;
+        for pref in memory[&quot;preferences&quot;]:
+            prompt += f&quot;- {pref}\n&quot;
+        prompt += &quot;\n&quot;
+
+    if memory[&quot;history_summary&quot;]:
+        prompt += f&quot;Краткое содержание прошлых разговоров:\n{memory['history_summary']}\n\n&quot;
+
+    prompt += &quot;&quot;&quot;Правила:
+- Используй знания о пользователе в ответах
+- Если пользователь сообщает новую информацию о себе — запомни (скажи об этом)
+- Если не знаешь чего-то о пользователе — спроси
+&quot;&quot;&quot;
+    return prompt
+
+# --- Извлечение новых фактов ---
+
+def extract_new_facts(messages, memory):
+    &quot;&quot;&quot;Просим Claude извлечь новые факты из разговора&quot;&quot;&quot;
+    extraction_response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        # Используем Haiku — дешевле, для простой задачи хватит
+        max_tokens=500,
+        system=&quot;Извлеки новые факты о пользователе из разговора. Верни JSON-список строк. Если новых фактов нет — верни пустой список [].&quot;,
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Известные факты: {memory['facts']}\n\nРазговор: {json.dumps(messages[-6:], ensure_ascii=False)}&quot;
+            # [-6:] — последние 6 сообщений, чтобы не тратить токены
+        }]
+    )
+    try:
+        new_facts = json.loads(extraction_response.content[0].text)
+        return new_facts
+    except:
+        return []
+
+# --- Основной цикл ---
+
+def chat():
+    memory = load_memory()
+    messages = []
+
+    print(&quot;Чат с памятью (напиши 'выход' чтобы закончить)&quot;)
+    print(&quot;-&quot; * 50)
+
+    if memory[&quot;facts&quot;]:
+        print(f&quot;[Память загружена: {len(memory['facts'])} фактов]&quot;)
+
+    while True:
+        user_input = input(&quot;\nТы: &quot;)
+        if user_input.lower() == &quot;выход&quot;:
+            break
+
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_input})
+
+        response = client.messages.create(
+            model=&quot;claude-sonnet-4-6&quot;,
+            max_tokens=1024,
+            system=build_system_prompt(memory),
+            messages=messages
+        )
+
+        assistant_message = response.content[0].text
+        messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: assistant_message})
+        print(f&quot;\nAssistant: {assistant_message}&quot;)
+
+    # --- После завершения: обновляем память ---
+
+    if messages:
+        new_facts = extract_new_facts(messages, memory)
+        if new_facts:
+            memory[&quot;facts&quot;].extend(new_facts)
+            # Убираем дубликаты
+            memory[&quot;facts&quot;] = list(set(memory[&quot;facts&quot;]))
+            print(f&quot;\n[Запомнил {len(new_facts)} новых фактов]&quot;)
+
+        save_memory(memory)
+        print(&quot;[Память сохранена]&quot;)
+
+chat()
+</code></pre>
+
+<h3>Что произойдёт:</h3>
+<pre class="highlight"><code>Сессия 1:
+  Ты: Привет, я Алексей, работаю маркетологом
+  Assistant: Привет, Алексей! Рад познакомиться. Чем могу помочь?
+  Ты: Мне нравятся краткие ответы с примерами
+  Assistant: Понял! Буду отвечать кратко и с примерами.
+  Ты: выход
+  [Запомнил 3 новых факта]
+  [Память сохранена]
+
+Сессия 2 (через час / день / неделю):
+  [Память загружена: 3 факта]
+  Ты: Привет!
+  Assistant: Привет, Алексей! Как дела в маркетинге?
+  Ты: Как меня зовут и чем я занимаюсь?
+  Assistant: Тебя зовут Алексей, ты работаешь маркетологом.
+</code></pre>
+
+<p>Между сессиями Claude "помнит" — потому что факты сохранены в файле и загружены в system prompt.</p>
+<hr />
+<h2>Как реальные агенты хранят память</h2>
+<h3>OpenClaw: Markdown-файлы</h3>
+<p>OpenClaw (open-source AI-агент из урока 3.2) хранит всю память в обычных Markdown-файлах:</p>
+<pre class="highlight"><code>SOUL.md      — личность, стиль поведения
+user.md      — предпочтения пользователя
+memory.md    — факты, запомненные между разговорами
+HEARTBEAT.md — расписание автоматических задач
+</code></pre>
+
+<p>Эти файлы загружаются в system prompt при каждом запросе. Это тот же подход, что в нашем примере — но вместо JSON используется Markdown, который удобнее читать и редактировать вручную.</p>
+<p><strong>Почему Markdown, а не база данных?</strong> Потому что:
+- Можно открыть и прочитать глазами
+- Можно отредактировать в любом текстовом редакторе
+- LLM хорошо понимает Markdown (обучены на нём)
+- Не нужна настройка базы данных</p>
+<h3>Claude Code: тот же принцип</h3>
+<p>Claude Code (инструмент, в котором написан этот курс) тоже использует файловую память:
+- <code>CLAUDE.md</code> — инструкции и контекст проекта
+- Файлы в <code>.claude/memory/</code> — запомненные факты и предпочтения</p>
+<h3>ChatGPT: Memory API</h3>
+<p>ChatGPT хранит память на серверах OpenAI. Когда пользователь говорит "запомни, что я вегетарианец" — факт сохраняется и автоматически добавляется в контекст будущих разговоров.</p>
+<p>Принцип одинаковый: <strong>сохранить → загрузить в контекст → использовать</strong>.</p>
+<hr />
+<h2>Стратегии управления памятью</h2>
+<h3>Проблема: контекстное окно конечно</h3>
+<p>Из урока 2.5: у Claude контекстное окно = 200,000 токенов. Это много, но:</p>
+<pre class="highlight"><code>System prompt:     ~500 токенов
+Память (факты):    ~200 токенов
+История (50 сообщений): ~20,000 токенов
+Вопрос:            ~100 токенов
+──────────────────────────
+Итого:             ~20,800 токенов
+
+А при 500 сообщениях — уже 200,000+ → не влезает
+</code></pre>
+
+<h3>Стратегия 1: Ограничение истории</h3>
+<p>Самый простой способ — отправлять только последние N сообщений:</p>
+<pre class="highlight"><code class="language-python"># Отправляем только последние 20 сообщений
+messages = all_messages[-20:]
+</code></pre>
+
+<p><strong>Плюс:</strong> просто, предсказуемо.
+<strong>Минус:</strong> агент забывает, что было 21 сообщение назад.</p>
+<h3>Стратегия 2: Суммаризация</h3>
+<p>Попросить Claude кратко пересказать старую часть разговора:</p>
+<pre class="highlight"><code class="language-python">def summarize_old_messages(messages):
+    &quot;&quot;&quot;Превращаем длинную историю в краткое описание&quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        max_tokens=300,
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Кратко опиши основные темы и решения из этого разговора (3-5 предложений):\n\n{json.dumps(messages, ensure_ascii=False)}&quot;
+        }]
+    )
+    return response.content[0].text
+
+# Когда история становится длинной:
+if len(messages) &gt; 30:
+    summary = summarize_old_messages(messages[:20])
+    # Сохраняем краткое содержание старых сообщений
+    memory[&quot;history_summary&quot;] = summary
+    # Оставляем только последние 10
+    messages = messages[-10:]
+</code></pre>
+
+<p><strong>Плюс:</strong> сохраняется суть, экономия токенов.
+<strong>Минус:</strong> детали теряются, дополнительный API-вызов (стоит денег).</p>
+<h3>Стратегия 3: Автоматическое извлечение фактов</h3>
+<p>После каждого разговора (или каждых N сообщений) агент сам извлекает важные факты:</p>
+<pre class="highlight"><code class="language-python"># Агент извлекает факты автоматически
+# (мы уже это делали в extract_new_facts выше)
+
+Из разговора:
+  &quot;Я переехал в Казань, теперь работаю удалённо&quot;
+
+Извлечённые факты:
+  - Живёт в Казани
+  - Работает удалённо
+</code></pre>
+
+<p><strong>Плюс:</strong> агент запоминает важное автоматически.
+<strong>Минус:</strong> может извлечь лишнее или пропустить важное.</p>
+<h3>Какую стратегию выбрать?</h3>
+<table>
+<thead>
+<tr>
+<th>Стратегия</th>
+<th>Сложность</th>
+<th>Для кого</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ограничение истории</td>
+<td>Легко</td>
+<td>Простые боты, FAQ</td>
+</tr>
+<tr>
+<td>Суммаризация</td>
+<td>Средне</td>
+<td>Боты с длинными диалогами</td>
+</tr>
+<tr>
+<td>Извлечение фактов</td>
+<td>Средне</td>
+<td>Персональные ассистенты</td>
+</tr>
+<tr>
+<td>Всё вместе</td>
+<td>Сложно</td>
+<td>Продакшн-системы</td>
+</tr>
+</tbody>
+</table>
+<p>Для начала достаточно <strong>ограничения истории</strong> (<code>messages[-20:]</code>). Остальное добавляется по мере необходимости.</p>
+<hr />
+<h2>Стоимость памяти</h2>
+<p>Память не бесплатна — она тратит токены:</p>
+<pre class="highlight"><code>Подход                    Дополнительные токены     Стоимость (Sonnet)
+─────────────────────     ────────────────────      ──────────────────
+Без памяти                0                         $0
+Факты в system prompt     ~200 токенов / запрос     ~$0.0006 / запрос
+Суммаризация              ~500 токенов / вызов      ~$0.009 / вызов
+Извлечение фактов         ~800 токенов / вызов      ~$0.015 / вызов
+</code></pre>
+
+<p>Суммаризацию и извлечение фактов лучше делать на <strong>Haiku</strong> — в 4 раза дешевле, и для таких задач качества хватает.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Чат с памятью</h3>
+<p>Скопируй полный пример агента с памятью и запусти. Расскажи ему о себе, закрой программу, запусти снова — проверь, что он помнит.</p>
+<h3>Задание 2: Посмотри файл памяти</h3>
+<p>После первого разговора открой <code>agent_memory.json</code> и посмотри, что агент запомнил. Попробуй отредактировать файл вручную — добавь факт — и проверь, что агент его знает.</p>
+<h3>Задание 3: Ограничение истории</h3>
+<p>Модифицируй чат так, чтобы отправлялись только последние 10 сообщений. Поговори 15 сообщений и проверь — помнит ли агент, что было в начале разговора?</p>
+<pre class="highlight"><code class="language-python"># Подсказка: замени
+messages=messages
+# на
+messages=messages[-10:]
+</code></pre>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Почему Claude не помнит вчерашний разговор, если не реализовать память?</p>
+<details>
+<summary>Ответ</summary>
+
+Потому что Claude API — stateless. Каждый запрос независим. API не хранит историю — нужно самому сохранять данные в файл или базу данных и загружать их при следующем запуске.
+</details>
+
+<p><strong>Задача 2:</strong> Чем отличается краткосрочная память от долгосрочной?</p>
+<details>
+<summary>Ответ</summary>
+
+Краткосрочная — это `messages` (история текущего разговора). Она живёт пока работает программа. Долгосрочная — это данные, сохранённые в файл или базу данных. Они переживают перезапуск программы.
+</details>
+
+<p><strong>Задача 3:</strong> Почему для извлечения фактов лучше использовать Haiku, а не Sonnet?</p>
+<details>
+<summary>Ответ</summary>
+
+Потому что извлечение фактов — простая задача (классификация и структурирование текста). Haiku справляется с ней не хуже Sonnet, но стоит в ~4 раза дешевле. Экономия из урока 2.5: начинай с дешёвой модели, переходи на дорогую только если качество не устраивает.
+</details>
+
+<p><strong>Задача 4:</strong> Агент с историей из 100 сообщений стал дорогим. Как снизить расходы, не теряя контекст?</p>
+<details>
+<summary>Ответ</summary>
+
+Использовать суммаризацию: попросить Claude (Haiku) кратко пересказать старые сообщения, сохранить краткое содержание в memory, и отправлять только последние 10-20 сообщений + краткое содержание. Так контекст сохраняется, а токены экономятся.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>API = stateless.</strong> Claude не помнит ничего между запросами — это ответственность кода.</li>
+<li><strong>Три вида памяти:</strong> краткосрочная (history), долгосрочная (файлы/БД), контекстная (system prompt).</li>
+<li><strong>Сохранять в файл → загружать в system prompt</strong> — базовый паттерн памяти.</li>
+<li><strong>Память стоит токенов</strong> — используй Haiku для служебных задач (суммаризация, извлечение фактов).</li>
+<li><strong>OpenClaw, Claude Code, ChatGPT</strong> — все используют один и тот же принцип.</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stateless API</td>
+<td>API без состояния — Claude не помнит ничего между запросами, каждый вызов начинается с чистого листа.</td>
+</tr>
+<tr>
+<td>Краткосрочная память</td>
+<td>История сообщений текущего разговора, которая передаётся в каждом запросе к API.</td>
+</tr>
+<tr>
+<td>Долгосрочная память</td>
+<td>Информация, сохранённая между разговорами в файлах или базе данных и загружаемая при необходимости.</td>
+</tr>
+<tr>
+<td>Контекстная память</td>
+<td>Инструкции и факты, помещённые в system prompt, которые Claude учитывает в каждом ответе.</td>
+</tr>
+<tr>
+<td>Суммаризация</td>
+<td>Приём экономии токенов: старые сообщения сжимаются в краткое содержание с помощью быстрой модели вроде Haiku.</td>
+</tr>
+<tr>
+<td>Sliding window</td>
+<td>Метод управления историей, при котором хранятся только последние N сообщений, а более старые удаляются или суммаризируются.</td>
+</tr>
+<tr>
+<td>Извлечение фактов</td>
+<td>Процесс, при котором модель выделяет ключевые факты из разговора и сохраняет их отдельно для долгосрочной памяти.</td>
+</tr>
+<tr>
+<td>Conversation history</td>
+<td>Полный список сообщений разговора (user и assistant), который передаётся в массиве messages при вызове API.</td>
+</tr>
+<tr>
+<td>System prompt как память</td>
+<td>Паттерн, при котором сохранённые факты и предпочтения пользователя загружаются в system prompt перед каждым запросом.</td>
+</tr>
+<tr>
+<td>База данных для памяти</td>
+<td>Внешнее хранилище (файл, SQLite, PostgreSQL), где агент сохраняет информацию между сессиями.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Первый агент на Claude Agent SDK</strong>. Мы соберём полноценного агента, используя официальный SDK от Anthropic: tools + memory + агентный цикл — всё в одном. Это будет первый агент, готовый для реальных задач.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="3-2-tools.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="3-4-agent-sdk.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

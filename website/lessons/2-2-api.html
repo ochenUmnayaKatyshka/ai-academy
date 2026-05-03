@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API — язык программ — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 2 · Урок 2 из 6</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 2.2 — API: язык программ</h1>
+<blockquote>
+<p>API — это способ, которым программы разговаривают друг с другом. Когда ты заказываешь такси в Uber — твоё приложение отправляет запрос через API на сервер Uber. Когда Instagram показывает ленту — приложение получает посты через API.</p>
+</blockquote>
+<hr />
+<h2>Зачем тебе это знать</h2>
+<p>Чтобы твой код мог общаться с AI, тебе нужен API. Без него ты можешь только вручную писать в чат Claude. С API — твоя программа сама отправляет запросы и получает ответы. Так работают все AI-продукты: Telegram-боты, автоматические ассистенты, системы анализа данных.</p>
+<hr />
+<h2>Что такое API</h2>
+<p>API (Application Programming Interface) — интерфейс для общения между программами.</p>
+<p>Ключевое слово — <strong>интерфейс</strong>. Ты уже знаешь интерфейсы:</p>
+<table>
+<thead>
+<tr>
+<th>Интерфейс</th>
+<th>Кто общается</th>
+<th>Как</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Кнопки в лифте</td>
+<td>Человек → Лифт</td>
+<td>Нажимаешь "5" — лифт едет на 5 этаж</td>
+</tr>
+<tr>
+<td>Экран телефона</td>
+<td>Человек → Приложение</td>
+<td>Тапаешь кнопку — приложение реагирует</td>
+</tr>
+<tr>
+<td>API</td>
+<td>Программа → Программа</td>
+<td>Отправляешь запрос — получаешь ответ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Аналогия:</strong> API — это официант в ресторане. Ты (программа) не ходишь на кухню сама. Ты говоришь официанту (API): "Мне стейк средней прожарки". Он уходит на кухню (сервер), передаёт заказ повару, и возвращается с готовым блюдом (ответом). Тебе не нужно знать, как работает кухня — нужно только знать меню (документацию API) и формат заказа.</p>
+<hr />
+<h2>Как работает API: запрос и ответ</h2>
+<p>Любое общение через API состоит из двух частей:</p>
+<h3>1. Запрос (Request) — ты отправляешь</h3>
+<pre class="highlight"><code>&quot;Эй, Claude! Вот текст, переведи его на английский.&quot;
+</code></pre>
+
+<h3>2. Ответ (Response) — сервер возвращает</h3>
+<pre class="highlight"><code>&quot;Here is the translation of your text.&quot;
+</code></pre>
+
+<p>Это всё. Запрос → Ответ. Каждый раз, когда ты открываешь Instagram и видишь ленту — приложение отправило запрос на сервер ("дай мне новые посты"), а сервер вернул ответ (список постов с фото и текстом).</p>
+<hr />
+<h2>HTTP — как доставляются запросы</h2>
+<p>Запросы передаются по протоколу HTTP. Каждый запрос состоит из трёх частей:</p>
+<pre class="highlight"><code>Запрос = Куда + Что хочу + Данные
+</code></pre>
+
+<p>Разберём на примере Claude API:</p>
+<h3>Куда (URL / Endpoint)</h3>
+<pre class="highlight"><code>https://api.anthropic.com/v1/messages
+</code></pre>
+
+<p>Это адрес, куда ты отправляешь запрос. Как почтовый адрес на конверте.</p>
+<pre class="highlight"><code class="language-python"># Разберём по частям:
+# https://              — протокол (защищённое соединение)
+# api.anthropic.com     — сервер Anthropic (дом, куда идёт конверт)
+# /v1/                  — версия API (первая версия)
+# /messages             — что именно мы хотим (работа с сообщениями)
+</code></pre>
+
+<p>У каждого сервиса свой адрес:</p>
+<pre class="highlight"><code class="language-python"># Claude:    https://api.anthropic.com/v1/messages
+# Telegram:  https://api.telegram.org/bot{token}/sendMessage
+# OpenAI:    https://api.openai.com/v1/chat/completions
+# Погода:    https://api.openweathermap.org/data/2.5/weather
+</code></pre>
+
+<h3>Что хочу (HTTP-метод)</h3>
+<pre class="highlight"><code>POST — отправить данные и получить ответ
+</code></pre>
+
+<p>Это как глагол в предложении — ЧТО ты хочешь сделать:</p>
+<pre class="highlight"><code class="language-python"># GET    — &quot;покажи мне&quot;     (получить данные, ничего не меняя)
+#          Пример: открыть профиль в Instagram — GET /profile
+#
+# POST   — &quot;создай / обработай&quot; (отправить данные на обработку)
+#          Пример: отправить сообщение Claude — POST /messages
+#          Пример: опубликовать пост — POST /posts
+#
+# PUT    — &quot;измени&quot;          (обновить существующие данные)
+#          Пример: изменить описание профиля — PUT /profile
+#
+# DELETE — &quot;удали&quot;           (удалить данные)
+#          Пример: удалить пост — DELETE /posts/123
+</code></pre>
+
+<p>Для Claude API мы всегда используем <strong>POST</strong> — потому что мы отправляем сообщение и хотим получить ответ.</p>
+<h3>Данные (Body / Тело запроса)</h3>
+<pre class="highlight"><code class="language-json">{
+  &quot;model&quot;: &quot;claude-sonnet-4-6&quot;,
+  &quot;max_tokens&quot;: 1024,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Что такое API? Объясни в одном предложении.&quot;
+    }
+  ]
+}
+</code></pre>
+
+<pre class="highlight"><code class="language-python"># &quot;model&quot;      — какую модель использовать (Haiku, Sonnet, Opus)
+# &quot;max_tokens&quot; — максимум слов в ответе (1024 токена ≈ 750 слов)
+# &quot;messages&quot;   — история разговора (список сообщений)
+# &quot;role&quot;       — кто говорит: &quot;user&quot; = ты, &quot;assistant&quot; = Claude
+# &quot;content&quot;    — сам текст сообщения
+</code></pre>
+
+<h3>Полная картина одного запроса</h3>
+<pre class="highlight"><code>Ты отправляешь:
+┌──────────────────────────────────────────────┐
+│ КУДА:   https://api.anthropic.com/v1/messages│
+│ МЕТОД:  POST                                 │
+│ КЛЮЧ:   sk-ant-api03-xxxxx (твой пропуск)    │
+│ ДАННЫЕ: { model: sonnet, message: &quot;Привет&quot; } │
+└──────────────────────────────────────────────┘
+                    ↓
+            Сервер Anthropic
+            Claude думает...
+                    ↓
+Ты получаешь:
+┌──────────────────────────────────────────────┐
+│ КОД:    200 (всё ок)                         │
+│ ОТВЕТ:  { text: &quot;Привет! Чем могу помочь?&quot; } │
+│ ТОКЕНЫ: input: 5, output: 12                 │
+└──────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>JSON — формат данных</h2>
+<p>Программы общаются через API в формате <strong>JSON</strong>. Ты уже знаешь его из урока 1.2.</p>
+<p>Ответ от Claude API тоже приходит в JSON:</p>
+<pre class="highlight"><code class="language-json">{
+  &quot;content&quot;: [
+    {
+      &quot;type&quot;: &quot;text&quot;,
+      &quot;text&quot;: &quot;API — это способ, которым программы общаются друг с другом.&quot;
+    }
+  ],
+  &quot;model&quot;: &quot;claude-sonnet-4-6&quot;,
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 22,
+    &quot;output_tokens&quot;: 35
+  }
+}
+</code></pre>
+
+<pre class="highlight"><code class="language-python"># &quot;content&quot;       — ответ модели (текст, который сгенерировал Claude)
+# &quot;usage&quot;         — статистика: сколько токенов потрачено
+# &quot;input_tokens&quot;  — сколько токенов в твоём вопросе (за это ты платишь)
+# &quot;output_tokens&quot; — сколько токенов в ответе Claude (за это тоже платишь)
+</code></pre>
+
+<hr />
+<h2>API-ключ — твой пропуск</h2>
+<p>Чтобы пользоваться API, нужен <strong>API-ключ</strong> — уникальная строка, которая идентифицирует тебя.</p>
+<pre class="highlight"><code>sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</code></pre>
+
+<h3>Зачем он нужен</h3>
+<ol>
+<li><strong>Идентификация</strong> — сервер знает, кто отправил запрос</li>
+<li><strong>Оплата</strong> — расходы списываются с твоего аккаунта</li>
+<li><strong>Лимиты</strong> — сервер контролирует сколько запросов ты отправляешь</li>
+</ol>
+<p><strong>Аналогия:</strong> API-ключ — это как карта доступа в офис. Без неё тебя не пустят. По ней система знает кто ты, куда тебе можно ходить, и ведёт учёт.</p>
+<h3>Безопасность</h3>
+<pre class="highlight"><code class="language-python"># НИКОГДА так не делай:
+api_key = &quot;sk-ant-api03-мой-секретный-ключ&quot;  # ключ прямо в коде — ОПАСНО
+
+# ВСЕГДА так:
+import os
+api_key = os.getenv(&quot;ANTHROPIC_API_KEY&quot;)  # ключ берётся из .env файла
+</code></pre>
+
+<p>Если кто-то получит твой ключ — он сможет отправлять запросы за твои деньги. Поэтому:
+- Храни ключ в <code>.env</code> файле (урок 1.6)
+- Добавь <code>.env</code> в <code>.gitignore</code> (урок 1.7)
+- Никогда не отправляй ключ в чат, не выкладывай на GitHub</p>
+<hr />
+<h2>Заголовки (Headers) — метаданные запроса</h2>
+<p>Кроме данных, в каждом запросе есть заголовки — дополнительная информация о запросе.</p>
+<pre class="highlight"><code class="language-python">headers = {
+    &quot;x-api-key&quot;: &quot;твой-ключ&quot;,           # кто ты (пропуск)
+    &quot;content-type&quot;: &quot;application/json&quot;,   # формат данных (JSON)
+    &quot;anthropic-version&quot;: &quot;2023-06-01&quot;     # версия API
+}
+</code></pre>
+
+<p><strong>Аналогия:</strong> Если тело запроса — это письмо внутри конверта, то заголовки — это то, что написано на конверте: обратный адрес, "заказное", "с уведомлением". Почтальон (сервер) сначала читает конверт, чтобы понять куда доставить и как обработать, а потом уже открывает и читает содержимое.</p>
+<hr />
+<h2>Коды ответов — что пошло так или не так</h2>
+<p>Каждый ответ API приходит с числовым кодом:</p>
+<pre class="highlight"><code class="language-python"># 200 — всё хорошо, запрос выполнен
+# 400 — ты отправил неправильный запрос (ошибка в данных)
+# 401 — неверный API-ключ (тебя не пускают)
+# 404 — такого адреса не существует
+# 429 — слишком много запросов, подожди (rate limit)
+# 500 — ошибка на сервере (не твоя вина)
+</code></pre>
+
+<p><strong>Аналогия:</strong> Это как ответы от службы доставки:
+- 200 = "Доставлено"
+- 400 = "Неверный адрес, проверьте"
+- 401 = "Карта заблокирована, оплата не прошла"
+- 429 = "Слишком много заказов, попробуйте позже"
+- 500 = "У нас сломалась кухня, мы чиним"</p>
+<hr />
+<h2>API в реальной жизни — что ты уже используешь</h2>
+<p>Каждый день ты взаимодействуешь с десятками API, не зная об этом:</p>
+<table>
+<thead>
+<tr>
+<th>Действие</th>
+<th>Какой API работает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Открываешь Instagram</td>
+<td>Instagram API загружает ленту, stories, рекомендации</td>
+</tr>
+<tr>
+<td>Вызываешь Uber</td>
+<td>Google Maps API строит маршрут, Stripe API списывает оплату</td>
+</tr>
+<tr>
+<td>Оплачиваешь онлайн</td>
+<td>Платёжный API (Stripe, PayPal) обрабатывает транзакцию</td>
+</tr>
+<tr>
+<td>Смотришь погоду</td>
+<td>Weather API отдаёт прогноз по твоей геолокации</td>
+</tr>
+<tr>
+<td>Пишешь Claude</td>
+<td>Anthropic API принимает сообщение и возвращает ответ</td>
+</tr>
+</tbody>
+</table>
+<p>Теперь разница в том, что ты будешь вызывать эти API <strong>из своего кода</strong>, а не через готовое приложение.</p>
+<hr />
+<h2>SDK — обёртка над API</h2>
+<p>Работать с API напрямую (формировать HTTP-запросы вручную) — можно, но неудобно. Поэтому компании делают <strong>SDK</strong> (Software Development Kit) — готовую библиотеку, которая упрощает работу.</p>
+<h3>Без SDK (чистый HTTP-запрос):</h3>
+<pre class="highlight"><code class="language-python">import requests
+
+# Нужно вручную собрать URL, заголовки, тело — много кода
+response = requests.post(
+    &quot;https://api.anthropic.com/v1/messages&quot;,
+    headers={
+        &quot;x-api-key&quot;: &quot;твой-ключ&quot;,
+        &quot;content-type&quot;: &quot;application/json&quot;,
+        &quot;anthropic-version&quot;: &quot;2023-06-01&quot;
+    },
+    json={
+        &quot;model&quot;: &quot;claude-sonnet-4-6&quot;,
+        &quot;max_tokens&quot;: 1024,
+        &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Привет!&quot;}]
+    }
+)
+</code></pre>
+
+<h3>С SDK (Anthropic Python SDK):</h3>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+
+# SDK делает всю техническую работу за тебя
+client = Anthropic()  # ключ берёт из .env автоматически
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=1024,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Привет!&quot;}]
+)
+</code></pre>
+
+<p><strong>Аналогия:</strong> API — это правила дорожного движения. SDK — это навигатор. Ты можешь ехать по правилам сама (чистый API), а можешь включить навигатор (SDK) — он сам проложит маршрут и скажет куда поворачивать.</p>
+<p>В следующем уроке мы будем использовать именно SDK — так проще и быстрее.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Найди API</h3>
+<p>Открой любой сервис, которым пользуешься (Telegram, Notion, Google Sheets), и найди его API-документацию. Просто загугли: <code>[название сервиса] API documentation</code>. Посмотри какие запросы можно делать.</p>
+<h3>Задание 2: Прочитай ответ</h3>
+<p>Вот ответ от Claude API. Прочитай и ответь: что спросил пользователь? Сколько токенов потрачено?</p>
+<pre class="highlight"><code class="language-json">{
+  &quot;content&quot;: [
+    {
+      &quot;type&quot;: &quot;text&quot;,
+      &quot;text&quot;: &quot;Python — это язык программирования, который часто используется для AI и автоматизации.&quot;
+    }
+  ],
+  &quot;model&quot;: &quot;claude-sonnet-4-6&quot;,
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 15,
+    &quot;output_tokens&quot;: 28
+  }
+}
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+Пользователь спросил что-то вроде "Что такое Python?" (15 входных токенов — короткий вопрос). Потрачено 15 + 28 = 43 токена суммарно.
+</details>
+
+<h3>Задание 3: Найди ошибку</h3>
+<p>Вот запрос к Claude API. Что в нём не так?</p>
+<pre class="highlight"><code class="language-json">{
+  &quot;model&quot;: &quot;claude-sonnet-4-6&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Привет!&quot;
+    }
+  ]
+}
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+Не указан `max_tokens` — обязательный параметр, который задаёт максимальную длину ответа. Без него API вернёт ошибку 400 (неверный запрос).
+</details>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что такое API своими словами?</p>
+<details>
+<summary>Ответ</summary>
+
+Способ, которым программы общаются друг с другом. Одна программа отправляет запрос, другая возвращает ответ. Формат общения стандартизирован, чтобы любая программа могла работать с любым сервисом.
+</details>
+
+<p><strong>Задача 2:</strong> Ты получил код ответа 401. Что произошло и что делать?</p>
+<details>
+<summary>Ответ</summary>
+
+401 — неверный API-ключ. Проверь, правильно ли ты указал ключ. Возможно, он устарел, или ты забыл добавить его в `.env` файл.
+</details>
+
+<p><strong>Задача 3:</strong> Зачем нужен SDK, если можно работать с API напрямую?</p>
+<details>
+<summary>Ответ</summary>
+
+SDK упрощает работу: не нужно вручную формировать заголовки, URL, обрабатывать ошибки. SDK делает это за тебя. Результат тот же, но кода меньше и ошибок меньше.
+</details>
+
+<p><strong>Задача 4:</strong> Почему API-ключ нельзя писать прямо в коде?</p>
+<details>
+<summary>Ответ</summary>
+
+Если код попадёт на GitHub или кто-то его увидит — он получит твой ключ и сможет отправлять запросы за твои деньги. Ключ хранят в `.env` файле, который добавлен в `.gitignore` и не попадает в Git.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>API — это способ общения между программами.</strong> Запрос → Ответ, всегда.</li>
+<li><strong>Запрос = Куда (URL) + Что хочу (метод) + Данные (тело).</strong> Три части, каждый раз.</li>
+<li><strong>JSON — язык этого общения.</strong> Данные передаются в формате JSON.</li>
+<li><strong>API-ключ — твой пропуск.</strong> Без него не пустят, с ним — всё работает. Храни в <code>.env</code>.</li>
+<li><strong>SDK — упрощает работу с API.</strong> Вместо ручных HTTP-запросов — простые команды.</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API (Application Programming Interface)</td>
+<td>Набор правил, по которым одна программа может общаться с другой — отправлять запросы и получать ответы.</td>
+</tr>
+<tr>
+<td>HTTP</td>
+<td>Протокол (набор правил) передачи данных в интернете, по которому работают сайты и API.</td>
+</tr>
+<tr>
+<td>Запрос (request)</td>
+<td>Сообщение, которое твоя программа отправляет серверу с просьбой что-то сделать или вернуть данные.</td>
+</tr>
+<tr>
+<td>Ответ (response)</td>
+<td>Сообщение, которое сервер отправляет обратно твоей программе с результатом или ошибкой.</td>
+</tr>
+<tr>
+<td>Endpoint</td>
+<td>Конкретный URL-адрес на сервере, к которому ты обращаешься для выполнения определённого действия.</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>Формат записи данных в виде пар "ключ: значение", который используют API для обмена информацией.</td>
+</tr>
+<tr>
+<td>Заголовки (headers)</td>
+<td>Дополнительная информация в запросе или ответе — например, тип данных, API-ключ или формат.</td>
+</tr>
+<tr>
+<td>Статус-код</td>
+<td>Число в ответе сервера, которое говорит, что произошло: 200 — всё ок, 401 — нет доступа, 500 — ошибка сервера.</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>HTTP-метод для получения данных с сервера — ты просишь, сервер отдаёт.</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>HTTP-метод для отправки данных на сервер — ты передаёшь информацию, сервер её обрабатывает.</td>
+</tr>
+<tr>
+<td>REST</td>
+<td>Стиль построения API, в котором каждый URL представляет ресурс, а действия задаются HTTP-методами.</td>
+</tr>
+<tr>
+<td>SDK (Software Development Kit)</td>
+<td>Готовая библиотека кода, которая упрощает работу с API — не нужно вручную формировать запросы.</td>
+</tr>
+<tr>
+<td>Клиент API</td>
+<td>Программа или код, который отправляет запросы к API — то есть твоё приложение.</td>
+</tr>
+<tr>
+<td>Сервер</td>
+<td>Компьютер, который принимает запросы, обрабатывает их и отправляет ответы — например, сервер Claude.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Первый вызов Claude API</strong>. Ты напишешь код, который отправит запрос к Claude и получит ответ. Твой первый AI-запрос из кода!</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="2-1-llm.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="2-3-first-api.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

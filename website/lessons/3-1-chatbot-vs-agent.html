@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чат-бот vs Агент — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 3 · Урок 1 из 5</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 3.1 — Чат-бот vs Агент</h1>
+<blockquote>
+<p>Чат-бот отвечает на вопросы. Агент выполняет задачи. Это главное отличие. Чат-бот — как справочная по телефону. Агент — как личный ассистент, который сам звонит, ищет, бронирует и возвращается с результатом.</p>
+</blockquote>
+<hr />
+<h2>Чат-бот = только текст</h2>
+<p>Вот простой пример. Допустим, в терминале работает чат с Claude (такой, как из урока 2.3):</p>
+<pre class="highlight"><code>Пользователь: Какая погода в Москве?
+Claude: Я не могу проверить погоду, так как у меня нет доступа к интернету.
+        Но обычно в марте в Москве около 0-5°C...
+</code></pre>
+
+<p>Claude не знает реальную погоду. Он может только предположить. Потому что у него <strong>нет рук</strong> — он не может выйти в интернет, открыть сайт, позвонить API.</p>
+<p>Агент — это тот же Claude, но <strong>с руками</strong>. Ему можно дать инструменты (tools) — и он сам решит, какие использовать.</p>
+<hr />
+<h2>Разница в одной схеме</h2>
+<h3>Чат-бот</h3>
+<pre class="highlight"><code>Ты → Вопрос → Claude → Текстовый ответ → Ты
+
+Один шаг. Вопрос-ответ. Всё.
+</code></pre>
+
+<h3>Агент</h3>
+<pre class="highlight"><code>Ты → Задача → Claude → [Думает: что мне нужно сделать?]
+                      → Вызывает инструмент (например: проверь погоду)
+                      → Получает результат (15°C, облачно)
+                      → [Думает: нужно ещё что-то?]
+                      → Вызывает другой инструмент (отправь сообщение в Telegram)
+                      → Получает результат (отправлено)
+                      → [Думает: задача выполнена]
+                      → Финальный ответ → Ты
+</code></pre>
+
+<p>Агент работает <strong>в цикле</strong>: думает → действует → наблюдает → думает снова. Это называется <strong>agentic loop</strong> (агентный цикл).</p>
+<hr />
+<h2>Реальные примеры</h2>
+<h3>Чат-бот: отвечает текстом</h3>
+<pre class="highlight"><code>Ты: Забронируй мне столик в ресторане на вечер
+Чат-бот: Вот несколько ресторанов, которые я рекомендую:
+         1. Ресторан А — итальянская кухня
+         2. Ресторан Б — японская кухня
+         Вы можете забронировать столик по телефону...
+</code></pre>
+
+<p>Чат-бот дал совет, но <strong>ничего не сделал</strong>.</p>
+<h3>Агент: выполняет задачу</h3>
+<pre class="highlight"><code>Ты: Забронируй мне столик в ресторане на вечер
+Агент: [Думает] Мне нужно:
+       1. Найти ресторан поблизости
+       2. Проверить свободные столики
+       3. Забронировать
+
+       [Вызывает инструмент: search_restaurants(location=&quot;рядом&quot;, cuisine=&quot;любая&quot;)]
+       → Результат: Ресторан &quot;Оливия&quot;, ул. Пушкина 5, есть столики на 19:00 и 20:00
+
+       [Вызывает инструмент: book_table(restaurant=&quot;Оливия&quot;, time=&quot;19:00&quot;, guests=2)]
+       → Результат: Бронь подтверждена, номер 4521
+
+       Готово! Забронировала столик в &quot;Оливия&quot; на 19:00 на 2 персоны.
+       Адрес: ул. Пушкина 5. Номер брони: 4521.
+</code></pre>
+
+<p>Агент <strong>сам выполнил</strong> задачу: нашёл ресторан, забронировал, вернул результат.</p>
+<hr />
+<h2>Что такое инструменты (Tools)</h2>
+<p>Инструменты — это <strong>функции, которые ты даёшь Claude</strong>, и он сам решает, когда их вызвать.</p>
+<pre class="highlight"><code class="language-python"># Ты описываешь инструмент:
+&quot;get_weather&quot; — получить погоду в городе
+&quot;send_message&quot; — отправить сообщение
+&quot;search_database&quot; — найти информацию в базе
+&quot;add_to_spreadsheet&quot; — добавить строку в Google Таблицу
+
+# Claude решает:
+# &quot;Пользователь спросил про погоду → вызову get_weather&quot;
+# &quot;Пользователь попросил отправить сообщение → вызову send_message&quot;
+</code></pre>
+
+<p><strong>Аналогия:</strong> Ты нанимаешь ассистента и говоришь: "Вот телефон для звонков, вот доступ к почте, вот ключ от базы данных". Ассистент сам решает, когда что использовать — в зависимости от задачи.</p>
+<h3>Как это работает технически</h3>
+<pre class="highlight"><code class="language-python"># 1. Ты описываешь инструмент для Claude (что он может делать)
+tools = [
+    {
+        &quot;name&quot;: &quot;get_weather&quot;,
+        &quot;description&quot;: &quot;Получить текущую погоду в указанном городе&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;city&quot;: {
+                    &quot;type&quot;: &quot;string&quot;,
+                    &quot;description&quot;: &quot;Название города&quot;
+                }
+            },
+            &quot;required&quot;: [&quot;city&quot;]
+        }
+    }
+]
+# &quot;name&quot; — имя инструмента
+# &quot;description&quot; — что он делает (Claude читает это чтобы решить, использовать ли)
+# &quot;input_schema&quot; — какие параметры нужны (город, в данном случае)
+
+# 2. Ты пишешь реальную функцию (что ДЕЙСТВИТЕЛЬНО происходит)
+def get_weather(city):
+    # Здесь будет запрос к настоящему API погоды
+    return f&quot;В {city} сейчас +15°C, облачно&quot;
+
+# 3. Claude САМА решает, вызвать ли инструмент
+# Если ты спросишь &quot;Какая погода в Москве?&quot; — Claude вызовет get_weather
+# Если ты спросишь &quot;Что такое Python?&quot; — Claude ответит текстом, без инструмента
+</code></pre>
+
+<p>Claude <strong>не вызывает функцию сам</strong>. Он говорит тебе: "Я хочу вызвать <code>get_weather</code> с параметром <code>city=Москва</code>". Ты выполняешь функцию в своём коде и отправляешь результат обратно.</p>
+<hr />
+<h2>Агентный цикл в коде</h2>
+<p>Вот как выглядит полный агент на Python:</p>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+
+client = Anthropic()
+
+# --- Инструменты ---
+
+# Описание для Claude (что доступно)
+tools = [
+    {
+        &quot;name&quot;: &quot;get_weather&quot;,
+        &quot;description&quot;: &quot;Получить погоду в городе&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Город&quot;}
+            },
+            &quot;required&quot;: [&quot;city&quot;]
+        }
+    },
+    {
+        &quot;name&quot;: &quot;send_notification&quot;,
+        &quot;description&quot;: &quot;Отправить уведомление пользователю&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;text&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Текст уведомления&quot;}
+            },
+            &quot;required&quot;: [&quot;text&quot;]
+        }
+    }
+]
+
+# Реальные функции (что происходит на самом деле)
+def get_weather(city):
+    # В реальности — запрос к API погоды
+    return f&quot;В {city}: +15°C, облачно, ветер 3 м/с&quot;
+
+def send_notification(text):
+    # В реальности — отправка в Telegram, email и т.д.
+    print(f&quot;[Уведомление отправлено]: {text}&quot;)
+    return &quot;Уведомление отправлено успешно&quot;
+
+# Маппинг имени → функции
+tool_functions = {
+    &quot;get_weather&quot;: lambda args: get_weather(args[&quot;city&quot;]),
+    &quot;send_notification&quot;: lambda args: send_notification(args[&quot;text&quot;]),
+}
+
+# --- Агентный цикл ---
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Проверь погоду в Москве и отправь мне уведомление&quot;}
+]
+
+while True:
+    # Отправляем запрос Claude с инструментами
+    response = client.messages.create(
+        model=&quot;claude-sonnet-4-6&quot;,
+        max_tokens=1024,
+        tools=tools,
+        messages=messages
+    )
+
+    # Если Claude закончил — выводим ответ и выходим
+    if response.stop_reason == &quot;end_turn&quot;:
+        for block in response.content:
+            if hasattr(block, &quot;text&quot;):
+                print(f&quot;\nClaude: {block.text}&quot;)
+        break
+        # stop_reason == &quot;end_turn&quot; — Claude решил, что задача выполнена
+
+    # Если Claude хочет вызвать инструмент
+    if response.stop_reason == &quot;tool_use&quot;:
+        # Добавляем ответ Claude в историю
+        messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response.content})
+
+        # Выполняем каждый вызов инструмента
+        tool_results = []
+        for block in response.content:
+            if block.type == &quot;tool_use&quot;:
+                print(f&quot;[Агент вызывает: {block.name}({block.input})]&quot;)
+
+                # Вызываем реальную функцию
+                result = tool_functions[block.name](block.input)
+
+                tool_results.append({
+                    &quot;type&quot;: &quot;tool_result&quot;,
+                    &quot;tool_use_id&quot;: block.id,
+                    &quot;content&quot;: result
+                })
+
+        # Отправляем результаты обратно Claude
+        messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: tool_results})
+        # И цикл повторяется — Claude получит результаты и решит, что делать дальше
+</code></pre>
+
+<h3>Что произойдёт при запуске:</h3>
+<pre class="highlight"><code>[Агент вызывает: get_weather({&quot;city&quot;: &quot;Москва&quot;})]
+[Агент вызывает: send_notification({&quot;text&quot;: &quot;В Москве сейчас +15°C, облачно, ветер 3 м/с&quot;})]
+[Уведомление отправлено]: В Москве сейчас +15°C, облачно, ветер 3 м/с
+
+Claude: Готово! Я проверил погоду в Москве (+15°C, облачно, ветер 3 м/с)
+        и отправил тебе уведомление.
+</code></pre>
+
+<p>Claude <strong>сам</strong> решил:
+1. Сначала вызвать <code>get_weather</code> чтобы узнать погоду
+2. Потом <code>send_notification</code> чтобы отправить результат
+3. Потом дать финальный ответ</p>
+<p>Ты не говорила ему "сначала проверь погоду, потом отправь уведомление". Он сам спланировал шаги.</p>
+<hr />
+<h2>Сравнение: Чат-бот vs Агент</h2>
+<table>
+<thead>
+<tr>
+<th>Критерий</th>
+<th>Чат-бот</th>
+<th>Агент</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Что делает</td>
+<td>Отвечает текстом</td>
+<td>Выполняет задачи</td>
+</tr>
+<tr>
+<td>Инструменты</td>
+<td>Нет</td>
+<td>Да (tools)</td>
+</tr>
+<tr>
+<td>Шаги</td>
+<td>Один (вопрос → ответ)</td>
+<td>Много (цикл думай-действуй)</td>
+</tr>
+<tr>
+<td>Автономность</td>
+<td>Нет — ты управляешь</td>
+<td>Да — сам планирует шаги</td>
+</tr>
+<tr>
+<td>Взаимодействие с миром</td>
+<td>Не может</td>
+<td>Может (API, базы, файлы, сообщения)</td>
+</tr>
+<tr>
+<td>Пример</td>
+<td>Чат Claude на сайте</td>
+<td>OpenClaw — AI-агент, который мониторит чат и пишет в таблицу</td>
+</tr>
+</tbody>
+</table>
+<h3>Реальный пример: OpenClaw</h3>
+<p><strong>OpenClaw</strong> — это open-source AI-агент, который работает локально на компьютере и может подключаться к 40+ мессенджерам (Telegram, WhatsApp, Discord, Slack и др.). Внутри него — тот самый агентный цикл:</p>
+<ul>
+<li>Получает сообщение из чата (инструмент: чтение мессенджера)</li>
+<li>LLM анализирует содержимое (Claude или другая модель)</li>
+<li>Выполняет действие — записывает в Google Sheets, отправляет ответ, ищет в интернете (инструменты)</li>
+<li>Повторяет для каждого нового сообщения</li>
+</ul>
+<p>Это не вопрос-ответ. Это цикл: получил → проанализировал → действовал → ждёт следующее. Классический агент.</p>
+<hr />
+<h2>Когда нужен чат-бот, а когда агент</h2>
+<table>
+<thead>
+<tr>
+<th>Задача</th>
+<th>Что использовать</th>
+<th>Почему</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ответы на вопросы</td>
+<td>Чат-бот</td>
+<td>Не нужны действия, только текст</td>
+</tr>
+<tr>
+<td>FAQ поддержка</td>
+<td>Чат-бот</td>
+<td>Ответы по шаблону</td>
+</tr>
+<tr>
+<td>Мониторинг чата и запись в таблицу</td>
+<td>Агент</td>
+<td>Нужно читать, анализировать, записывать</td>
+</tr>
+<tr>
+<td>Бронирование / заказ</td>
+<td>Агент</td>
+<td>Нужно взаимодействие с внешними системами</td>
+</tr>
+<tr>
+<td>Генерация отчётов из данных</td>
+<td>Агент</td>
+<td>Нужно достать данные, обработать, оформить</td>
+</tr>
+<tr>
+<td>Автоматизация рабочих процессов</td>
+<td>Агент</td>
+<td>Много шагов, много инструментов</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Архитектура агента</h2>
+<pre class="highlight"><code>┌─────────────────────────────────────────┐
+│            ТВОЙ КОД (Python)            │
+│                                         │
+│  ┌─────────────┐    ┌───────────────┐   │
+│  │  Описания   │    │   Реальные    │   │
+│  │  tools      │    │   функции     │   │
+│  │  (JSON)     │    │   (Python)    │   │
+│  └──────┬──────┘    └───────┬───────┘   │
+│         │                   │           │
+│  ┌──────▼───────────────────▼───────┐   │
+│  │        Агентный цикл (loop)      │   │
+│  │                                  │   │
+│  │  1. Отправь сообщение + tools    │   │
+│  │  2. Получи ответ от Claude       │   │
+│  │  3. Если tool_use → выполни      │   │
+│  │  4. Отправь результат обратно    │   │
+│  │  5. Повтори пока stop ≠ end     │   │
+│  └──────────────┬───────────────────┘   │
+│                 │                        │
+└─────────────────┼────────────────────────┘
+                  │ API вызовы
+          ┌───────▼───────┐
+          │  Claude API   │
+          │  (Anthropic)  │
+          └───────────────┘
+</code></pre>
+
+<p>Весь агент — это <strong>твой Python-код</strong> + <strong>Claude API</strong>. Ты описываешь инструменты, Claude решает когда их вызвать, ты выполняешь — и так по кругу.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Определи — чат-бот или агент?</h3>
+<p>Для каждого примера скажи, нужен чат-бот или агент:</p>
+<ol>
+<li>Бот, который переводит текст с русского на английский</li>
+<li>Бот, который проверяет статус заказа в базе данных</li>
+<li>Бот, который генерирует Instagram-посты</li>
+<li>Бот, который каждое утро собирает новости и отправляет дайджест в Telegram</li>
+</ol>
+<details>
+<summary>Ответ</summary>
+
+1. **Чат-бот** — перевод = текстовая задача, инструменты не нужны
+2. **Агент** — нужен инструмент для доступа к базе данных
+3. **Чат-бот** — генерация текста, инструменты не нужны (если не сохранять в файл)
+4. **Агент** — нужны инструменты: поиск новостей, суммирование, отправка в Telegram
+</details>
+
+<h3>Задание 2: Придумай инструменты</h3>
+<p>Допустим, нужен бот-монитор для Telegram-чата, который ищет потенциальных клиентов и записывает их в таблицу. Какие инструменты (tools) ему нужны? Напиши список с описанием.</p>
+<details>
+<summary>Пример ответа</summary>
+
+
+<pre class="highlight"><code class="language-python">tools = [
+    {&quot;name&quot;: &quot;read_chat_messages&quot;, &quot;description&quot;: &quot;Читать новые сообщения из Telegram-чата&quot;},
+    {&quot;name&quot;: &quot;classify_message&quot;, &quot;description&quot;: &quot;Определить, является ли сообщение лидом&quot;},
+    {&quot;name&quot;: &quot;add_to_sheets&quot;, &quot;description&quot;: &quot;Добавить строку в Google Таблицу&quot;},
+    {&quot;name&quot;: &quot;send_notification&quot;, &quot;description&quot;: &quot;Отправить уведомление владельцу&quot;},
+]
+</code></pre>
+
+
+</details>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Чем агент отличается от чат-бота в одном предложении?</p>
+<details>
+<summary>Ответ</summary>
+
+Агент имеет инструменты и может выполнять действия во внешнем мире (API, базы данных, файлы), а чат-бот только генерирует текст.
+</details>
+
+<p><strong>Задача 2:</strong> Что такое agentic loop?</p>
+<details>
+<summary>Ответ</summary>
+
+Цикл, в котором агент работает: получает задачу → думает → вызывает инструмент → получает результат → думает снова → вызывает следующий инструмент → и так пока задача не выполнена.
+</details>
+
+<p><strong>Задача 3:</strong> Claude сам вызывает функции на твоём компьютере?</p>
+<details>
+<summary>Ответ</summary>
+
+Нет. Claude говорит: "Я хочу вызвать функцию X с параметрами Y". Твой код выполняет функцию и отправляет результат обратно Claude. Claude не имеет прямого доступа к твоей системе.
+</details>
+
+<p><strong>Задача 4:</strong> Что означает <code>stop_reason == "tool_use"</code> в ответе Claude?</p>
+<details>
+<summary>Ответ</summary>
+
+Claude остановился не потому что закончил, а потому что хочет вызвать инструмент. Нужно выполнить запрошенную функцию, отправить результат обратно, и Claude продолжит работу.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>Чат-бот = текст.</strong> Вопрос → ответ, без действий.</li>
+<li><strong>Агент = действия.</strong> Задача → план → инструменты → результат.</li>
+<li><strong>Tools</strong> — функции, которые ты даёшь Claude. Он сам решает когда их вызвать.</li>
+<li><strong>Agentic loop</strong> — цикл "думай-действуй", пока задача не выполнена.</li>
+<li><strong>Claude не вызывает функции сам</strong> — он просит, ты выполняешь, отправляешь результат.</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Чат-бот</td>
+<td>Программа, которая принимает текст и возвращает текст, без выполнения действий во внешнем мире.</td>
+</tr>
+<tr>
+<td>AI-агент</td>
+<td>Программа на основе LLM, которая умеет планировать и выполнять действия с помощью инструментов для достижения цели.</td>
+</tr>
+<tr>
+<td>Agentic loop (агентный цикл)</td>
+<td>Цикл, в котором агент повторяет шаги «думает → действует → наблюдает» до тех пор, пока задача не будет выполнена.</td>
+</tr>
+<tr>
+<td>Инструмент (tool)</td>
+<td>Функция, которую ты описываешь для Claude, и он сам решает, когда её вызвать.</td>
+</tr>
+<tr>
+<td>stop_reason</td>
+<td>Поле в ответе API, которое показывает, почему Claude остановил генерацию — закончил ответ или хочет вызвать инструмент.</td>
+</tr>
+<tr>
+<td>end_turn</td>
+<td>Значение stop_reason, означающее, что Claude закончил свой ответ и больше ничего не хочет делать.</td>
+</tr>
+<tr>
+<td>tool_use</td>
+<td>Значение stop_reason, означающее, что Claude хочет вызвать инструмент и ждёт от тебя результат его выполнения.</td>
+</tr>
+<tr>
+<td>Цикл «думает → действует → наблюдает»</td>
+<td>Основной паттерн работы агента: сначала анализирует задачу, потом вызывает инструмент, потом смотрит на результат и решает, что делать дальше.</td>
+</tr>
+<tr>
+<td>Оркестрация</td>
+<td>Управление процессом работы агента: какие инструменты доступны, в каком порядке вызываются и когда остановиться.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Tools: руки агента</strong>. Ты напишешь свои инструменты и создашь агента, который умеет выполнять реальные действия — работать с файлами, искать информацию, отправлять данные.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="2-6-scripts.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="3-2-tools.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

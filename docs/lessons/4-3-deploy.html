@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сервер и деплой — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 4 · Урок 3 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 4.3 — Сервер и деплой</h1>
+<blockquote>
+<p>Бот работает. Помнит разговоры. Но только пока открыт терминал на твоём компьютере. Закрыла ноутбук — бот уснул. Ушла спать — бот не отвечает. В этом уроке мы перенесём бота на удалённый сервер, который работает 24/7. После этого бот будет доступен всегда — даже когда ты не за компьютером.</p>
+</blockquote>
+<hr />
+<h2>Что такое сервер</h2>
+<p>Сервер — это обычный компьютер, который стоит в дата-центре и работает без перерывов. У него нет монитора, клавиатуры и мышки — только интернет. Управляешь им удалённо, через терминал.</p>
+<pre class="highlight"><code>Твой ноутбук                         Сервер (Hetzner)
+┌──────────────┐                     ┌──────────────┐
+│ Ты пишешь    │  ── SSH-команды ──► │ Linux-машина │
+│ команды      │                     │ работает 24/7│
+│ в терминале  │  ◄── ответы ──────  │ без монитора │
+└──────────────┘                     └──────────────┘
+                                     Адрес: 89.167.18.198
+</code></pre>
+
+<p><strong>VPS</strong> (Virtual Private Server) — виртуальный сервер. Один физический компьютер делится на несколько виртуальных. Каждый работает независимо, как отдельная машина. Это дешевле, чем покупать свой сервер.</p>
+<p>Популярные хостинги: <strong>Hetzner</strong>, DigitalOcean, Linode, Vultr. Цены от $4-10/месяц.</p>
+<hr />
+<h2>Шаг 1: Подключиться к серверу (SSH)</h2>
+<p><strong>SSH</strong> (Secure Shell) — протокол для безопасного управления удалённым компьютером. Все команды и данные шифруются.</p>
+<p>Открой терминал на <strong>своём</strong> компьютере и подключись:</p>
+<pre class="highlight"><code class="language-bash">ssh root@89.167.18.198
+</code></pre>
+
+<ul>
+<li><code>ssh</code> — команда для подключения</li>
+<li><code>root</code> — имя пользователя (администратор)</li>
+<li><code>89.167.18.198</code> — IP-адрес сервера</li>
+</ul>
+<p>Введи пароль (символы не отображаются — это нормально). После этого ты внутри сервера.</p>
+<h3>Как понять, что ты на сервере?</h3>
+<p>Командная строка изменится:</p>
+<pre class="highlight"><code class="language-bash"># На своём компьютере:
+katya@MacBook ~ %
+
+# На сервере:
+root@server:~#
+</code></pre>
+
+<p>Если видишь <code>root@server</code> — все команды выполняются на сервере, а не на ноутбуке.</p>
+<h3>Базовые команды Linux</h3>
+<p>На сервере обычно стоит Linux (Ubuntu). Вот минимум команд:</p>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pwd</code></td>
+<td>Показать текущую папку</td>
+<td><code>/root</code></td>
+</tr>
+<tr>
+<td><code>ls</code></td>
+<td>Список файлов</td>
+<td><code>ls -la</code> (с деталями)</td>
+</tr>
+<tr>
+<td><code>cd</code></td>
+<td>Перейти в папку</td>
+<td><code>cd /home/botuser</code></td>
+</tr>
+<tr>
+<td><code>cat</code></td>
+<td>Показать содержимое файла</td>
+<td><code>cat .env</code></td>
+</tr>
+<tr>
+<td><code>nano</code></td>
+<td>Редактор текста</td>
+<td><code>nano bot.py</code> (Ctrl+O сохранить, Ctrl+X выйти)</td>
+</tr>
+<tr>
+<td><code>mkdir</code></td>
+<td>Создать папку</td>
+<td><code>mkdir mybot</code></td>
+</tr>
+<tr>
+<td><code>rm</code></td>
+<td>Удалить файл</td>
+<td><code>rm old_file.py</code></td>
+</tr>
+<tr>
+<td><code>exit</code></td>
+<td>Отключиться от сервера</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Эти команды ты уже знаешь из урока 1.1 (терминал) — они те же самые.</p>
+<hr />
+<h2>Шаг 2: Подготовить сервер</h2>
+<h3>Обновить систему</h3>
+<pre class="highlight"><code class="language-bash">apt update &amp;&amp; apt upgrade -y
+</code></pre>
+
+<p><code>apt</code> — менеджер пакетов в Linux (как <code>pip</code> для Python, но для всей системы). <code>update</code> — обновить список доступных пакетов. <code>upgrade</code> — установить обновления.</p>
+<h3>Установить Python и инструменты</h3>
+<pre class="highlight"><code class="language-bash">apt install -y python3-pip python3-venv git
+</code></pre>
+
+<ul>
+<li><code>python3-pip</code> — менеджер пакетов Python (pip)</li>
+<li><code>python3-venv</code> — виртуальные окружения</li>
+<li><code>git</code> — для загрузки кода с GitHub</li>
+</ul>
+<p>Проверь, что Python установлен:</p>
+<pre class="highlight"><code class="language-bash">python3 --version
+</code></pre>
+
+<hr />
+<h2>Шаг 3: Создать отдельного пользователя</h2>
+<p>На сервере по умолчанию ты — <code>root</code> (суперадминистратор). Root может всё: удалить любой файл, остановить любую службу. Это опасно: если в боте ошибка или уязвимость — злоумышленник получит полный контроль над сервером.</p>
+<p>Решение — создать отдельного пользователя с ограниченными правами:</p>
+<pre class="highlight"><code class="language-bash">adduser botuser
+</code></pre>
+
+<p>Введи пароль для нового пользователя. Остальные вопросы (имя, телефон) — просто нажимай Enter.</p>
+<p>Теперь бот будет работать от имени <code>botuser</code> — даже если что-то пойдёт не так, он не сможет навредить всей системе.</p>
+<hr />
+<h2>Шаг 4: Загрузить код на сервер</h2>
+<p>Есть два способа. Рекомендую второй (через git).</p>
+<h3>Способ A: Git (рекомендуется)</h3>
+<p>Если код уже на GitHub:</p>
+<pre class="highlight"><code class="language-bash"># Переключиться на пользователя botuser
+su - botuser
+
+# Склонировать репозиторий
+git clone https://github.com/твой-юзернейм/my-telegram-bot.git
+cd my-telegram-bot
+</code></pre>
+
+<h3>Способ B: scp (прямое копирование)</h3>
+<p>Если кода нет на GitHub — скопируй файлы напрямую. Эту команду запускай на <strong>своём компьютере</strong> (не на сервере!):</p>
+<pre class="highlight"><code class="language-bash">scp -r ~/Desktop/my-telegram-bot/ root@89.167.18.198:/home/botuser/
+</code></pre>
+
+<p><code>scp</code> — Secure Copy. Работает через SSH, данные шифруются.</p>
+<hr />
+<h2>Шаг 5: Настроить окружение</h2>
+<h3>Виртуальное окружение (venv)</h3>
+<p>Из урока 1.1 ты знаешь, что <code>venv</code> — изолированная среда для пакетов Python. На сервере это обязательно — иначе пакеты бота могут конфликтовать с системными.</p>
+<pre class="highlight"><code class="language-bash"># Внутри папки проекта (/home/botuser/my-telegram-bot):
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+deactivate
+</code></pre>
+
+<h3>Файл .env</h3>
+<p>Создай <code>.env</code> на сервере вручную (токены нельзя хранить в git):</p>
+<pre class="highlight"><code class="language-bash">nano /home/botuser/my-telegram-bot/.env
+</code></pre>
+
+<p>Впиши:</p>
+<pre class="highlight"><code>TELEGRAM_BOT_TOKEN=4839574812:AAFD39kkdpWt3ywyRZergyOLMaJhac60qc
+ANTHROPIC_API_KEY=sk-ant-api03-...
+</code></pre>
+
+<p>Сохрани: <code>Ctrl+O</code> → <code>Enter</code> → <code>Ctrl+X</code>.</p>
+<p>Ограничь доступ к файлу (чтобы только владелец мог читать):</p>
+<pre class="highlight"><code class="language-bash">chmod 600 /home/botuser/my-telegram-bot/.env
+</code></pre>
+
+<hr />
+<h2>Шаг 6: Проверить, что бот работает</h2>
+<p>Прежде чем настраивать автозапуск — убедись, что бот вообще запускается:</p>
+<pre class="highlight"><code class="language-bash">cd /home/botuser/my-telegram-bot
+source venv/bin/activate
+python3 ai_bot.py
+</code></pre>
+
+<p>Если видишь "Бот запущен!" и бот отвечает в Telegram — всё работает. Останови его: <code>Ctrl+C</code>.</p>
+<hr />
+<h2>Шаг 7: Сделать бота постоянным (systemd)</h2>
+<h3>Проблема: почему бот умирает</h3>
+<p>Когда ты закрываешь SSH-соединение, сервер посылает сигнал "отключись" (SIGHUP) всем программам, запущенным в этой сессии. Твой бот — одна из них. Он получает сигнал и выключается.</p>
+<h3>Решение: systemd</h3>
+<p><strong>systemd</strong> — это менеджер служб Linux. Он встроен в систему, ничего устанавливать не нужно. systemd умеет:</p>
+<ul>
+<li>Запускать программу в фоне (как демон)</li>
+<li>Автоматически перезапускать при сбое</li>
+<li>Запускать при загрузке сервера</li>
+<li>Вести логи</li>
+</ul>
+<h3>Создание сервиса</h3>
+<p>Вернись под пользователя root:</p>
+<pre class="highlight"><code class="language-bash">exit  # выйти из botuser обратно в root
+</code></pre>
+
+<p>Создай файл сервиса:</p>
+<pre class="highlight"><code class="language-bash">nano /etc/systemd/system/telegram-bot.service
+</code></pre>
+
+<p>Вставь это содержимое:</p>
+<pre class="highlight"><code class="language-ini">[Unit]
+Description=Telegram AI Bot
+After=network.target
+
+[Service]
+Type=simple
+User=botuser
+WorkingDirectory=/home/botuser/my-telegram-bot
+ExecStart=/home/botuser/my-telegram-bot/venv/bin/python3 /home/botuser/my-telegram-bot/ai_bot.py
+EnvironmentFile=/home/botuser/my-telegram-bot/.env
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<h3>Что значит каждая строка</h3>
+<table>
+<thead>
+<tr>
+<th>Строка</th>
+<th>Зачем</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Description=Telegram AI Bot</code></td>
+<td>Описание (для тебя)</td>
+</tr>
+<tr>
+<td><code>After=network.target</code></td>
+<td>Ждать, пока появится интернет</td>
+</tr>
+<tr>
+<td><code>User=botuser</code></td>
+<td>Запускать от <code>botuser</code>, НЕ от root</td>
+</tr>
+<tr>
+<td><code>WorkingDirectory=...</code></td>
+<td>Рабочая папка бота</td>
+</tr>
+<tr>
+<td><code>ExecStart=...</code></td>
+<td>Путь к Python из venv + путь к скрипту</td>
+</tr>
+<tr>
+<td><code>EnvironmentFile=...</code></td>
+<td>Загрузить переменные из .env</td>
+</tr>
+<tr>
+<td><code>Restart=always</code></td>
+<td>Перезапускать при любом сбое</td>
+</tr>
+<tr>
+<td><code>RestartSec=10</code></td>
+<td>Ждать 10 секунд перед перезапуском</td>
+</tr>
+<tr>
+<td><code>WantedBy=multi-user.target</code></td>
+<td>Запускаться при нормальной загрузке сервера</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Важно:</strong> в <code>ExecStart</code> указан Python из <strong>venv</strong>, а не системный. Это гарантирует, что бот использует правильные пакеты.</p>
+<h3>Запуск сервиса</h3>
+<pre class="highlight"><code class="language-bash">systemctl daemon-reload    # перечитать файлы сервисов
+systemctl enable telegram-bot    # включить автозапуск при загрузке
+systemctl start telegram-bot     # запустить прямо сейчас
+</code></pre>
+
+<h3>Проверка</h3>
+<pre class="highlight"><code class="language-bash">systemctl status telegram-bot
+</code></pre>
+
+<p>Если видишь <strong><code>Active: active (running)</code></strong> — бот работает:</p>
+<pre class="highlight"><code>● telegram-bot.service - Telegram AI Bot
+     Loaded: loaded (/etc/systemd/system/telegram-bot.service; enabled)
+     Active: active (running) since Wed 2024-01-15 10:30:00 UTC
+   Main PID: 1234 (python3)
+     Memory: 52.0M
+</code></pre>
+
+<p>Теперь можешь закрыть SSH. Бот продолжит работать.</p>
+<hr />
+<h2>Управление ботом</h2>
+<h3>Основные команды</h3>
+<pre class="highlight"><code class="language-bash">systemctl start telegram-bot     # запустить
+systemctl stop telegram-bot      # остановить
+systemctl restart telegram-bot   # перезапустить
+systemctl status telegram-bot    # проверить статус
+</code></pre>
+
+<h3>Просмотр логов</h3>
+<pre class="highlight"><code class="language-bash"># Все логи бота
+journalctl -u telegram-bot
+
+# Последние 50 строк
+journalctl -u telegram-bot -n 50
+
+# Следить за логами в реальном времени (как tail -f)
+journalctl -u telegram-bot -f
+
+# Логи за последний час
+journalctl -u telegram-bot --since &quot;1 hour ago&quot;
+</code></pre>
+
+<p><code>journalctl</code> — инструмент для чтения логов systemd. Флаг <code>-u</code> — по имени сервиса. Флаг <code>-f</code> — следить в реальном времени (для отладки).</p>
+<h3>Обновление бота</h3>
+<p>Когда ты изменила код и запушила в GitHub:</p>
+<pre class="highlight"><code class="language-bash"># На сервере:
+su - botuser                    # переключиться на пользователя бота
+cd /home/botuser/my-telegram-bot
+git pull                         # скачать новый код
+source venv/bin/activate
+pip install -r requirements.txt  # если добавились новые пакеты
+deactivate
+exit                             # обратно в root
+
+systemctl restart telegram-bot   # перезапустить с новым кодом
+systemctl status telegram-bot    # убедиться, что работает
+</code></pre>
+
+<hr />
+<h2>Безопасность: минимум</h2>
+<h3>1. Не запускай бота от root</h3>
+<p>Мы уже это сделали — создали <code>botuser</code> и указали <code>User=botuser</code> в сервисе.</p>
+<h3>2. SSH-ключи вместо паролей</h3>
+<p>Пароли можно подобрать (брутфорс). SSH-ключи — нет.</p>
+<p>На <strong>своём</strong> компьютере:</p>
+<pre class="highlight"><code class="language-bash"># Создать ключ (один раз)
+ssh-keygen -t ed25519 -C &quot;my-server-key&quot;
+# Нажми Enter (оставь путь по умолчанию)
+# Введи пароль для ключа (или просто Enter)
+
+# Скопировать ключ на сервер
+ssh-copy-id root@89.167.18.198
+</code></pre>
+
+<p>После этого <code>ssh root@89.167.18.198</code> работает без пароля — используется ключ.</p>
+<p><strong>Как это работает:</strong> у тебя два файла — приватный ключ (на компьютере, никому не показывать) и публичный ключ (на сервере). Это как замок и ключ: публичный ключ — это замок, приватный — ключ от него.</p>
+<h3>3. Файрвол (ufw)</h3>
+<p>Файрвол блокирует все входящие подключения, кроме разрешённых.</p>
+<pre class="highlight"><code class="language-bash">ufw allow OpenSSH    # ОБЯЗАТЕЛЬНО — разрешить SSH, иначе потеряешь доступ!
+ufw enable           # включить файрвол
+ufw status           # проверить правила
+</code></pre>
+
+<p>Для Telegram-бота, который использует polling, <strong>не нужно открывать дополнительные порты</strong>. Бот сам обращается к Telegram (исходящее соединение), а не принимает подключения.</p>
+<hr />
+<h2>Полный чек-лист деплоя</h2>
+<pre class="highlight"><code>Подготовка сервера:
+  [ ] ssh root@89.167.18.198
+  [ ] apt update &amp;&amp; apt upgrade -y
+  [ ] apt install -y python3-pip python3-venv git
+  [ ] adduser botuser
+
+Безопасность:
+  [ ] ufw allow OpenSSH &amp;&amp; ufw enable
+
+Загрузка кода:
+  [ ] su - botuser
+  [ ] git clone https://github.com/.../my-telegram-bot.git
+  [ ] cd my-telegram-bot
+
+Настройка:
+  [ ] python3 -m venv venv
+  [ ] source venv/bin/activate &amp;&amp; pip install -r requirements.txt &amp;&amp; deactivate
+  [ ] nano .env (вписать токены)
+  [ ] chmod 600 .env
+
+Проверка:
+  [ ] source venv/bin/activate &amp;&amp; python3 ai_bot.py (работает? Ctrl+C)
+  [ ] exit (обратно в root)
+
+Автозапуск:
+  [ ] nano /etc/systemd/system/telegram-bot.service
+  [ ] systemctl daemon-reload
+  [ ] systemctl enable telegram-bot
+  [ ] systemctl start telegram-bot
+  [ ] systemctl status telegram-bot → active (running) ✓
+</code></pre>
+
+<hr />
+<h2>Частые ошибки</h2>
+<h3>1. Бот не запускается через systemd</h3>
+<pre class="highlight"><code>Проблема: systemctl status показывает &quot;failed&quot;
+Решение: проверь логи — journalctl -u telegram-bot -n 30
+         Обычно: неправильный путь в ExecStart или забыл .env
+</code></pre>
+
+<h3>2. ModuleNotFoundError на сервере</h3>
+<pre class="highlight"><code>Проблема: бот не находит библиотеки (anthropic, telegram)
+Причина: ExecStart указывает на системный Python, а не на venv
+Решение: путь должен быть /home/botuser/my-telegram-bot/venv/bin/python3
+</code></pre>
+
+<h3>3. Permission denied</h3>
+<pre class="highlight"><code>Проблема: бот не может прочитать файл
+Причина: файл принадлежит root, а бот работает от botuser
+Решение: chown -R botuser:botuser /home/botuser/my-telegram-bot/
+</code></pre>
+
+<h3>4. Потерял доступ к серверу после включения файрвола</h3>
+<pre class="highlight"><code>Проблема: ufw enable без ufw allow OpenSSH
+Решение: в панели управления Hetzner есть &quot;Console&quot; — аварийный доступ
+         Через неё: ufw allow OpenSSH или ufw disable
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Подключись к серверу</h3>
+<p>Подключись по SSH, выполни <code>pwd</code>, <code>ls</code>, <code>python3 --version</code>. Убедись, что всё работает.</p>
+<h3>Задание 2: Задеплой бота</h3>
+<p>Пройди весь чек-лист. В конце бот должен отвечать в Telegram, даже когда ты отключишься от SSH.</p>
+<h3>Задание 3: Проверь устойчивость</h3>
+<p>Перезапусти сервер:</p>
+<pre class="highlight"><code class="language-bash">reboot
+</code></pre>
+
+<p>Подожди минуту, потом напиши боту. Он должен ответить (systemd запустит его автоматически).</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Зачем создавать отдельного пользователя <code>botuser</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+Безопасность. Root имеет неограниченный доступ ко всей системе. Если в боте окажется уязвимость и злоумышленник получит контроль — он получит доступ ко всему серверу. Пользователь `botuser` ограничен своей папкой — ущерб минимален.
+</details>
+
+<p><strong>Задача 2:</strong> Почему в <code>ExecStart</code> нужен Python из venv, а не системный?</p>
+<details>
+<summary>Ответ</summary>
+
+Системный Python не знает про пакеты, установленные в venv (anthropic, python-telegram-bot). Если указать `/usr/bin/python3`, бот получит `ModuleNotFoundError`. Python из venv (`/home/botuser/my-telegram-bot/venv/bin/python3`) видит все пакеты, которые мы установили через `pip install`.
+</details>
+
+<p><strong>Задача 3:</strong> Что произойдёт, если не сделать <code>ufw allow OpenSSH</code> перед <code>ufw enable</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+Файрвол заблокирует ВСЕ входящие подключения, включая SSH. Ты потеряешь доступ к серверу через терминал. Решение: использовать аварийную консоль в панели управления Hetzner и выполнить `ufw allow OpenSSH` или `ufw disable`.
+</details>
+
+<p><strong>Задача 4:</strong> Как посмотреть, почему бот не запустился?</p>
+<details>
+<summary>Ответ</summary>
+
+`journalctl -u telegram-bot -n 50` — покажет последние 50 строк логов сервиса. Там будет ошибка Python (ModuleNotFoundError, FileNotFoundError, неправильный токен и т.д.). Это первое, что нужно проверять при проблемах.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Сервер</strong></td>
+<td>Компьютер, который работает 24/7 и доступен через интернет</td>
+</tr>
+<tr>
+<td><strong>VPS</strong></td>
+<td>Virtual Private Server — виртуальный сервер на хостинге</td>
+</tr>
+<tr>
+<td><strong>SSH</strong></td>
+<td>Secure Shell — протокол для безопасного управления удалённым компьютером</td>
+</tr>
+<tr>
+<td><strong>IP-адрес</strong></td>
+<td>Числовой адрес компьютера в сети (как адрес дома)</td>
+</tr>
+<tr>
+<td><strong>root</strong></td>
+<td>Суперпользователь Linux с полным доступом ко всей системе</td>
+</tr>
+<tr>
+<td><strong>apt</strong></td>
+<td>Менеджер пакетов Linux (как pip для Python, но для системы)</td>
+</tr>
+<tr>
+<td><strong>scp</strong></td>
+<td>Secure Copy — копирование файлов через SSH</td>
+</tr>
+<tr>
+<td><strong>venv</strong></td>
+<td>Виртуальное окружение Python (изолированные пакеты)</td>
+</tr>
+<tr>
+<td><strong>systemd</strong></td>
+<td>Менеджер служб Linux. Управляет фоновыми процессами</td>
+</tr>
+<tr>
+<td><strong>Сервис (service)</strong></td>
+<td>Программа, работающая в фоне под управлением systemd</td>
+</tr>
+<tr>
+<td><strong>systemctl</strong></td>
+<td>Команда для управления сервисами (start, stop, restart, status)</td>
+</tr>
+<tr>
+<td><strong>journalctl</strong></td>
+<td>Команда для чтения логов systemd</td>
+</tr>
+<tr>
+<td><strong>SIGHUP</strong></td>
+<td>Сигнал "отключись", который процесс получает при закрытии SSH</td>
+</tr>
+<tr>
+<td><strong>chmod</strong></td>
+<td>Команда для изменения прав доступа к файлу</td>
+</tr>
+<tr>
+<td><strong>ufw</strong></td>
+<td>Uncomplicated Firewall — простой файрвол для Linux</td>
+</tr>
+<tr>
+<td><strong>SSH-ключ</strong></td>
+<td>Пара файлов (приватный + публичный) для входа без пароля</td>
+</tr>
+<tr>
+<td><strong>Деплой</strong></td>
+<td>Развёртывание — процесс переноса кода на сервер и запуска</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Проблема:
+  Бот на ноутбуке → закрыл терминал → бот умер
+
+Решение:
+  Сервер (VPS) + systemd → бот работает 24/7
+
+Деплой в 4 шага:
+  1. SSH → подключиться к серверу
+  2. git clone → загрузить код
+  3. venv + pip install → настроить окружение
+  4. systemd → сделать бота службой
+
+Управление:
+  systemctl start/stop/restart telegram-bot
+  journalctl -u telegram-bot -f  (логи)
+
+Безопасность:
+  ✓ Отдельный пользователь (не root)
+  ✓ SSH-ключи (не пароли)
+  ✓ Файрвол (ufw allow OpenSSH → ufw enable)
+  ✓ chmod 600 .env (только владелец читает)
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Бот работает 24/7 на сервере, помнит разговоры в базе данных. В следующем уроке — <strong>платформы и OpenClaw</strong>: как устроены большие проекты с AI-агентами и как всё, что ты изучила, складывается в реальную систему.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="4-2-databases.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="4-4-platforms.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

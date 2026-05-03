@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Базы данных — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 4 · Урок 2 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 4.2 — Базы данных</h1>
+<blockquote>
+<p>В прошлом уроке мы создали Telegram-бота с Claude. Он работает, отвечает на вопросы, помнит контекст разговора. Но есть одна проблема: закрой терминал — и бот забудет все разговоры. Потому что вся история хранится в словаре <code>conversations = {}</code> — в оперативной памяти. Перезапуск = полная амнезия. В этом уроке мы это починим.</p>
+</blockquote>
+<hr />
+<h2>Проблема: память, которая исчезает</h2>
+<p>Вот как сейчас работает наш бот из урока 4.1:</p>
+<pre class="highlight"><code class="language-python">conversations = {}  # словарь в оперативной памяти
+
+# Пользователь пишет &quot;Привет&quot;
+conversations[123456] = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Привет&quot;}]
+
+# Claude отвечает
+conversations[123456].append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Привет! Чем помочь?&quot;})
+
+# ... бот работает, история растёт ...
+
+# Ctrl+C → бот остановился
+# python ai_bot.py → бот запустился заново
+# conversations = {} → пустой словарь. Всё потеряно.
+</code></pre>
+
+<p>Это как писать заметки на стикерах, которые приклеены к монитору. Выключил компьютер — стикеры упали. Нужно что-то надёжнее.</p>
+<hr />
+<h2>Где хранить данные: три варианта</h2>
+<h3>Вариант 1: Файл (JSON)</h3>
+<p>Самое очевидное — записать данные в файл:</p>
+<pre class="highlight"><code class="language-python">import json
+
+# Сохранить
+with open(&quot;history.json&quot;, &quot;w&quot;) as f:
+    json.dump(conversations, f)
+
+# Загрузить
+with open(&quot;history.json&quot;, &quot;r&quot;) as f:
+    conversations = json.load(f)
+</code></pre>
+
+<p><strong>Проблема:</strong> если два пользователя напишут боту одновременно, оба обработчика попытаются записать в один файл. Один перезапишет данные другого. Это называется <strong>race condition</strong> — гонка за ресурс.</p>
+<h3>Вариант 2: База данных SQLite</h3>
+<p><strong>SQLite</strong> — это база данных, которая хранит данные в одном файле. Но в отличие от JSON-файла, SQLite умеет:</p>
+<ul>
+<li>Безопасно обрабатывать несколько запросов одновременно (блокировки)</li>
+<li>Быстро искать по условию ("все сообщения от пользователя 123456")</li>
+<li>Хранить миллионы записей без замедления</li>
+<li>Гарантировать, что данные не повредятся при сбое</li>
+</ul>
+<p>И самое главное: <strong>SQLite встроена в Python</strong>. Не нужно ничего устанавливать — <code>import sqlite3</code> и всё.</p>
+<h3>Вариант 3: PostgreSQL / MySQL</h3>
+<p>Отдельная программа-сервер, которая работает в фоне. Нужна для больших проектов с тысячами одновременных пользователей. Для нашего бота — избыточна.</p>
+<h3>Сравнение</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>JSON-файл</th>
+<th>SQLite</th>
+<th>PostgreSQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Установка</strong></td>
+<td>Не нужна</td>
+<td>Не нужна (встроена)</td>
+<td>Отдельный сервер</td>
+</tr>
+<tr>
+<td><strong>Данные на диске</strong></td>
+<td>Да</td>
+<td>Да</td>
+<td>Да</td>
+</tr>
+<tr>
+<td><strong>Поиск по условию</strong></td>
+<td>Вручную (цикл в Python)</td>
+<td><code>SELECT WHERE user_id = ?</code></td>
+<td><code>SELECT WHERE user_id = ?</code></td>
+</tr>
+<tr>
+<td><strong>Одновременная запись</strong></td>
+<td>Опасно (потеря данных)</td>
+<td>Безопасно (блокировка)</td>
+<td>Безопасно (полная поддержка)</td>
+</tr>
+<tr>
+<td><strong>Для чего</strong></td>
+<td>Конфиги, маленькие списки</td>
+<td>Боты, приложения, локальные проекты</td>
+<td>Веб-приложения, большие системы</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Наш выбор: SQLite.</strong> Бесплатно, встроено в Python, надёжно, достаточно для бота.</p>
+<pre class="highlight"><code>Источник: sqlite.org
+&quot;SQLite competes with fopen(), not with PostgreSQL.&quot;
+SQLite конкурирует с открытием файлов, а не с большими СУБД.
+</code></pre>
+
+<hr />
+<h2>Что такое SQL</h2>
+<p>SQL — это <strong>язык запросов к базам данных</strong>. Аббревиатура: <strong>Structured Query Language</strong> (язык структурированных запросов).</p>
+<p>Это НЕ язык программирования. На SQL нельзя написать программу. SQL — это способ сказать базе данных: "найди мне это", "сохрани это", "удали это".</p>
+<p>Аналогия: Python — это язык, на котором ты пишешь программу. SQL — это язык, на котором ты разговариваешь с базой данных внутри этой программы. Как два разных языка для двух разных задач.</p>
+<p>SQL используют <strong>все</strong> базы данных: SQLite, PostgreSQL, MySQL, Oracle. Выучишь SQL один раз — используешь везде.</p>
+<hr />
+<h2>SQL за 10 минут: пять команд</h2>
+<p>Тебе нужно знать всего 5 команд. Серьёзно — для бота этого хватит.</p>
+<h3>1. CREATE TABLE — создать таблицу</h3>
+<p>Таблица — это как таблица в Excel. У неё есть столбцы (с именами и типами) и строки (данные).</p>
+<pre class="highlight"><code class="language-sql">CREATE TABLE IF NOT EXISTS conversations (
+    id        INTEGER PRIMARY KEY,
+    user_id   INTEGER NOT NULL,
+    role      TEXT NOT NULL,
+    content   TEXT NOT NULL,
+    timestamp TEXT NOT NULL
+);
+</code></pre>
+
+<p>Разберём:</p>
+<table>
+<thead>
+<tr>
+<th>Элемент</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CREATE TABLE</code></td>
+<td>Создать таблицу</td>
+</tr>
+<tr>
+<td><code>IF NOT EXISTS</code></td>
+<td>Только если такой ещё нет (иначе ошибка при повторном запуске)</td>
+</tr>
+<tr>
+<td><code>conversations</code></td>
+<td>Имя таблицы</td>
+</tr>
+<tr>
+<td><code>id INTEGER PRIMARY KEY</code></td>
+<td>Уникальный номер строки, назначается автоматически</td>
+</tr>
+<tr>
+<td><code>user_id INTEGER NOT NULL</code></td>
+<td>ID пользователя Telegram, целое число, обязательное</td>
+</tr>
+<tr>
+<td><code>role TEXT NOT NULL</code></td>
+<td><code>"user"</code> или <code>"assistant"</code>, строка, обязательная</td>
+</tr>
+<tr>
+<td><code>content TEXT NOT NULL</code></td>
+<td>Текст сообщения, обязательный</td>
+</tr>
+<tr>
+<td><code>timestamp TEXT NOT NULL</code></td>
+<td>Время сообщения, обязательное</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Типы данных в SQLite:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Тип</th>
+<th>Что хранит</th>
+<th>Примеры</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INTEGER</code></td>
+<td>Целые числа</td>
+<td><code>1</code>, <code>42</code>, <code>123456789</code></td>
+</tr>
+<tr>
+<td><code>TEXT</code></td>
+<td>Строки</td>
+<td><code>"привет"</code>, <code>"user"</code>, <code>"2024-01-15"</code></td>
+</tr>
+<tr>
+<td><code>REAL</code></td>
+<td>Дробные числа</td>
+<td><code>3.14</code>, <code>0.99</code></td>
+</tr>
+</tbody>
+</table>
+<p>Для бота хватит <code>INTEGER</code> и <code>TEXT</code>.</p>
+<h3>2. INSERT INTO — добавить строку</h3>
+<pre class="highlight"><code class="language-sql">INSERT INTO conversations (user_id, role, content, timestamp)
+VALUES (123456, 'user', 'Привет!', '2024-01-15 10:30:00');
+</code></pre>
+
+<p>Это как <code>conversations[123456].append({"role": "user", "content": "Привет!"})</code> — но данные сохраняются на диск.</p>
+<h3>3. SELECT — найти данные</h3>
+<pre class="highlight"><code class="language-sql">-- Все сообщения пользователя 123456
+SELECT role, content FROM conversations
+WHERE user_id = 123456;
+
+-- Только последние 20 сообщений (от новых к старым)
+SELECT role, content FROM conversations
+WHERE user_id = 123456
+ORDER BY id DESC
+LIMIT 20;
+</code></pre>
+
+<p>Разберём:</p>
+<table>
+<thead>
+<tr>
+<th>Элемент</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SELECT role, content</code></td>
+<td>Какие столбцы вернуть</td>
+</tr>
+<tr>
+<td><code>FROM conversations</code></td>
+<td>Из какой таблицы</td>
+</tr>
+<tr>
+<td><code>WHERE user_id = 123456</code></td>
+<td>Условие (фильтр)</td>
+</tr>
+<tr>
+<td><code>ORDER BY id DESC</code></td>
+<td>Сортировка: <code>DESC</code> = от нового к старому, <code>ASC</code> = от старого к новому</td>
+</tr>
+<tr>
+<td><code>LIMIT 20</code></td>
+<td>Вернуть не больше 20 строк</td>
+</tr>
+</tbody>
+</table>
+<h3>4. DELETE — удалить строки</h3>
+<pre class="highlight"><code class="language-sql">-- Удалить все сообщения пользователя (команда /clear)
+DELETE FROM conversations WHERE user_id = 123456;
+</code></pre>
+
+<h3>5. UPDATE — изменить данные</h3>
+<pre class="highlight"><code class="language-sql">UPDATE conversations SET content = 'исправленный текст' WHERE id = 5;
+</code></pre>
+
+<p>Нам пока не нужен, но знать полезно.</p>
+<hr />
+<h2>SQL в Python: модуль sqlite3</h2>
+<p>Вот как SQL работает внутри Python:</p>
+<h3>Шаг 1: Подключение</h3>
+<pre class="highlight"><code class="language-python">import sqlite3
+
+# Создаёт файл bot_history.db (если нет) или открывает существующий
+conn = sqlite3.connect(&quot;bot_history.db&quot;)
+</code></pre>
+
+<p><code>connect()</code> — это как <code>open()</code> для файлов. Создаёт соединение с базой данных. Если файла нет — создаст пустую базу.</p>
+<h3>Шаг 2: Выполнение SQL</h3>
+<pre class="highlight"><code class="language-python"># Создать таблицу
+conn.execute(&quot;&quot;&quot;
+    CREATE TABLE IF NOT EXISTS conversations (
+        id        INTEGER PRIMARY KEY,
+        user_id   INTEGER NOT NULL,
+        role      TEXT NOT NULL,
+        content   TEXT NOT NULL,
+        timestamp TEXT NOT NULL
+    )
+&quot;&quot;&quot;)
+conn.commit()  # сохранить изменения на диск
+</code></pre>
+
+<p><code>execute()</code> — выполнить SQL-запрос. <code>commit()</code> — зафиксировать изменения. Без <code>commit()</code> данные останутся в памяти и пропадут.</p>
+<h3>Шаг 3: Вставка данных</h3>
+<pre class="highlight"><code class="language-python">conn.execute(
+    &quot;INSERT INTO conversations (user_id, role, content, timestamp) VALUES (?, ?, ?, ?)&quot;,
+    (123456, &quot;user&quot;, &quot;Привет!&quot;, &quot;2024-01-15 10:30:00&quot;)
+)
+conn.commit()
+</code></pre>
+
+<p><strong>Важно: знаки <code>?</code></strong></p>
+<p><code>?</code> — это заполнители (placeholders). Python подставляет значения из кортежа <code>(123456, "user", ...)</code> безопасно.</p>
+<p>Почему не написать так?</p>
+<pre class="highlight"><code class="language-python"># ОПАСНО — никогда так не делай!
+conn.execute(f&quot;INSERT INTO conversations VALUES ({user_id}, '{role}', '{content}', '{timestamp}')&quot;)
+</code></pre>
+
+<p>Потому что если <code>content</code> содержит одинарную кавычку (например, <code>it's</code>), запрос сломается. А если пользователь специально отправит <code>'; DROP TABLE conversations; --</code>, он <strong>удалит всю таблицу</strong>. Это называется <strong>SQL-инъекция</strong> — одна из самых известных уязвимостей в истории IT.</p>
+<p><strong>Всегда используй <code>?</code> — это защита.</strong></p>
+<h3>Шаг 4: Чтение данных</h3>
+<pre class="highlight"><code class="language-python">cursor = conn.execute(
+    &quot;SELECT role, content FROM conversations WHERE user_id = ? ORDER BY id DESC LIMIT ?&quot;,
+    (123456, 20)
+)
+rows = cursor.fetchall()
+# rows = [(&quot;assistant&quot;, &quot;Чем помочь?&quot;), (&quot;user&quot;, &quot;Привет!&quot;)]
+#         ^ новые первые (ORDER BY DESC)
+</code></pre>
+
+<ul>
+<li><code>cursor</code> — объект с результатами запроса</li>
+<li><code>fetchall()</code> — получить все строки как список кортежей</li>
+<li><code>fetchone()</code> — получить одну строку (или <code>None</code>, если данных нет)</li>
+</ul>
+<h3>Шаг 5: Закрытие</h3>
+<pre class="highlight"><code class="language-python">conn.close()
+</code></pre>
+
+<h3>Безопасный паттерн: <code>with</code></h3>
+<p>Чтобы не забывать про <code>commit()</code> и обработку ошибок:</p>
+<pre class="highlight"><code class="language-python">conn = sqlite3.connect(&quot;bot_history.db&quot;)
+
+with conn:  # если всё ок → commit(), если ошибка → rollback()
+    conn.execute(
+        &quot;INSERT INTO conversations (user_id, role, content, timestamp) VALUES (?, ?, ?, ?)&quot;,
+        (123456, &quot;user&quot;, &quot;Привет!&quot;, &quot;2024-01-15 10:30:00&quot;)
+    )
+# commit() вызван автоматически
+
+conn.close()
+</code></pre>
+
+<p><code>with conn:</code> — контекстный менеджер. Если код внутри выполнился без ошибок — автоматически вызывает <code>commit()</code>. Если произошла ошибка — вызывает <code>rollback()</code> (откат, как будто ничего не записывали).</p>
+<p><strong>Важно:</strong> <code>with conn:</code> НЕ закрывает соединение. <code>conn.close()</code> нужен отдельно.</p>
+<hr />
+<h2>Обновляем бота: от словаря к базе данных</h2>
+<h3>Что было (урок 4.1)</h3>
+<pre class="highlight"><code class="language-python">conversations = {}  # оперативная память → пропадает при перезапуске
+</code></pre>
+
+<h3>Что будет</h3>
+<pre class="highlight"><code class="language-python">import sqlite3  # встроенный модуль → данные на диске → переживают перезапуск
+</code></pre>
+
+<h3>Шаг 1: Функции для работы с базой</h3>
+<p>Создадим отдельный файл <code>database.py</code> — чтобы не мешать логику бота с SQL-запросами:</p>
+<pre class="highlight"><code class="language-python"># database.py — работа с базой данных
+
+import sqlite3
+from datetime import datetime
+
+DB_FILE = &quot;bot_history.db&quot;
+
+def init_db():
+    &quot;&quot;&quot;Создать таблицу, если её ещё нет. Вызывается один раз при старте.&quot;&quot;&quot;
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute(&quot;&quot;&quot;
+        CREATE TABLE IF NOT EXISTS conversations (
+            id        INTEGER PRIMARY KEY,
+            user_id   INTEGER NOT NULL,
+            role      TEXT NOT NULL,
+            content   TEXT NOT NULL,
+            timestamp TEXT NOT NULL
+        )
+    &quot;&quot;&quot;)
+    conn.commit()
+    conn.close()
+
+def save_message(user_id: int, role: str, content: str):
+    &quot;&quot;&quot;Сохранить одно сообщение в базу.&quot;&quot;&quot;
+    conn = sqlite3.connect(DB_FILE)
+    with conn:
+        conn.execute(
+            &quot;INSERT INTO conversations (user_id, role, content, timestamp) VALUES (?, ?, ?, ?)&quot;,
+            (user_id, role, content, datetime.now().isoformat())
+        )
+    conn.close()
+
+def get_history(user_id: int, limit: int = 20) -&gt; list[dict]:
+    &quot;&quot;&quot;Получить последние N сообщений пользователя в хронологическом порядке.&quot;&quot;&quot;
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.execute(
+        &quot;SELECT role, content FROM conversations WHERE user_id = ? ORDER BY id DESC LIMIT ?&quot;,
+        (user_id, limit)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    # reversed() — потому что ORDER BY DESC возвращает новые первыми,
+    # а Claude API ожидает старые первыми (хронологический порядок)
+    return [{&quot;role&quot;: row[0], &quot;content&quot;: row[1]} for row in reversed(rows)]
+
+def clear_history(user_id: int):
+    &quot;&quot;&quot;Удалить все сообщения пользователя (команда /clear).&quot;&quot;&quot;
+    conn = sqlite3.connect(DB_FILE)
+    with conn:
+        conn.execute(&quot;DELETE FROM conversations WHERE user_id = ?&quot;, (user_id,))
+    conn.close()
+</code></pre>
+
+<h3>Разбор каждой функции</h3>
+<p><strong><code>init_db()</code></strong> — создаёт таблицу при первом запуске. <code>IF NOT EXISTS</code> означает: если таблица уже есть — ничего не делать. Без этого при втором запуске была бы ошибка "table already exists".</p>
+<p><strong><code>save_message()</code></strong> — записывает одно сообщение. <code>datetime.now().isoformat()</code> — текущее время в формате <code>2024-01-15T10:30:00.123456</code>. Мы храним время на будущее — чтобы потом можно было узнать, когда был разговор.</p>
+<p><strong><code>get_history()</code></strong> — возвращает историю в формате, который Claude API ожидает: <code>[{"role": "user", "content": "..."}, ...]</code>. Формат не изменился — бот даже не знает, что данные теперь из базы.</p>
+<p><strong><code>clear_history()</code></strong> — удаляет все сообщения пользователя. Используется для команды <code>/clear</code>.</p>
+<h3>Шаг 2: Обновлённый бот</h3>
+<pre class="highlight"><code class="language-python"># ai_bot.py — Telegram-бот с Claude и базой данных
+
+import os
+import logging
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from anthropic import Anthropic
+from database import init_db, save_message, get_history, clear_history  # наш модуль
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO)
+
+claude = Anthropic(api_key=os.environ[&quot;ANTHROPIC_API_KEY&quot;])
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    clear_history(user_id)
+    await update.message.reply_text(
+        &quot;Привет! Я AI-ассистент на базе Claude. Задай мне любой вопрос!&quot;
+    )
+
+async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    clear_history(user_id)
+    await update.message.reply_text(&quot;История очищена. Начнём сначала!&quot;)
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    user_text = update.message.text
+
+    # Сохранить сообщение пользователя в базу
+    save_message(user_id, &quot;user&quot;, user_text)
+
+    # Получить историю из базы (последние 20 сообщений)
+    history = get_history(user_id, limit=20)
+
+    try:
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id,
+            action=&quot;typing&quot;
+        )
+
+        response = claude.messages.create(
+            model=&quot;claude-sonnet-4-5&quot;,
+            max_tokens=1024,
+            system=&quot;Ты — полезный ассистент в Telegram-чате. Отвечай кратко и по делу.&quot;,
+            messages=history  # ← из базы данных, но формат тот же
+        )
+
+        reply = response.content[0].text
+
+        # Сохранить ответ Claude в базу
+        save_message(user_id, &quot;assistant&quot;, reply)
+
+        if len(reply) &gt; 4000:
+            for i in range(0, len(reply), 4000):
+                await update.message.reply_text(reply[i:i+4000])
+        else:
+            await update.message.reply_text(reply)
+
+    except Exception as e:
+        logging.error(f&quot;Ошибка Claude API: {e}&quot;)
+        await update.message.reply_text(&quot;Произошла ошибка. Попробуй ещё раз.&quot;)
+
+# Инициализация базы при запуске
+init_db()
+
+app = ApplicationBuilder().token(os.environ[&quot;TELEGRAM_BOT_TOKEN&quot;]).build()
+app.add_handler(CommandHandler(&quot;start&quot;, start))
+app.add_handler(CommandHandler(&quot;clear&quot;, clear))
+app.add_handler(MessageHandler(filters.TEXT &amp; ~filters.COMMAND, handle_message))
+
+print(&quot;Бот запущен!&quot;)
+app.run_polling()
+</code></pre>
+
+<h3>Что изменилось (сравнение)</h3>
+<table>
+<thead>
+<tr>
+<th>Было (урок 4.1)</th>
+<th>Стало (урок 4.2)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>conversations = {}</code></td>
+<td><code>from database import ...</code></td>
+</tr>
+<tr>
+<td><code>conversations[user_id] = []</code></td>
+<td><code>clear_history(user_id)</code></td>
+</tr>
+<tr>
+<td><code>conversations[user_id].append(...)</code></td>
+<td><code>save_message(user_id, "user", text)</code></td>
+</tr>
+<tr>
+<td><code>messages=conversations[user_id]</code></td>
+<td><code>messages=get_history(user_id)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Обрати внимание: вызов Claude API <strong>вообще не изменился</strong>. <code>messages=history</code> работает точно так же — потому что <code>get_history()</code> возвращает данные в том же формате <code>[{"role": "...", "content": "..."}]</code>.</p>
+<h3>Структура проекта</h3>
+<pre class="highlight"><code>my-telegram-bot/
+    ai_bot.py          # Основной бот
+    database.py        # Работа с базой данных
+    bot_history.db     # Файл базы данных (создаётся автоматически)
+    .env               # Токены
+    .env.example       # Шаблон
+    requirements.txt   # Зависимости
+    .gitignore         # Что не загружать в git
+</code></pre>
+
+<p><strong>.gitignore</strong> (обновлённый):</p>
+<pre class="highlight"><code>.env
+__pycache__/
+*.db
+</code></pre>
+
+<p>Добавили <code>*.db</code> — файл базы данных тоже не нужно загружать в git. У каждого будет своя база.</p>
+<hr />
+<h2>Проверяем, что база работает</h2>
+<p>Можно заглянуть в базу прямо из Python:</p>
+<pre class="highlight"><code class="language-python"># check_db.py — скрипт для проверки базы данных
+
+import sqlite3
+
+conn = sqlite3.connect(&quot;bot_history.db&quot;)
+cursor = conn.execute(&quot;SELECT user_id, role, content, timestamp FROM conversations ORDER BY id DESC LIMIT 10&quot;)
+
+for row in cursor.fetchall():
+    user_id, role, content, timestamp = row
+    print(f&quot;[{timestamp}] User {user_id} | {role}: {content[:50]}...&quot;)
+
+conn.close()
+</code></pre>
+
+<p>Запусти после нескольких сообщений боту:</p>
+<pre class="highlight"><code class="language-bash">python check_db.py
+</code></pre>
+
+<p>Увидишь что-то вроде:</p>
+<pre class="highlight"><code>[2024-01-15T10:30:05] User 123456 | assistant: Привет! Чем могу помочь?...
+[2024-01-15T10:30:00] User 123456 | user: Привет!...
+</code></pre>
+
+<p>Данные на диске. Перезапусти бота — история на месте.</p>
+<hr />
+<h2>Визуализация: как устроена таблица</h2>
+<pre class="highlight"><code>Таблица: conversations
+┌────┬──────────┬───────────┬───────────────────┬──────────────────────┐
+│ id │ user_id  │ role      │ content           │ timestamp            │
+├────┼──────────┼───────────┼───────────────────┼──────────────────────┤
+│ 1  │ 123456   │ user      │ Привет!           │ 2024-01-15T10:30:00  │
+│ 2  │ 123456   │ assistant │ Привет! Чем       │ 2024-01-15T10:30:05  │
+│    │          │           │ помочь?           │                      │
+│ 3  │ 789012   │ user      │ What is Python?   │ 2024-01-15T10:31:00  │
+│ 4  │ 789012   │ assistant │ Python — это      │ 2024-01-15T10:31:03  │
+│    │          │           │ язык...           │                      │
+│ 5  │ 123456   │ user      │ Расскажи про SQL  │ 2024-01-15T10:32:00  │
+│ 6  │ 123456   │ assistant │ SQL — это язык    │ 2024-01-15T10:32:04  │
+│    │          │           │ запросов...       │                      │
+└────┴──────────┴───────────┴───────────────────┴──────────────────────┘
+</code></pre>
+
+<ul>
+<li>Каждая строка — одно сообщение</li>
+<li>У каждого пользователя свой <code>user_id</code></li>
+<li><code>SELECT WHERE user_id = 123456</code> вернёт строки 1, 2, 5, 6 (только этого пользователя)</li>
+<li><code>ORDER BY id DESC LIMIT 2</code> вернёт строки 6, 5 (последние две)</li>
+</ul>
+<hr />
+<h2>Частые ошибки</h2>
+<h3>1. Забыл <code>commit()</code></h3>
+<pre class="highlight"><code>Проблема: данные записываются, но после перезапуска пропадают
+Причина: без commit() данные остаются в памяти
+Решение: используй `with conn:` — он вызывает commit() автоматически
+</code></pre>
+
+<h3>2. SQL-инъекция</h3>
+<pre class="highlight"><code class="language-python"># ОПАСНО — пользователь может уничтожить базу
+conn.execute(f&quot;SELECT * FROM conversations WHERE user_id = {user_id}&quot;)
+
+# БЕЗОПАСНО — используй ? (placeholder)
+conn.execute(&quot;SELECT * FROM conversations WHERE user_id = ?&quot;, (user_id,))
+</code></pre>
+
+<h3>3. Кортеж из одного элемента</h3>
+<pre class="highlight"><code class="language-python"># ОШИБКА — Python думает, что это просто число в скобках
+conn.execute(&quot;SELECT * FROM conversations WHERE user_id = ?&quot;, (user_id))
+
+# ПРАВИЛЬНО — запятая после user_id делает это кортежем
+conn.execute(&quot;SELECT * FROM conversations WHERE user_id = ?&quot;, (user_id,))
+</code></pre>
+
+<p>В Python <code>(42)</code> — это просто число 42 в скобках. А <code>(42,)</code> — это кортеж (tuple) из одного элемента. SQLite ожидает кортеж, не число.</p>
+<h3>4. Файл базы в git</h3>
+<pre class="highlight"><code>Проблема: файл .db попал в GitHub
+Решение: добавь *.db в .gitignore ДО первого коммита
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Запусти бота с базой данных</h3>
+<p>Создай файл <code>database.py</code>, обнови <code>ai_bot.py</code>. Поговори с ботом, затем перезапусти его (<code>Ctrl+C</code> → <code>python ai_bot.py</code>). Напиши "О чём мы говорили?" — бот должен помнить.</p>
+<h3>Задание 2: Скрипт проверки</h3>
+<p>Запусти <code>check_db.py</code> — убедись, что сообщения сохраняются в базе с правильными user_id, role и timestamp.</p>
+<h3>Задание 3: Команда /stats</h3>
+<p>Добавь команду <code>/stats</code>, которая показывает пользователю, сколько сообщений он отправил:</p>
+<pre class="highlight"><code class="language-python">async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    conn = sqlite3.connect(&quot;bot_history.db&quot;)
+    cursor = conn.execute(
+        &quot;SELECT COUNT(*) FROM conversations WHERE user_id = ? AND role = 'user'&quot;,
+        (user_id,)
+    )
+    count = cursor.fetchone()[0]
+    conn.close()
+    await update.message.reply_text(f&quot;Ты отправил(а) {count} сообщений.&quot;)
+</code></pre>
+
+<p>Не забудь зарегистрировать обработчик: <code>app.add_handler(CommandHandler("stats", stats))</code></p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Почему SQLite лучше JSON-файла для бота?</p>
+<details>
+<summary>Ответ</summary>
+
+SQLite безопасно обрабатывает одновременные запросы (когда два пользователя пишут одновременно). JSON-файл при одновременной записи может потерять данные — один обработчик перезапишет изменения другого. Также SQLite быстро ищет по условию (`WHERE user_id = ?`), а в JSON нужно загрузить весь файл и искать циклом.
+</details>
+
+<p><strong>Задача 2:</strong> Что делает <code>?</code> в SQL-запросе?</p>
+<details>
+<summary>Ответ</summary>
+
+`?` — это заполнитель (placeholder). Python подставляет значения из кортежа безопасно, экранируя специальные символы. Это защита от SQL-инъекции — атаки, при которой пользователь вставляет вредоносный SQL-код через ввод данных.
+</details>
+
+<p><strong>Задача 3:</strong> Зачем <code>reversed()</code> в функции <code>get_history()</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+Мы запрашиваем `ORDER BY id DESC LIMIT 20` — это возвращает 20 последних сообщений, но от новых к старым. Claude API ожидает сообщения в хронологическом порядке (от старых к новым). `reversed()` переворачивает список обратно в правильный порядок.
+</details>
+
+<p><strong>Задача 4:</strong> Что произойдёт, если убрать <code>conn.commit()</code> после INSERT?</p>
+<details>
+<summary>Ответ</summary>
+
+Данные запишутся в память, но не сохранятся на диск. Пока программа работает — всё будет выглядеть нормально. Но при перезапуске эти данные пропадут. `commit()` — это как нажать Ctrl+S для базы данных. Используй `with conn:` — тогда commit() вызывается автоматически.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>База данных</strong></td>
+<td>Программа для надёжного хранения и поиска данных</td>
+</tr>
+<tr>
+<td><strong>SQLite</strong></td>
+<td>Лёгкая база данных, встроенная в Python. Хранит всё в одном файле</td>
+</tr>
+<tr>
+<td><strong>SQL</strong></td>
+<td>Язык запросов к базам данных (Structured Query Language)</td>
+</tr>
+<tr>
+<td><strong>Таблица</strong></td>
+<td>Структура данных со столбцами и строками (как в Excel)</td>
+</tr>
+<tr>
+<td><strong>CREATE TABLE</strong></td>
+<td>SQL-команда: создать таблицу</td>
+</tr>
+<tr>
+<td><strong>INSERT INTO</strong></td>
+<td>SQL-команда: добавить строку в таблицу</td>
+</tr>
+<tr>
+<td><strong>SELECT</strong></td>
+<td>SQL-команда: найти и вернуть данные</td>
+</tr>
+<tr>
+<td><strong>DELETE</strong></td>
+<td>SQL-команда: удалить строки</td>
+</tr>
+<tr>
+<td><strong>WHERE</strong></td>
+<td>Условие в запросе (фильтр)</td>
+</tr>
+<tr>
+<td><strong>ORDER BY</strong></td>
+<td>Сортировка результатов (ASC — по возрастанию, DESC — по убыванию)</td>
+</tr>
+<tr>
+<td><strong>LIMIT</strong></td>
+<td>Ограничить количество возвращаемых строк</td>
+</tr>
+<tr>
+<td><strong>PRIMARY KEY</strong></td>
+<td>Уникальный идентификатор строки (автоматический номер)</td>
+</tr>
+<tr>
+<td><strong>NOT NULL</strong></td>
+<td>Поле обязательно для заполнения</td>
+</tr>
+<tr>
+<td><strong>commit()</strong></td>
+<td>Сохранить изменения на диск (как Ctrl+S)</td>
+</tr>
+<tr>
+<td><strong>placeholder (?)</strong></td>
+<td>Безопасная подстановка значений в SQL-запрос</td>
+</tr>
+<tr>
+<td><strong>SQL-инъекция</strong></td>
+<td>Атака через вставку вредоносного SQL-кода в пользовательский ввод</td>
+</tr>
+<tr>
+<td><strong>Race condition</strong></td>
+<td>Проблема при одновременном доступе к ресурсу (гонка данных)</td>
+</tr>
+<tr>
+<td><strong>cursor</strong></td>
+<td>Объект для получения результатов SQL-запроса</td>
+</tr>
+<tr>
+<td><strong>fetchall()</strong></td>
+<td>Получить все строки результата как список</td>
+</tr>
+<tr>
+<td><strong>fetchone()</strong></td>
+<td>Получить одну строку результата (или None)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Проблема:
+  conversations = {} → данные в оперативной памяти → пропадают при перезапуске
+
+Решение:
+  SQLite → данные на диске → переживают перезапуск, сбои, Ctrl+C
+
+Что нужно знать:
+  1. import sqlite3            — встроен в Python, ничего устанавливать не нужно
+  2. conn = sqlite3.connect()  — открыть/создать базу данных
+  3. conn.execute(&quot;SQL&quot;, (?))  — выполнить запрос (всегда через ?)
+  4. with conn:                — автоматический commit/rollback
+  5. conn.close()              — закрыть соединение
+
+5 SQL-команд:
+  CREATE TABLE — создать таблицу
+  INSERT INTO  — добавить данные
+  SELECT       — найти данные
+  DELETE       — удалить данные
+  UPDATE       — изменить данные
+
+Безопасность:
+  ✓ Всегда используй ? (placeholders) — защита от SQL-инъекций
+  ✓ Никогда не вставляй пользовательские данные в SQL через f-строки
+  ✓ Добавь *.db в .gitignore
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Бот теперь помнит разговоры между перезапусками. Но он всё ещё работает только на твоём компьютере — закрыла ноутбук, бот не доступен. В следующем уроке — <strong>сервер и деплой</strong>: как запустить бота на удалённом сервере, чтобы он работал 24/7.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="4-1-telegram.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="4-3-deploy.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

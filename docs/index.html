@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Academy — От нуля до создания AI-продуктов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+/* ===== BASE ===== */
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;
+  color:#0a0a0a;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* Dot grid pattern */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;
+  opacity:0.06;
+  pointer-events:none;
+  z-index:0;
+}
+body>*{position:relative;z-index:1}
+
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announce{
+  background:#0a0a0a;
+  color:#f5f5f0;
+  text-align:center;
+  padding:10px 20px;
+  font-size:11px;
+  font-family:'Space Mono',monospace;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+/* ===== NAV ===== */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 28px;
+  max-width:780px;
+  margin:0 auto;
+}
+.nav__logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:18px;
+  letter-spacing:-0.5px;
+}
+.theme-toggle{
+  background:none;
+  border:1px solid #ccc;
+  border-radius:4px;
+  padding:6px 14px;
+  cursor:pointer;
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  color:#666;
+  transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== HERO ===== */
+.hero{
+  text-align:center;
+  padding:72px 28px 48px;
+}
+.hero__badge{
+  display:inline-block;
+  background:#0a0a0a;
+  color:#f5f5f0;
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  padding:6px 16px;
+  letter-spacing:0.5px;
+  margin-bottom:28px;
+}
+.hero__title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:52px;
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:-2px;
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+.hero__title-accent{color:#999}
+.hero__subtitle{
+  font-family:'Space Mono',monospace;
+  color:#666;
+  font-size:14px;
+  line-height:1.7;
+  max-width:500px;
+  margin:0 auto;
+}
+
+/* ===== PROGRESS ===== */
+.progress{padding:0 0 40px}
+.progress__info{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#999;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.progress__bar{
+  width:100%;height:4px;
+  background:#ddd;
+  overflow:hidden;
+}
+.progress__fill{
+  height:100%;
+  background:#c8e600;
+  transition:width .4s ease;
+  width:0%;
+}
+
+/* ===== BIG CARDS ===== */
+.big-cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  padding-bottom:64px;
+}
+.big-card{
+  border:2px solid #0a0a0a;
+  padding:36px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s ease;
+  display:block;
+}
+.big-card:hover{
+  transform:scale(1.04);
+  border-color:#c8e600;
+  box-shadow:0 0 0 2px #c8e600;
+}
+.big-card:active{
+  background:#c8e600;
+  transform:scale(1.02);
+}
+.big-card__icon{font-size:28px;margin-bottom:12px;display:block}
+.big-card__title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.big-card--disabled{
+  cursor:not-allowed;pointer-events:none;
+  border-color:#ccc;color:#999;opacity:0.5;
+}
+.big-card--disabled .big-card__icon{filter:grayscale(1)}
+body.dark .big-card--disabled{border-color:#222;color:#555;opacity:0.45}
+body.girls .big-card--disabled{border-color:#e0d5d0;color:#b0a0a0;opacity:0.55}
+
+/* ===== STAGES ===== */
+.stage{margin-bottom:56px}
+.stage__header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:6px;
+}
+.stage__num{
+  background:#c8e600;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  padding:4px 10px;
+  display:inline-block;
+  line-height:1;
+}
+.stage__title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:-0.5px;
+}
+.stage__meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.stage__desc{font-size:13px;color:#666}
+.stage__counter{font-size:13px;color:#999;font-variant-numeric:tabular-nums}
+
+/* ===== LESSON ROWS ===== */
+.lesson-list{display:flex;flex-direction:column;gap:8px}
+.lesson-row{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.lesson-card{
+  flex-shrink:0;
+  width:220px;
+  border:1.5px solid #0a0a0a;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  transition:all .2s ease;
+  text-decoration:none;
+  color:#0a0a0a;
+  position:relative;
+}
+.lesson-card:hover{
+  border-color:#c8e600;
+  box-shadow:0 0 0 1.5px #c8e600;
+  transform:translateX(4px);
+}
+.lesson-card--completed{
+  border-color:#a0c400;
+  background:rgba(200,230,0,0.08);
+}
+.lesson-card__icon{font-size:16px;flex-shrink:0}
+.lesson-card__name{
+  font-family:'Space Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.3;
+}
+.lesson-card__check{
+  position:absolute;
+  top:4px;right:6px;
+  font-size:10px;
+}
+.lesson-row__desc{
+  font-size:13px;
+  color:#888;
+  line-height:1.5;
+  flex:1;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  padding:64px 28px 40px;
+  text-align:center;
+  border-top:1.5px solid #ddd;
+  margin-top:64px;
+}
+.footer__label{font-size:12px;color:#999;margin-bottom:24px;text-transform:uppercase;letter-spacing:1px}
+.footer__avatar{
+  width:80px;height:80px;border-radius:50%;
+  object-fit:cover;margin-bottom:14px;
+  border:2px solid #ddd;
+}
+.footer__name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;margin-bottom:4px;
+}
+.footer__role{font-size:13px;color:#888;margin-bottom:10px}
+.footer__instagram{font-size:13px;color:#0a0a0a;border-bottom:1px solid #ccc}
+.footer__instagram:hover{border-color:#c8e600}
+.footer__copy{font-size:11px;color:#ccc;margin-top:32px}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{
+  background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);
+  opacity:0.04;
+}
+body.dark .announce{background:#1a1a1a;color:#888}
+body.dark .nav__logo{color:#e5e5e5}
+body.dark .theme-toggle{border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+body.dark .hero__badge{background:#c8e600;color:#0a0a0a}
+body.dark .hero__title{color:#e5e5e5}
+body.dark .hero__title-accent{color:#555}
+body.dark .hero__subtitle{color:#888}
+body.dark .progress__bar{background:#222}
+body.dark .progress__info{color:#555}
+body.dark .big-card{border-color:#333;color:#e5e5e5}
+body.dark .big-card:hover{border-color:#c8e600;box-shadow:0 0 0 2px #c8e600}
+body.dark .big-card:active{background:#c8e600;color:#0a0a0a}
+body.dark .big-card__title{color:#e5e5e5}
+body.dark .stage__title{color:#e5e5e5}
+body.dark .stage__desc{color:#888}
+body.dark .stage__counter{color:#555}
+body.dark .lesson-card{border-color:#333;color:#e5e5e5}
+body.dark .lesson-card:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+body.dark .lesson-card--completed{border-color:#6b8a00;background:rgba(200,230,0,0.05)}
+body.dark .lesson-row__desc{color:#666}
+body.dark .footer{border-top-color:#222}
+body.dark .footer__name{color:#e5e5e5}
+body.dark .footer__instagram{color:#e5e5e5;border-color:#333}
+body.dark .footer__avatar{border-color:#333}
+body.dark a{color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{
+  background:#f5f0ed;color:#3a3a3a;
+  font-family:'Georgia','Times New Roman',serif;
+}
+body.girls::before{
+  background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);
+  opacity:0.04;
+}
+body.girls .announce{background:#3a3a3a}
+body.girls .nav__logo{font-family:'Georgia',serif;font-weight:400;font-size:20px;letter-spacing:0}
+body.girls .theme-toggle{border-color:#d0c5c0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+body.girls .hero__badge{background:#c47a8a;color:#fff}
+body.girls .hero__title{
+  font-family:'Georgia',serif;font-weight:400;
+  text-transform:none;letter-spacing:0;font-size:48px;
+}
+body.girls .hero__title-accent{color:#c47a8a}
+body.girls .hero__subtitle{font-family:'Georgia',serif;color:#9a8a8a;font-style:italic}
+body.girls .progress__fill{background:#d4a0aa}
+body.girls .progress__bar{background:#e8ddd8}
+body.girls .progress__info{color:#b0a0a0}
+body.girls .big-card{border-color:#d0c5c0;background:#fff}
+body.girls .big-card:hover{border-color:#c47a8a;box-shadow:0 4px 20px rgba(196,122,138,0.12);transform:scale(1.04)}
+body.girls .big-card:active{background:#f8e8ec}
+body.girls .big-card__title{font-family:'Georgia',serif;text-transform:none;letter-spacing:0}
+body.girls .stage__num{background:#f8e0e6;color:#c47a8a}
+body.girls .stage__title{font-family:'Georgia',serif;text-transform:none;font-weight:400;letter-spacing:0}
+body.girls .stage__desc{color:#9a8a8a;font-style:italic}
+body.girls .stage__counter{color:#b0a0a0}
+body.girls .lesson-card{border-color:#d0c5c0;background:#fff;color:#3a3a3a}
+body.girls .lesson-card:hover{border-color:#c47a8a;box-shadow:0 0 0 1.5px #c47a8a}
+body.girls .lesson-card--completed{border-color:#b8d0b8;background:rgba(180,220,180,0.1)}
+body.girls .lesson-card__name{font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-row__desc{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .footer{border-top-color:#e0d5d0}
+body.girls .footer__name{font-family:'Georgia',serif;font-weight:400}
+body.girls .footer__instagram{color:#c47a8a;border-color:#d0c5c0}
+body.girls .footer__copy{color:#c0b0b0}
+body.girls .footer__avatar{border-color:#e0d5d0}
+body.girls a{color:#3a3a3a}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  .hero__title{font-size:36px}
+  .hero{padding:48px 20px 32px}
+  .lesson-row{flex-direction:column;align-items:stretch;gap:4px}
+  .lesson-card{width:100%}
+  .lesson-row__desc{padding-left:4px;font-size:12px}
+  .big-cards{gap:12px}
+  .big-card{padding:28px 16px}
+  .container{padding:0 20px}
+  .nav{padding:16px 20px}
+  body.girls .hero__title{font-size:34px}
+}
+  </style>
+</head>
+<body>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announce">30 уроков · от нуля до AI-продуктов · бесплатно</div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav__logo">AI ACADEMY</div>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-label">&#x1F338; для девочек</span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__badge">🎓 Курс для тех, кто никогда не кодил</div>
+    <h1 class="hero__title">
+      НАУЧИСЬ СОЗДАВАТЬ<br>AI-ПРОДУКТЫ <span class="hero__title-accent">\\</span>
+    </h1>
+    <p class="hero__subtitle">
+      Пошаговый путь от нуля. 30 уроков, 5 этапов, практика на каждом шаге.
+    </p>
+  </section>
+
+  <!-- PROGRESS -->
+  <div class="progress container">
+    <div class="progress__info">
+      <span>Прогресс</span>
+      <span id="progress-text">0 из 30 уроков</span>
+    </div>
+    <div class="progress__bar">
+      <div class="progress__fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- BIG CARDS -->
+  <div class="big-cards container" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="big-card big-card--disabled">
+      <span class="big-card__icon">📚</span>
+      <span class="big-card__title">Обучение</span>
+    </div>
+    <a href="claude-code.html" class="big-card">
+      <span class="big-card__icon">⚡</span>
+      <span class="big-card__title">Claude Code</span>
+    </a>
+    <div class="big-card big-card--disabled">
+      <span class="big-card__icon">📂</span>
+      <span class="big-card__title">Материалы</span>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__label">В создании обучения участвовали:</div>
+    <img src="img/avatar.jpg" alt="Фото" class="footer__avatar" onerror="this.style.display='none'">
+    <div class="footer__name">Катя Цаприлова</div>
+    <div class="footer__role">Создатель</div>
+    <a href="https://instagram.com/k8tsap" class="footer__instagram" target="_blank">@k8tsap</a>
+    <div class="footer__copy">AI Academy · 2025</div>
+  </footer>
+
+  <script>
+// ===== PROGRESS =====
+(function(){
+  'use strict';
+  var SK='ai-academy-progress',TL=30;
+  function gp(){try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}}}
+  document.addEventListener('DOMContentLoaded',function(){
+    var p=gp(),cc=Object.keys(p).length;
+    var pt=document.getElementById('progress-text'),pf=document.getElementById('progress-fill');
+    if(pt)pt.textContent=cc+' из '+TL+' уроков';
+    if(pf)pf.style.width=(cc/TL*100)+'%';
+  });
+})();
+
+// ===== THEME =====
+var themes=['light','dark','girls'];
+var themeLabels={light:'🌸 для девочек',dark:'💪 нормальный пацан',girls:'☀ светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+  </script>
+</body>
+</html>

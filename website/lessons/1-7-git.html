@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git и GitHub — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 8 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 1.7 — Git и GitHub</h1>
+<blockquote>
+<p>Git — программа, которая запоминает каждое изменение в твоём коде. GitHub — сайт, где ты хранишь копию кода в интернете.</p>
+</blockquote>
+<hr />
+<h2>Зачем нужен Git</h2>
+<p>Представь: ты написала программу. Она работает. Ты решила добавить новую функцию, поменяла 10 строк — и всё сломалось. Ты не помнишь, какие строки были до этого. Код не работает, вернуться назад невозможно.</p>
+<p>Git это предотвращает. Он работает как <strong>машина времени для кода</strong>:
+- Ты говоришь Git: "запомни код как он есть сейчас" (это называется <strong>коммит</strong>)
+- Через час ты что-то сломала → говоришь Git: "верни мне код каким он был час назад"
+- Git возвращает всё обратно</p>
+<p><strong>Аналогия:</strong> Ctrl+Z (отмена) в любом редакторе. Но Git помнит не последние 10 действий, а <strong>всю историю</strong> — хоть за год назад.</p>
+<hr />
+<h2>Зачем нужен GitHub</h2>
+<p>Git хранит историю на <strong>твоём компьютере</strong>. Но что если ноутбук сломается? Код потерян.</p>
+<p>GitHub — это сайт (github.com), куда ты загружаешь копию своего кода. Теперь код лежит и у тебя, и в интернете.</p>
+<p>Зачем это нужно:</p>
+<ul>
+<li><strong>Копия кода в интернете</strong> — ноутбук сломался, украли, залила кофем → заходишь на GitHub с любого другого компьютера и скачиваешь свой код обратно</li>
+<li><strong>Запуск на сервере</strong> — когда ты хочешь, чтобы твоя программа работала 24/7 (как твой morning-digest бот), сервер берёт код с GitHub и запускает его. Без GitHub серверу неоткуда взять твой код</li>
+<li><strong>Другие видят твои проекты</strong> — когда ты ищешь работу, работодатель заходит на твой GitHub и видит, что ты умеешь. Это как портфолио дизайнера, но для программиста</li>
+</ul>
+<hr />
+<h2>Основные понятия</h2>
+<h3>Репозиторий (repo)</h3>
+<p>Просто папка проекта, за которой Git следит. Ты говоришь Git "следи за этой папкой" — и он начинает запоминать все изменения внутри.</p>
+<pre class="highlight"><code class="language-bash"># Создать репозиторий = сказать Git &quot;следи за этой папкой&quot;
+git init
+# Появится скрытая папка .git — в ней Git хранит всю историю
+</code></pre>
+
+<h3>Коммит (commit)</h3>
+<p>Сохранённая версия кода. Ты нажимаешь "сохранить" — и Git запоминает, как выглядит весь код прямо сейчас.</p>
+<p><strong>Аналогия:</strong> Фото на телефоне. Каждое фото — момент времени. Ты можешь листать фотографии назад и видеть, как всё выглядело раньше. Коммит — это "фотография" кода в определённый момент. Ты можешь пролистать все коммиты и увидеть, как код менялся.</p>
+<h3>Ветка (branch)</h3>
+<p>Допустим, у тебя работающий код. Ты хочешь попробовать добавить новую функцию, но боишься сломать то, что уже работает.</p>
+<p>Ветка — это <strong>копия кода, в которой ты экспериментируешь</strong>. Оригинал не трогается.</p>
+<p><strong>Аналогия:</strong> Ты редактируешь фото в Instagram. Ты не рисуешь сразу на оригинале — приложение создаёт копию, ты накладываешь фильтры, крутишь яркость. Если нравится результат — сохраняешь. Если нет — нажимаешь "отменить" и оригинал в порядке.</p>
+<p>Ветка в Git — то же самое:
+- Создала ветку → работаешь в копии
+- Получилось → объединяешь с оригиналом
+- Не получилось → удаляешь копию, оригинал не пострадал</p>
+<hr />
+<h2>Первый репозиторий — пошагово</h2>
+<h3>1. Создаём проект и говорим Git следить за ним</h3>
+<pre class="highlight"><code class="language-bash">mkdir my-project
+cd my-project
+git init
+# → Initialized empty Git repository
+# Git теперь следит за папкой my-project
+</code></pre>
+
+<h3>2. Создаём файл</h3>
+<pre class="highlight"><code class="language-bash">touch app.py
+</code></pre>
+
+<p>Открой <code>app.py</code> и напиши:</p>
+<pre class="highlight"><code class="language-python">print(&quot;Привет, мир!&quot;)
+</code></pre>
+
+<h3>3. Проверяем статус — что Git видит</h3>
+<pre class="highlight"><code class="language-bash">git status
+# Git покажет:
+# Untracked files: app.py
+# &quot;Untracked&quot; = &quot;я вижу этот файл, но пока не слежу за ним&quot;
+</code></pre>
+
+<h3>4. Говорим Git: "следи за этим файлом"</h3>
+<pre class="highlight"><code class="language-bash">git add app.py
+# Теперь файл в зоне подготовки — готов к сохранению
+
+git status
+# Changes to be committed: app.py
+# &quot;Готов к сохранению&quot;
+</code></pre>
+
+<h3>5. Сохраняем версию (делаем коммит)</h3>
+<pre class="highlight"><code class="language-bash">git commit -m &quot;Первый коммит: добавила app.py&quot;
+# -m = message = сообщение с описанием &quot;что я сделала&quot;
+# Версия сохранена. Git запомнил код как он есть сейчас.
+</code></pre>
+
+<h3>6. Смотрим историю сохранений</h3>
+<pre class="highlight"><code class="language-bash">git log --oneline
+# → abc1234 Первый коммит: добавила app.py
+# Показывает все сохранённые версии — от новых к старым
+</code></pre>
+
+<hr />
+<h2>Цикл работы с Git</h2>
+<p>Это ты будешь делать каждый раз:</p>
+<pre class="highlight"><code class="language-bash"># 1. Написала или изменила код
+
+# 2. Проверяешь что изменилось
+git status
+
+# 3. Добавляешь изменения в подготовку
+git add app.py
+# или добавить все изменённые файлы разом:
+git add .
+
+# 4. Сохраняешь версию с описанием
+git commit -m &quot;Описание что сделала&quot;
+</code></pre>
+
+<p><strong>Как часто сохранять?</strong> После каждого логичного шага. Добавила новую функцию — коммит. Исправила ошибку — коммит. Не жди конца дня.</p>
+<hr />
+<h2>Что писать в сообщении коммита</h2>
+<p>Сообщение отвечает на вопрос "что я сделала":</p>
+<pre class="highlight"><code class="language-bash"># Понятно
+git commit -m &quot;Добавила отправку уведомлений&quot;
+git commit -m &quot;Исправила ошибку в расчёте скидки&quot;
+
+# Непонятно — через неделю ты сама не вспомнишь что менялось
+git commit -m &quot;Изменения&quot;
+git commit -m &quot;Фикс&quot;
+</code></pre>
+
+<hr />
+<h2>GitHub — загружаем код в интернет</h2>
+<h3>1. Создай аккаунт на github.com</h3>
+<h3>2. Создай новый репозиторий на сайте</h3>
+<ul>
+<li>Нажми "New repository" (зелёная кнопка)</li>
+<li>Дай имя (например <code>my-project</code>)</li>
+<li>Нажми "Create repository"</li>
+</ul>
+<h3>3. Свяжи свой проект с GitHub</h3>
+<pre class="highlight"><code class="language-bash">git remote add origin https://github.com/username/my-project.git
+# Ты говоришь Git: &quot;когда я попрошу отправить код в интернет — отправляй вот сюда&quot;
+# &quot;origin&quot; — стандартное имя для удалённого хранилища
+# &quot;remote&quot; = удалённый (в интернете)
+
+git branch -M main
+# Называем основную ветку &quot;main&quot; (стандартное имя)
+
+git push -u origin main
+# push = &quot;отправить&quot; — код уходит на GitHub
+# Теперь на github.com/username/my-project лежит твой код
+</code></pre>
+
+<h3>4. Дальнейшая работа</h3>
+<pre class="highlight"><code class="language-bash"># Изменила код → добавила → сохранила → отправила
+git add .
+git commit -m &quot;Добавила новую функцию&quot;
+git push
+# Код обновился на GitHub
+</code></pre>
+
+<hr />
+<h2>git diff — посмотреть что изменилось</h2>
+<pre class="highlight"><code class="language-bash">git diff
+# Показывает разницу между текущим кодом и последним сохранением
+
+# Строки с + — ты добавила
+# Строки с - — ты удалила
+</code></pre>
+
+<hr />
+<h2>.gitignore — что НЕ загружать в интернет</h2>
+<p>Есть файлы, которые нельзя загружать на GitHub. Например, <code>.env</code> с паролями. Если загрузишь — любой человек в интернете увидит твои ключи.</p>
+<pre class="highlight"><code class="language-bash"># Создай файл .gitignore в папке проекта
+# Каждая строка — то, что Git должен игнорировать
+
+.env                # твои пароли и API-ключи
+__pycache__/        # временные файлы Python (создаются автоматически)
+.venv/              # виртуальное окружение Python
+node_modules/       # библиотеки JavaScript (тяжёлые, скачиваются заново)
+.DS_Store           # служебный файл macOS (создаётся автоматически)
+</code></pre>
+
+<hr />
+<h2>Клонирование — скачать чужой проект</h2>
+<p>Кто-то выложил проект на GitHub. Ты хочешь его себе:</p>
+<pre class="highlight"><code class="language-bash">git clone https://github.com/openclaw/openclaw.git
+# clone = скачать весь проект со всей историей
+# Появится папка openclaw/ — заходи и изучай
+
+cd openclaw
+ls
+</code></pre>
+
+<hr />
+<h2>Ветки на практике</h2>
+<pre class="highlight"><code class="language-bash"># Создать новую ветку (копию для экспериментов) и перейти в неё
+git checkout -b experiment
+# -b = создать новую ветку с именем &quot;experiment&quot;
+# Теперь ты в копии. Основной код в безопасности.
+
+# Делаешь изменения, сохраняешь...
+git add .
+git commit -m &quot;Пробую новую фичу&quot;
+
+# Если получилось — объединяем с основным кодом
+git checkout main          # возвращаемся к оригиналу
+git merge experiment       # merge = объединить изменения из ветки
+
+# Если не получилось — просто удаляем ветку
+git checkout main          # возвращаемся к оригиналу
+git branch -d experiment   # удаляем неудачный эксперимент
+# Основной код не пострадал
+</code></pre>
+
+<hr />
+<h2>Реальный сценарий: создание AI-проекта</h2>
+<pre class="highlight"><code class="language-bash"># 1. Создаём проект
+mkdir ai-bot
+cd ai-bot
+git init
+
+# 2. Сразу создаём .gitignore чтобы не загрузить секреты
+touch .gitignore
+# Записываем в .gitignore:  .env
+
+# 3. Создаём файлы
+touch app.py requirements.txt .env
+
+# 4. Первое сохранение
+git add .
+git commit -m &quot;Создала проект&quot;
+
+# 5. Пишем код... сохраняем по шагам
+git add app.py
+git commit -m &quot;Добавила подключение к Claude API&quot;
+
+# 6. Загружаем на GitHub
+git remote add origin https://github.com/username/ai-bot.git
+git push -u origin main
+
+# Готово — код на GitHub, можно деплоить на сервер
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<pre class="highlight"><code class="language-bash"># 1. Создай папку и инициализируй Git
+mkdir git-practice
+cd git-practice
+git init
+
+# 2. Создай файл hello.py с print(&quot;Hello!&quot;)
+touch hello.py
+
+# 3. Проверь статус
+git status
+
+# 4. Добавь и сохрани
+git add hello.py
+git commit -m &quot;Добавила hello.py&quot;
+
+# 5. Измени файл — добавь ещё одну строку
+# 6. Посмотри что изменилось
+git diff
+
+# 7. Добавь и сохрани
+git add hello.py
+git commit -m &quot;Добавила второе сообщение&quot;
+
+# 8. Посмотри историю
+git log --oneline
+</code></pre>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Ты изменила 3 файла. Как сохранить только <code>app.py</code>, а остальные пока не трогать?</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-bash">git add app.py
+git commit -m &quot;Обновила app.py&quot;
+</code></pre>
+
+
+`git add .` добавляет всё, а `git add app.py` — только один файл.
+</details>
+
+<p><strong>Задача 2:</strong> Ты случайно загрузила <code>.env</code> с паролями на GitHub. Как сделать так, чтобы это больше не повторилось?</p>
+<details>
+<summary>Ответ</summary>
+
+Добавить `.env` в файл `.gitignore`:
+
+<pre class="highlight"><code>.env
+</code></pre>
+
+
+Git перестанет видеть этот файл и не будет предлагать его сохранять.
+</details>
+
+<p><strong>Задача 3:</strong> Ты хочешь скачать проект OpenClaw с GitHub себе на компьютер. Какая команда?</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-bash">git clone https://github.com/openclaw/openclaw.git
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Что делают эти три команды по порядку?</p>
+<pre class="highlight"><code class="language-bash">git add .
+git commit -m &quot;Добавила авторизацию&quot;
+git push
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+1. `git add .` — подготовить все изменённые файлы к сохранению
+2. `git commit -m "..."` — сохранить версию кода с описанием
+3. `git push` — отправить сохранённую версию на GitHub (в интернет)
+</details>
+
+<p><strong>Задача 5:</strong> Ты хочешь попробовать рискованное изменение, но боишься сломать работающий код. Что делать?</p>
+<details>
+<summary>Ответ</summary>
+
+Создать ветку (копию для экспериментов):
+
+<pre class="highlight"><code class="language-bash">git checkout -b experiment
+</code></pre>
+
+
+Если получилось — `git checkout main` и `git merge experiment`.
+Если нет — `git checkout main` — оригинал не пострадал.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git</td>
+<td>Программа для отслеживания изменений в коде — как машина времени для проекта</td>
+</tr>
+<tr>
+<td>GitHub</td>
+<td>Сайт-хранилище для Git-репозиториев, где можно делиться кодом и работать в команде</td>
+</tr>
+<tr>
+<td>Репозиторий</td>
+<td>Папка проекта, в которой Git следит за всеми изменениями файлов</td>
+</tr>
+<tr>
+<td>commit</td>
+<td>Сохранённая «версия» проекта с описанием — точка, к которой можно вернуться</td>
+</tr>
+<tr>
+<td>push</td>
+<td>Команда для отправки локальных коммитов на GitHub (в облако)</td>
+</tr>
+<tr>
+<td>pull</td>
+<td>Команда для скачивания свежих изменений с GitHub на свой компьютер</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>Команда для копирования чужого репозитория с GitHub к себе на компьютер</td>
+</tr>
+<tr>
+<td>branch</td>
+<td>Ветка — параллельная копия проекта для экспериментов, не ломая основной код</td>
+</tr>
+<tr>
+<td>merge</td>
+<td>Слияние — объединение изменений из одной ветки в другую</td>
+</tr>
+<tr>
+<td>.gitignore</td>
+<td>Файл со списком того, что Git должен игнорировать (секреты, временные файлы)</td>
+</tr>
+<tr>
+<td>README.md</td>
+<td>Файл-визитка проекта — описание, инструкция по запуску, примеры</td>
+</tr>
+<tr>
+<td>git init</td>
+<td>Команда, которая превращает обычную папку в Git-репозиторий</td>
+</tr>
+<tr>
+<td>git add</td>
+<td>Команда, которая добавляет изменённые файлы в «зону подготовки» перед коммитом</td>
+</tr>
+<tr>
+<td>git status</td>
+<td>Команда, которая показывает текущее состояние репозитория — что изменено, что готово</td>
+</tr>
+<tr>
+<td>git log</td>
+<td>Команда, которая показывает историю всех коммитов проекта</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>1. Git — система контроля версий: сохраняет историю изменений и позволяет откатиться.
+2. GitHub — облачное хранилище для Git-репозиториев и платформа для совместной работы.
+3. Основной цикл: git add → git commit → git push (подготовить → сохранить → отправить).
+4. git status и git log — твои главные инструменты для понимания, что происходит в проекте.
+5. Ветки (branch) — безопасный способ экспериментировать, не трогая рабочий код.
+6. merge объединяет ветку с основной — если эксперимент удался.
+7. clone копирует чужой проект, pull скачивает обновления — так работает командная разработка.
+8. .gitignore — список файлов, которые Git не должен отслеживать (секреты, кэш, .env).
+9. README.md — первое, что видят люди в твоём репозитории, пиши его понятно.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Этап 1 завершён! Ты знаешь: терминал, файлы, Python (переменные, условия, циклы, функции, работа с файлами), Git и GitHub.</p>
+<p>Дальше — <strong>Этап 2: Понимание AI</strong>. Узнаешь, как работают языковые модели, что такое API, и отправишь свой первый запрос к Claude из кода.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="1-6-working-files.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="2-1-llm.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

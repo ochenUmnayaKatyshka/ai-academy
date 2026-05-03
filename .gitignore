@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.local
+*.key
+
+# Raw video files — too big for GitHub, host on YouTube/Vimeo instead
+video-lessons/
+*.mp4
+*.MP4
+*.mov
+*.MOV

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Скрипты с Claude API — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 2 · Урок 6 из 6</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 2.6 — Собираем полезные скрипты с Claude API</h1>
+<blockquote>
+<p>В уроке 2.3 мы создали чат с Claude в терминале. Но чат — это только начало. API можно использовать для автоматизации реальных задач: перевод текстов, анализ отзывов, генерация контента. В этом уроке мы напишем 4 полезных скрипта — каждый решает конкретную задачу. Заодно закрепим всё, что знаем: переменные, функции, файлы, циклы и API.</p>
+</blockquote>
+<hr />
+<h2>Зачем этот урок</h2>
+<p>В предыдущих уроках мы изучали вещи по отдельности:
+- Python: переменные, функции, файлы (уроки 1.3-1.6)
+- AI: API, промпты, токены (уроки 2.1-2.5)</p>
+<p>Теперь соединим всё вместе. Каждый скрипт в этом уроке использует <strong>и Python, и Claude API</strong> для решения задачи, которую вручную делать долго и скучно.</p>
+<pre class="highlight"><code>Что мы построим:
+
+  Скрипт 1: Переводчик файлов
+    Читает текст из файла → переводит через Claude → сохраняет результат
+
+  Скрипт 2: Анализатор отзывов
+    Читает отзывы из файла → Claude определяет тональность каждого
+
+  Скрипт 3: Генератор описаний товаров
+    Список товаров → Claude пишет описание для каждого
+
+  Скрипт 4: Умный обработчик CSV
+    Читает таблицу → Claude анализирует данные → сохраняет отчёт
+</code></pre>
+
+<p>Каждый скрипт — несколько десятков строк. Но они делают реальную работу, которая вручную заняла бы часы.</p>
+<hr />
+<h2>Подготовка</h2>
+<p>Убедись, что установлены библиотеки (из урока 2.3):</p>
+<pre class="highlight"><code class="language-bash">pip3 install anthropic python-dotenv
+</code></pre>
+
+<p>Файл <code>.env</code> в папке проекта:</p>
+<pre class="highlight"><code>ANTHROPIC_API_KEY=sk-ant-api03-твой-ключ
+</code></pre>
+
+<p>Базовая настройка — одинаковая для всех скриптов:</p>
+<pre class="highlight"><code class="language-python">import os
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()  # загружает API-ключ из .env
+client = Anthropic()  # создаёт клиент для работы с Claude
+</code></pre>
+
+<p>Мы уже делали это в уроке 2.3. Если что-то непонятно — вернись туда.</p>
+<hr />
+<h2>Скрипт 1: Переводчик файлов</h2>
+<h3>Задача</h3>
+<p>У тебя есть текст на русском. Нужно перевести на английский и сохранить в файл. Вручную — копировать в переводчик, ждать, копировать обратно. Скрипт делает это за секунды.</p>
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># translator.py — переводит текст из файла через Claude
+
+import os
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+client = Anthropic()
+
+
+def translate(text, target_language=&quot;English&quot;):
+    &quot;&quot;&quot;
+    Отправляет текст в Claude и получает перевод.
+    text — текст для перевода (строка)
+    target_language — на какой язык переводить (по умолчанию English)
+    &quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5&quot;,       # Haiku — быстрый и дешёвый (урок 2.5)
+        max_tokens=2048,                 # максимум токенов в ответе
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Translate the following text to {target_language}. &quot;
+                       f&quot;Return ONLY the translation, nothing else.\n\n{text}&quot;
+            # f-строка (урок 1.3) — вставляем переменные прямо в текст
+        }]
+    )
+    return response.content[0].text
+    # response.content — список блоков ответа
+    # [0] — первый блок
+    # .text — текст этого блока
+
+
+# === ГЛАВНАЯ ЧАСТЬ ПРОГРАММЫ ===
+
+# Шаг 1: Читаем файл с текстом
+input_file = &quot;text_to_translate.txt&quot;
+
+# open() открывает файл, read() читает содержимое (урок 1.6)
+with open(input_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    original_text = f.read()
+
+print(f&quot;Прочитан файл: {input_file}&quot;)
+print(f&quot;Длина текста: {len(original_text)} символов&quot;)
+
+# Шаг 2: Переводим
+print(&quot;Перевожу...&quot;)
+translated = translate(original_text, target_language=&quot;English&quot;)
+
+# Шаг 3: Сохраняем результат
+output_file = &quot;translated.txt&quot;
+
+with open(output_file, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    f.write(translated)
+
+print(f&quot;Перевод сохранён в: {output_file}&quot;)
+</code></pre>
+
+<h3>Как запустить</h3>
+<ol>
+<li>Создай файл <code>text_to_translate.txt</code> с любым текстом на русском:</li>
+</ol>
+<pre class="highlight"><code>Искусственный интеллект меняет мир. Компании используют AI для автоматизации рутинных задач, анализа данных и создания новых продуктов. Через несколько лет AI-ассистенты станут такими же привычными, как смартфоны.
+</code></pre>
+
+<ol>
+<li>Запусти:</li>
+</ol>
+<pre class="highlight"><code class="language-bash">python3 translator.py
+</code></pre>
+
+<ol>
+<li>Открой <code>translated.txt</code> — там будет перевод.</li>
+</ol>
+<h3>Разбор: что здесь нового</h3>
+<pre class="highlight"><code class="language-python">def translate(text, target_language=&quot;English&quot;):
+</code></pre>
+
+<p>Функция с <strong>параметром по умолчанию</strong> (урок 1.5). Если не указать язык — переведёт на английский. Но можно вызвать <code>translate(text, "Spanish")</code> — и переведёт на испанский.</p>
+<pre class="highlight"><code class="language-python">f&quot;Translate the following text to {target_language}. &quot;
+f&quot;Return ONLY the translation, nothing else.\n\n{text}&quot;
+</code></pre>
+
+<p><strong>Промпт</strong> (урок 2.4). Чёткая инструкция: переведи, верни ТОЛЬКО перевод. Без этого Claude может добавить пояснения вроде «Вот перевод:».</p>
+<pre class="highlight"><code class="language-python">with open(input_file, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    original_text = f.read()
+</code></pre>
+
+<p>Чтение файла (урок 1.6). <code>encoding="utf-8"</code> — чтобы кириллица читалась правильно.</p>
+<hr />
+<h2>Скрипт 2: Анализатор отзывов</h2>
+<h3>Задача</h3>
+<p>У тебя список отзывов клиентов. Нужно понять: какие позитивные, какие негативные, какие нейтральные. Вручную — читать каждый и решать. При 100 отзывах — это час работы. Скрипт делает это за минуту.</p>
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># review_analyzer.py — анализирует тональность отзывов
+
+import os
+import json
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+client = Anthropic()
+
+
+def analyze_review(review_text):
+    &quot;&quot;&quot;
+    Отправляет отзыв в Claude → получает тональность.
+    Возвращает словарь: {&quot;sentiment&quot;: &quot;positive/negative/neutral&quot;, &quot;summary&quot;: &quot;...&quot;}
+    &quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5&quot;,
+        max_tokens=200,
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;&quot;&quot;Analyze this customer review. Respond in JSON format:
+{{&quot;sentiment&quot;: &quot;positive&quot; or &quot;negative&quot; or &quot;neutral&quot;, &quot;summary&quot;: &quot;one sentence summary in Russian&quot;}}
+
+Review: {review_text}&quot;&quot;&quot;
+            # Двойные фигурные скобки {{ }} — чтобы Python не путал их
+            # с f-строковыми подстановками {review_text}
+        }]
+    )
+    # Парсим JSON из ответа Claude
+    result = json.loads(response.content[0].text)
+    # json.loads() превращает строку JSON в словарь Python (урок 1.6)
+    return result
+
+
+# === ГЛАВНАЯ ЧАСТЬ ===
+
+# Список отзывов (в реальном проекте — из файла или базы данных)
+reviews = [
+    &quot;Отличный магазин! Заказ пришёл на следующий день, всё целое.&quot;,
+    &quot;Ужасное обслуживание. Ждала посылку 3 недели, никто не отвечал.&quot;,
+    &quot;Нормально, но упаковка могла бы быть лучше.&quot;,
+    &quot;Качество супер, но доставка дорогая. В целом доволен.&quot;,
+    &quot;Больше никогда не закажу. Товар не соответствует описанию.&quot;,
+    &quot;Быстро, удобно, рекомендую!&quot;,
+    &quot;Средненько. Ничего особенного.&quot;,
+]
+
+# Счётчики для статистики
+stats = {&quot;positive&quot;: 0, &quot;negative&quot;: 0, &quot;neutral&quot;: 0}
+
+print(&quot;=== Анализ отзывов ===\n&quot;)
+
+# Проходим по каждому отзыву (цикл for — урок 1.4)
+for i, review in enumerate(reviews, 1):
+    # enumerate(reviews, 1) — нумерация с 1
+    # i = номер, review = текст отзыва
+
+    result = analyze_review(review)
+    sentiment = result[&quot;sentiment&quot;]
+    summary = result[&quot;summary&quot;]
+
+    # Обновляем статистику
+    stats[sentiment] += 1
+    # stats[&quot;positive&quot;] += 1 — увеличиваем счётчик на 1
+
+    # Выводим результат
+    print(f&quot;  #{i}: [{sentiment.upper():8s}] {summary}&quot;)
+    # :8s — форматирование: текст занимает минимум 8 символов (для ровных колонок)
+
+print(f&quot;\n=== Статистика ===&quot;)
+print(f&quot;  Позитивных: {stats['positive']}&quot;)
+print(f&quot;  Негативных: {stats['negative']}&quot;)
+print(f&quot;  Нейтральных: {stats['neutral']}&quot;)
+
+total = len(reviews)
+positive_pct = stats[&quot;positive&quot;] / total * 100
+print(f&quot;\n  Позитивных отзывов: {positive_pct:.0f}%&quot;)
+# :.0f — форматирование числа: 0 знаков после запятой
+</code></pre>
+
+<h3>Пример вывода</h3>
+<pre class="highlight"><code>=== Анализ отзывов ===
+
+  #1: [POSITIVE] Быстрая доставка, товар в порядке.
+  #2: [NEGATIVE] Долгая доставка и отсутствие поддержки.
+  #3: [NEUTRAL ] Средняя оценка, замечание к упаковке.
+  #4: [POSITIVE] Хорошее качество, но дорогая доставка.
+  #5: [NEGATIVE] Товар не соответствует описанию.
+  #6: [POSITIVE] Быстро и удобно.
+  #7: [NEUTRAL ] Ничего особенного.
+
+=== Статистика ===
+  Позитивных: 3
+  Негативных: 2
+  Нейтральных: 2
+
+  Позитивных отзывов: 43%
+</code></pre>
+
+<h3>Разбор: что здесь нового</h3>
+<pre class="highlight"><code class="language-python">json.loads(response.content[0].text)
+</code></pre>
+
+<p>Claude возвращает строку <code>'{"sentiment": "positive", "summary": "..."}'</code>. <code>json.loads()</code> превращает эту строку в словарь Python, чтобы можно было обращаться к полям: <code>result["sentiment"]</code>.</p>
+<pre class="highlight"><code class="language-python">for i, review in enumerate(reviews, 1):
+</code></pre>
+
+<p><code>enumerate()</code> — функция Python, которая добавляет нумерацию. Без неё у тебя только <code>review</code> (текст). С ней — <code>i</code> (номер) и <code>review</code> (текст). <code>1</code> — начать нумерацию с единицы, а не с нуля.</p>
+<pre class="highlight"><code class="language-python">stats[sentiment] += 1
+</code></pre>
+
+<p><code>+=</code> — сокращение для «прибавить». <code>stats["positive"] += 1</code> — то же самое, что <code>stats["positive"] = stats["positive"] + 1</code>.</p>
+<hr />
+<h2>Скрипт 3: Генератор описаний товаров</h2>
+<h3>Задача</h3>
+<p>У тебя список товаров с характеристиками. Нужно написать привлекательное описание для сайта. Вручную — 5-10 минут на товар. При 50 товарах — целый день. Скрипт генерирует все за несколько минут.</p>
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># product_descriptions.py — генерирует описания товаров для сайта
+
+import os
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+client = Anthropic()
+
+
+def generate_description(product):
+    &quot;&quot;&quot;
+    Генерирует описание товара для сайта.
+    product — словарь с полями: name, category, features, price
+    &quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5&quot;,
+        max_tokens=300,
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;&quot;&quot;Напиши короткое продающее описание товара для интернет-магазина.
+2-3 предложения, дружелюбный тон, упомяни ключевые преимущества.
+
+Товар: {product['name']}
+Категория: {product['category']}
+Характеристики: {product['features']}
+Цена: {product['price']} руб.&quot;&quot;&quot;
+        }]
+    )
+    return response.content[0].text
+
+
+# === СПИСОК ТОВАРОВ ===
+
+# Список словарей (урок 1.3: словари, урок 1.4: списки)
+products = [
+    {
+        &quot;name&quot;: &quot;Беспроводные наушники AirSound Pro&quot;,
+        &quot;category&quot;: &quot;Электроника&quot;,
+        &quot;features&quot;: &quot;Bluetooth 5.3, шумоподавление, 24 часа работы, быстрая зарядка&quot;,
+        &quot;price&quot;: 4990
+    },
+    {
+        &quot;name&quot;: &quot;Рюкзак Urban Explorer&quot;,
+        &quot;category&quot;: &quot;Аксессуары&quot;,
+        &quot;features&quot;: &quot;30 литров, водоотталкивающий, отделение для ноутбука, USB-порт&quot;,
+        &quot;price&quot;: 3490
+    },
+    {
+        &quot;name&quot;: &quot;Умная колонка HomeVoice&quot;,
+        &quot;category&quot;: &quot;Умный дом&quot;,
+        &quot;features&quot;: &quot;Голосовой ассистент, Wi-Fi, Bluetooth, стерео звук, таймеры&quot;,
+        &quot;price&quot;: 5990
+    },
+]
+
+# === ГЕНЕРИРУЕМ ОПИСАНИЯ ===
+
+print(&quot;=== Генерация описаний товаров ===\n&quot;)
+
+# Открываем файл для записи всех описаний
+with open(&quot;descriptions.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+
+    for product in products:
+        print(f&quot;Генерирую: {product['name']}...&quot;)
+
+        description = generate_description(product)
+
+        # Выводим на экран
+        print(f&quot;\n  {product['name']} — {product['price']} руб.&quot;)
+        print(f&quot;  {description}\n&quot;)
+
+        # Записываем в файл
+        f.write(f&quot;## {product['name']} — {product['price']} руб.\n\n&quot;)
+        f.write(f&quot;{description}\n\n&quot;)
+        f.write(&quot;---\n\n&quot;)
+
+print(&quot;Все описания сохранены в descriptions.txt&quot;)
+</code></pre>
+
+<h3>Разбор: что здесь нового</h3>
+<pre class="highlight"><code class="language-python">product['name']
+</code></pre>
+
+<p>Обращение к значению в словаре по ключу (урок 1.3). <code>product</code> — это словарь с ключами <code>name</code>, <code>category</code>, <code>features</code>, <code>price</code>.</p>
+<pre class="highlight"><code class="language-python">with open(&quot;descriptions.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    for product in products:
+        ...
+        f.write(...)
+</code></pre>
+
+<p>Файл открывается <strong>один раз</strong> перед циклом. Внутри цикла каждое описание дописывается в тот же файл. Когда цикл завершится, файл закроется автоматически (так работает <code>with</code> — урок 1.6).</p>
+<hr />
+<h2>Скрипт 4: Умный обработчик CSV</h2>
+<h3>Задача</h3>
+<p>У тебя таблица с данными (расходы, продажи, обращения). Нужно проанализировать и написать отчёт. Скрипт читает CSV-файл, отправляет данные в Claude и получает анализ.</p>
+<h3>Что такое CSV</h3>
+<p><strong>CSV (Comma-Separated Values)</strong> — формат таблицы в текстовом файле. Как Excel, но без оформления. Каждая строка — строка таблицы. Значения разделены запятыми.</p>
+<pre class="highlight"><code>Пример файла expenses.csv:
+
+дата,категория,сумма,описание
+2025-03-01,еда,1500,Продукты на неделю
+2025-03-02,транспорт,350,Такси до работы
+2025-03-03,еда,800,Обед с коллегами
+2025-03-04,развлечения,2000,Кино и ужин
+2025-03-05,еда,1200,Продукты
+2025-03-06,транспорт,200,Метро
+2025-03-07,здоровье,3500,Стоматолог
+</code></pre>
+
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># expense_analyzer.py — анализирует расходы из CSV-файла
+
+import os
+import csv
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+client = Anthropic()
+
+
+# === ШАГ 1: ЧИТАЕМ CSV ===
+
+expenses = []  # список для хранения всех строк
+
+with open(&quot;expenses.csv&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    reader = csv.DictReader(f)
+    # csv.DictReader — читает CSV и превращает каждую строку в словарь
+    # Первая строка (дата,категория,сумма,описание) становится ключами
+    # Каждая следующая строка — словарь:
+    # {&quot;дата&quot;: &quot;2025-03-01&quot;, &quot;категория&quot;: &quot;еда&quot;, &quot;сумма&quot;: &quot;1500&quot;, ...}
+
+    for row in reader:
+        expenses.append(row)
+        # append() добавляет элемент в конец списка (урок 1.4)
+
+print(f&quot;Прочитано {len(expenses)} записей из expenses.csv&quot;)
+
+
+# === ШАГ 2: СЧИТАЕМ СТАТИСТИКУ (Python, без Claude) ===
+
+total = 0
+by_category = {}  # словарь: категория → сумма
+
+for expense in expenses:
+    amount = int(expense[&quot;сумма&quot;])
+    # int() превращает строку &quot;1500&quot; в число 1500
+    # CSV хранит всё как текст — нужно конвертировать
+
+    category = expense[&quot;категория&quot;]
+    total += amount
+
+    # Если категория уже есть — прибавляем. Если нет — создаём.
+    if category in by_category:
+        by_category[category] += amount
+    else:
+        by_category[category] = amount
+
+print(f&quot;Общая сумма расходов: {total} руб.&quot;)
+print(f&quot;По категориям: {by_category}&quot;)
+
+
+# === ШАГ 3: ПРОСИМ CLAUDE ПРОАНАЛИЗИРОВАТЬ ===
+
+# Формируем текст с данными для Claude
+data_summary = f&quot;&quot;&quot;
+Период: {expenses[0]['дата']} — {expenses[-1]['дата']}
+Общая сумма: {total} руб.
+Количество транзакций: {len(expenses)}
+
+Расходы по категориям:
+&quot;&quot;&quot;
+
+for category, amount in by_category.items():
+    # .items() возвращает пары (ключ, значение) из словаря
+    percentage = amount / total * 100
+    data_summary += f&quot;  {category}: {amount} руб. ({percentage:.1f}%)\n&quot;
+
+# Отправляем в Claude
+response = client.messages.create(
+    model=&quot;claude-haiku-4-5&quot;,
+    max_tokens=500,
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: f&quot;&quot;&quot;Проанализируй мои расходы. Дай короткий отчёт:
+1. На что уходит больше всего
+2. Что можно оптимизировать
+3. Общая оценка
+
+Данные:
+{data_summary}&quot;&quot;&quot;
+    }]
+)
+
+analysis = response.content[0].text
+
+
+# === ШАГ 4: СОХРАНЯЕМ ОТЧЁТ ===
+
+with open(&quot;expense_report.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    f.write(&quot;=== ОТЧЁТ О РАСХОДАХ ===\n\n&quot;)
+    f.write(f&quot;Период: {expenses[0]['дата']} — {expenses[-1]['дата']}\n&quot;)
+    f.write(f&quot;Общая сумма: {total} руб.\n\n&quot;)
+    f.write(&quot;--- По категориям ---\n&quot;)
+    for category, amount in by_category.items():
+        f.write(f&quot;  {category}: {amount} руб.\n&quot;)
+    f.write(f&quot;\n--- Анализ от Claude ---\n\n&quot;)
+    f.write(analysis)
+    f.write(&quot;\n&quot;)
+
+print(f&quot;\nОтчёт сохранён в expense_report.txt&quot;)
+print(f&quot;\n{analysis}&quot;)
+</code></pre>
+
+<h3>Как запустить</h3>
+<ol>
+<li>Создай файл <code>expenses.csv</code> (содержимое выше)</li>
+<li>Запусти <code>python3 expense_analyzer.py</code></li>
+<li>Открой <code>expense_report.txt</code></li>
+</ol>
+<h3>Разбор: что здесь нового</h3>
+<pre class="highlight"><code class="language-python">import csv
+</code></pre>
+
+<p>Встроенный модуль Python для работы с CSV-файлами. Не нужно устанавливать через pip — он уже есть в Python.</p>
+<pre class="highlight"><code class="language-python">reader = csv.DictReader(f)
+</code></pre>
+
+<p><code>DictReader</code> читает CSV и превращает каждую строку в словарь. Первая строка файла — это ключи (<code>дата</code>, <code>категория</code>, <code>сумма</code>, <code>описание</code>). Каждая следующая строка — значения.</p>
+<pre class="highlight"><code class="language-python">expenses[-1]['дата']
+</code></pre>
+
+<p><code>[-1]</code> — последний элемент списка. <code>expenses[0]</code> — первый, <code>expenses[-1]</code> — последний. Так мы получаем дату первой и последней записи.</p>
+<pre class="highlight"><code class="language-python">for category, amount in by_category.items():
+</code></pre>
+
+<p><code>.items()</code> возвращает пары из словаря. Если <code>by_category = {"еда": 3500, "транспорт": 550}</code>, то цикл пройдёт по парам: <code>("еда", 3500)</code>, <code>("транспорт", 550)</code>.</p>
+<hr />
+<h2>Паттерн, который объединяет все скрипты</h2>
+<p>Заметь: все 4 скрипта построены по одной схеме:</p>
+<pre class="highlight"><code>1. ПРОЧИТАТЬ данные (из файла, списка, CSV)
+        │
+        ▼
+2. ОБРАБОТАТЬ через Claude API (перевод, анализ, генерация)
+        │
+        ▼
+3. СОХРАНИТЬ результат (в файл, на экран)
+</code></pre>
+
+<p>Это базовый паттерн AI-автоматизации: <strong>вход → обработка → выход</strong>. Он встречается везде:</p>
+<pre class="highlight"><code>Бот поддержки:    сообщение клиента → Claude → ответ
+RAG-система:      вопрос → поиск + Claude → ответ с источниками
+Анализатор:       данные → Claude → отчёт
+Генератор:        параметры → Claude → контент
+</code></pre>
+
+<p>В Этапе 3 мы усложним этот паттерн: добавим <strong>инструменты</strong> (Claude сам решает, что прочитать), <strong>цикл</strong> (Claude делает несколько шагов) и <strong>память</strong> (Claude помнит предыдущие действия). Но основа — та же самая.</p>
+<hr />
+<h2>Частые ошибки и как их исправить</h2>
+<p>Здесь собраны ошибки, которые чаще всего встречаются при написании скриптов с API. Сохрани эту страницу — пригодится в следующих уроках.</p>
+<h3>Ошибка 1: AuthenticationError</h3>
+<pre class="highlight"><code>anthropic.AuthenticationError: Error code: 401
+</code></pre>
+
+<p><strong>Причина:</strong> неправильный API-ключ или его нет.</p>
+<pre class="highlight"><code>Что проверить:
+  1. Файл .env существует в папке проекта
+  2. В нём ANTHROPIC_API_KEY=sk-ant-api03-... (без пробелов вокруг =)
+  3. Ключ скопирован полностью (не обрезан)
+  4. load_dotenv() вызывается ДО создания клиента
+</code></pre>
+
+<h3>Ошибка 2: ModuleNotFoundError</h3>
+<pre class="highlight"><code>ModuleNotFoundError: No module named 'anthropic'
+</code></pre>
+
+<p><strong>Причина:</strong> библиотека не установлена.</p>
+<pre class="highlight"><code>Решение:
+  pip3 install anthropic     (macOS)
+  pip install anthropic      (Windows)
+
+  Если используешь виртуальное окружение — убедись, что оно активировано:
+    source venv/bin/activate  (macOS)
+    venv\Scripts\activate     (Windows)
+</code></pre>
+
+<h3>Ошибка 3: FileNotFoundError</h3>
+<pre class="highlight"><code>FileNotFoundError: [Errno 2] No such file or directory: 'text_to_translate.txt'
+</code></pre>
+
+<p><strong>Причина:</strong> файл не найден. Либо его нет, либо ты запускаешь скрипт из другой папки.</p>
+<pre class="highlight"><code>Решение:
+  1. Убедись, что файл существует
+  2. Убедись, что ты в правильной папке:
+     pwd (macOS) — покажет текущую папку
+     cd ~/Documents/Projects/ai-academy — перейти в нужную
+  3. Или укажи полный путь к файлу:
+     &quot;/Users/katya/Documents/text.txt&quot; вместо &quot;text.txt&quot;
+</code></pre>
+
+<h3>Ошибка 4: json.JSONDecodeError</h3>
+<pre class="highlight"><code>json.decoder.JSONDecodeError: Expecting value: line 1 column 1
+</code></pre>
+
+<p><strong>Причина:</strong> Claude вернул не чистый JSON, а текст с пояснениями.</p>
+<pre class="highlight"><code>Что Claude вернул:
+  &quot;Вот результат анализа: {&quot;sentiment&quot;: &quot;positive&quot;}&quot;
+  ^^^^^^^^^^^^^^^^^^^^^^^^ — это лишний текст
+
+Решение: улучшить промпт
+  Плохо:  &quot;Проанализируй отзыв&quot;
+  Хорошо: &quot;Respond in JSON format ONLY. No other text.&quot;
+</code></pre>
+
+<h3>Ошибка 5: RateLimitError</h3>
+<pre class="highlight"><code>anthropic.RateLimitError: Error code: 429
+</code></pre>
+
+<p><strong>Причина:</strong> слишком много запросов за короткое время.</p>
+<pre class="highlight"><code>Решение:
+  Добавь паузу между запросами в цикле:
+
+  import time
+
+  for review in reviews:
+      result = analyze_review(review)
+      time.sleep(1)  # ждём 1 секунду между запросами
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Переведи свой текст</h3>
+<p>Возьми любой текст (статью, описание, пост) и переведи через <code>translator.py</code>. Попробуй перевести на разные языки: English, Spanish, French, Chinese.</p>
+<h3>Задание 2: Проанализируй свои отзывы</h3>
+<p>Добавь 10 своих отзывов в <code>review_analyzer.py</code> (можно скопировать с Wildberries, Ozon или любого магазина). Посмотри, правильно ли Claude определяет тональность.</p>
+<h3>Задание 3: Свой скрипт</h3>
+<p>Придумай свою задачу и напиши скрипт по паттерну «вход → Claude → выход». Примеры:
+- Генератор постов для соцсетей (список тем → посты)
+- Анализатор резюме (текст резюме → оценка и советы)
+- Корректор текста (текст с ошибками → исправленный текст)</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> По какому паттерну работают все скрипты в этом уроке?</p>
+<details>
+<summary>Ответ</summary>
+
+Вход → Обработка → Выход. Скрипт читает данные (из файла, списка, CSV), отправляет их в Claude API для обработки (перевод, анализ, генерация), получает результат и сохраняет (в файл или выводит на экран). Этот паттерн — основа всех AI-приложений.
+</details>
+
+<p><strong>Задача 2:</strong> Почему в скрипте с отзывами мы используем <code>json.loads()</code>, а не просто читаем текст ответа?</p>
+<details>
+<summary>Ответ</summary>
+
+Claude возвращает строку: `'{"sentiment": "positive", "summary": "..."}'`. Это строка — с ней нельзя работать как со словарём (нельзя написать `result["sentiment"]`). `json.loads()` превращает строку JSON в словарь Python, после чего можно обращаться к полям по ключу. Без `json.loads()` пришлось бы вручную парсить текст.
+</details>
+
+<p><strong>Задача 3:</strong> Что делает <code>enumerate(reviews, 1)</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+`enumerate()` добавляет нумерацию к элементам списка. Без неё цикл `for review in reviews` даёт только текст отзыва. С ней `for i, review in enumerate(reviews, 1)` даёт и номер (`i`), и текст (`review`). Параметр `1` означает: начать нумерацию с единицы (по умолчанию — с нуля).
+</details>
+
+<p><strong>Задача 4:</strong> Почему в скрипте с CSV мы делаем <code>int(expense["сумма"])</code>, а не просто используем <code>expense["сумма"]</code>?</p>
+<details>
+<summary>Ответ</summary>
+
+CSV хранит все значения как текст (строки). `expense["сумма"]` — это строка `"1500"`, а не число `1500`. Складывать строки нельзя: `"1500" + "350"` даст `"1500350"` вместо `1850`. `int()` превращает строку в целое число, после чего с ним можно считать: `1500 + 350 = 1850`.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CSV</strong></td>
+<td>Comma-Separated Values — табличный формат файла, где значения разделены запятыми. Как Excel, но текстовый</td>
+</tr>
+<tr>
+<td><strong>csv.DictReader</strong></td>
+<td>Функция Python, которая читает CSV и превращает каждую строку в словарь</td>
+</tr>
+<tr>
+<td><strong>enumerate()</strong></td>
+<td>Функция Python, которая добавляет нумерацию к элементам списка при переборе в цикле</td>
+</tr>
+<tr>
+<td><strong>json.loads()</strong></td>
+<td>Функция, которая превращает строку JSON в словарь Python. loads = load string</td>
+</tr>
+<tr>
+<td><strong>json.dumps()</strong></td>
+<td>Функция, которая превращает словарь Python в строку JSON. dumps = dump string</td>
+</tr>
+<tr>
+<td><strong>f-строка</strong></td>
+<td>Строка с <code>f</code> перед кавычками: <code>f"Привет, {name}!"</code>. Позволяет вставлять переменные прямо в текст</td>
+</tr>
+<tr>
+<td><strong>append()</strong></td>
+<td>Метод списка: добавляет элемент в конец. <code>my_list.append("новый")</code></td>
+</tr>
+<tr>
+<td><strong>items()</strong></td>
+<td>Метод словаря: возвращает пары (ключ, значение). Для перебора в цикле</td>
+</tr>
+<tr>
+<td><strong>Параметр по умолчанию</strong></td>
+<td>Значение аргумента функции, если его не передали: <code>def f(x, lang="en")</code></td>
+</tr>
+<tr>
+<td><strong>Паттерн</strong></td>
+<td>Повторяющийся шаблон решения. «Вход → обработка → выход» — паттерн AI-скриптов</td>
+</tr>
+<tr>
+<td><strong>RateLimitError</strong></td>
+<td>Ошибка: слишком много запросов к API за короткое время. Решение: добавить паузу</td>
+</tr>
+<tr>
+<td><strong>time.sleep()</strong></td>
+<td>Функция Python: пауза на N секунд. <code>time.sleep(1)</code> — ждать 1 секунду</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Все AI-скрипты работают по одному паттерну:
+  ВХОД → ОБРАБОТКА (Claude API) → ВЫХОД
+
+Этот паттерн масштабируется:
+  Один текст      → translate()     → один перевод
+  100 отзывов     → analyze_review()→ таблица тональностей
+  Список товаров  → generate()      → описания для сайта
+  CSV с данными   → analyze()       → отчёт
+
+Python читает и готовит данные.
+Claude думает и генерирует.
+Python сохраняет результат.
+
+Частые ошибки:
+  AuthenticationError → проверь .env и API-ключ
+  ModuleNotFoundError → pip install anthropic
+  FileNotFoundError   → проверь путь к файлу
+  JSONDecodeError     → улучши промпт (&quot;JSON only&quot;)
+  RateLimitError      → добавь time.sleep(1) между запросами
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Ты написала 4 скрипта, которые делают реальную работу. Каждый из них — прямая линия: данные → Claude → результат. Но что если программа должна <strong>сама решать</strong>, какие данные нужны и что делать дальше? Не ты говоришь «переведи файл» — а программа сама находит файл, решает, что с ним делать, и действует. Это и есть <strong>AI-агент</strong> — тема Этапа 3.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="2-5-tokens.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="3-1-chatbot-vs-agent.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

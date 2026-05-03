@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подготовка — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 1 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 0.1 — Подготовка: установка Python, редактора и всего необходимого</h1>
+<blockquote>
+<p>Прежде чем готовить — нужна кухня. Прежде чем писать код — нужно установить инструменты. Этот урок — про установку всего, что понадобится в курсе. Ничего сложного: скачать, установить, проверить. 15-30 минут — и рабочее место готово.</p>
+</blockquote>
+<hr />
+<h2>Что мы установим</h2>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│                ЧТО НУЖНО УСТАНОВИТЬ                       │
+│                                                          │
+│  1. Python — язык программирования                       │
+│     Все программы в курсе написаны на Python.            │
+│     Без него ничего не запустится.                        │
+│                                                          │
+│  2. VS Code — редактор кода                              │
+│     В нём ты будешь писать и редактировать код.          │
+│     Как Word для текстов, но для программ.               │
+│                                                          │
+│  3. Терминал — уже есть на компьютере                    │
+│     Нужно только найти и открыть.                        │
+│     Подробно разберём в следующем уроке (1.1).           │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>Шаг 1: Установка Python</h2>
+<h3>Что такое Python</h3>
+<p><strong>Python</strong> — язык программирования. Это как иностранный язык, на котором ты «разговариваешь» с компьютером. Пишешь команды на Python → компьютер их выполняет. Именно на Python написаны почти все AI-инструменты.</p>
+<h3>Проверь: может, уже установлен</h3>
+<p>Открой терминал:
+- <strong>macOS</strong>: нажми <code>Cmd + Пробел</code>, набери <code>Terminal</code>, нажми Enter
+- <strong>Windows</strong>: нажми <code>Win</code>, набери <code>PowerShell</code>, нажми Enter</p>
+<p>Набери команду и нажми Enter:</p>
+<pre class="highlight"><code class="language-bash">python3 --version
+</code></pre>
+
+<p>Если видишь что-то вроде <code>Python 3.11.5</code> или <code>Python 3.12.0</code> — Python уже установлен. Переходи к Шагу 2.</p>
+<p>Если видишь ошибку — устанавливаем.</p>
+<h3>macOS: установка Python</h3>
+<p><strong>Способ 1 (самый простой): через сайт</strong></p>
+<ol>
+<li>Открой браузер, перейди на https://www.python.org/downloads/</li>
+<li>Нажми большую жёлтую кнопку <strong>"Download Python 3.x.x"</strong></li>
+<li>Скачается файл <code>.pkg</code> — открой его</li>
+<li>Нажимай <strong>"Continue"</strong> → <strong>"Continue"</strong> → <strong>"Agree"</strong> → <strong>"Install"</strong></li>
+<li>Введи пароль от компьютера, когда попросит</li>
+<li>Готово</li>
+</ol>
+<p><strong>Способ 2: через Homebrew (если знаешь, что это)</strong></p>
+<pre class="highlight"><code class="language-bash">brew install python3
+</code></pre>
+
+<p><strong>Проверка:</strong></p>
+<p>Закрой терминал и открой заново (это важно — чтобы терминал увидел новый Python). Набери:</p>
+<pre class="highlight"><code class="language-bash">python3 --version
+# Должно показать: Python 3.11.x или 3.12.x или 3.13.x
+</code></pre>
+
+<h3>Windows: установка Python</h3>
+<ol>
+<li>Открой https://www.python.org/downloads/</li>
+<li>Нажми <strong>"Download Python 3.x.x"</strong></li>
+<li>Запусти скачанный файл <code>.exe</code></li>
+<li><strong>ВАЖНО!</strong> На первом экране поставь галочку <strong>"Add python.exe to PATH"</strong> — это критически важно. Без этой галочки терминал не найдёт Python.</li>
+</ol>
+<pre class="highlight"><code>┌─────────────────────────────────────────────┐
+│  Install Python 3.x.x                       │
+│                                             │
+│  ☑ Add python.exe to PATH  ← ЭТУ ГАЛОЧКУ!  │
+│                                             │
+│  [Install Now]                              │
+└─────────────────────────────────────────────┘
+</code></pre>
+
+<ol>
+<li>Нажми <strong>"Install Now"</strong></li>
+<li>Дождись завершения → <strong>"Close"</strong></li>
+</ol>
+<p><strong>Проверка:</strong></p>
+<p>Закрой PowerShell и открой заново. Набери:</p>
+<pre class="highlight"><code class="language-bash">python --version
+# Должно показать: Python 3.11.x или 3.12.x или 3.13.x
+</code></pre>
+
+<p>На Windows команда <code>python</code> (без тройки). На macOS — <code>python3</code>.</p>
+<h3>Что делать, если не работает</h3>
+<pre class="highlight"><code>Ошибка: &quot;python: command not found&quot; или
+        &quot;'python' is not recognized&quot;
+
+  macOS:
+    → Попробуй python3 вместо python
+    → Если не помогло — переустанови Python с сайта
+
+  Windows:
+    → Переустанови Python. На первом экране ОБЯЗАТЕЛЬНО
+      поставь галочку &quot;Add python.exe to PATH&quot;
+    → После установки ЗАКРОЙ PowerShell и открой заново
+
+Ошибка: показывает Python 2.x.x
+
+  → Это старая версия. Нужен Python 3.
+  → macOS: набери python3 вместо python
+  → Windows: переустанови с сайта (последнюю версию)
+</code></pre>
+
+<hr />
+<h2>Шаг 2: Проверка pip</h2>
+<p><strong>pip</strong> — менеджер пакетов для Python. Он устанавливает дополнительные библиотеки. Как App Store для приложений — но для Python-библиотек.</p>
+<p><strong>Аналогия.</strong> Python — это телефон. pip — это App Store. Библиотеки (anthropic, openai, flask) — это приложения. Телефон работает и без приложений, но с ними — гораздо полезнее.</p>
+<p>pip устанавливается автоматически вместе с Python. Проверь:</p>
+<pre class="highlight"><code class="language-bash"># macOS:
+pip3 --version
+# Пример: pip 23.2.1 from /usr/lib/python3/dist-packages/pip
+
+# Windows:
+pip --version
+# Пример: pip 23.2.1 from C:\Python312\Lib\site-packages\pip
+</code></pre>
+
+<h3>Что делать, если pip не работает</h3>
+<pre class="highlight"><code>Ошибка: &quot;pip: command not found&quot;
+
+  macOS:
+    → Попробуй pip3 вместо pip
+    → Если не помогло:
+      python3 -m pip --version
+
+  Windows:
+    → Попробуй:
+      python -m pip --version
+    → Если не помогло — переустанови Python
+      с галочкой &quot;Add python.exe to PATH&quot;
+</code></pre>
+
+<h3>Пробуем установить библиотеку</h3>
+<p>Давай установим первую библиотеку — чтобы убедиться, что pip работает:</p>
+<pre class="highlight"><code class="language-bash"># macOS:
+pip3 install python-dotenv
+
+# Windows:
+pip install python-dotenv
+</code></pre>
+
+<p>Если видишь <code>Successfully installed python-dotenv-x.x.x</code> — всё работает.</p>
+<pre class="highlight"><code>Что мы установили:
+  python-dotenv — библиотека для чтения файлов .env
+  Понадобится в уроке 2.3, когда будем работать с API-ключами.
+  Подробно про .env — в уроке 1.6.
+</code></pre>
+
+<h3>Что делать, если pip install не работает</h3>
+<pre class="highlight"><code>Ошибка: &quot;Permission denied&quot;
+
+  → Добавь --user в конце:
+    pip3 install python-dotenv --user
+
+Ошибка: &quot;Could not find a version that satisfies the requirement&quot;
+
+  → Проверь, правильно ли написано имя пакета
+  → Проверь подключение к интернету
+
+Ошибка: &quot;externally-managed-environment&quot; (новые версии macOS)
+
+  → Создай виртуальное окружение (объяснение ниже)
+    или добавь --break-system-packages:
+    pip3 install python-dotenv --break-system-packages
+</code></pre>
+
+<hr />
+<h2>Шаг 3: Установка VS Code</h2>
+<h3>Что такое VS Code</h3>
+<p><strong>VS Code (Visual Studio Code)</strong> — бесплатный редактор кода от Microsoft. В нём ты будешь писать программы. Можно писать и в Блокноте, но VS Code подсвечивает код цветами, подсказывает ошибки и имеет встроенный терминал.</p>
+<p><strong>Аналогия.</strong> Можно писать текст в Блокноте. Но в Word удобнее: есть проверка орфографии, форматирование, оглавление. VS Code — это «Word для кода».</p>
+<h3>Установка</h3>
+<ol>
+<li>Открой https://code.visualstudio.com/</li>
+<li>Нажми <strong>"Download"</strong> — сайт определит твою ОС автоматически</li>
+<li>Установи:</li>
+<li><strong>macOS</strong>: открой скачанный <code>.dmg</code>, перетащи VS Code в папку Applications</li>
+<li><strong>Windows</strong>: запусти <code>.exe</code>, нажимай Next → Next → Install</li>
+</ol>
+<h3>Настройка для Python</h3>
+<ol>
+<li>Открой VS Code</li>
+<li>Нажми на иконку <strong>Extensions</strong> (четыре квадрата слева) или <code>Ctrl+Shift+X</code> (Windows) / <code>Cmd+Shift+X</code> (macOS)</li>
+<li>В поиске набери <strong>Python</strong></li>
+<li>Найди расширение <strong>"Python"</strong> от Microsoft (с синей галочкой) → нажми <strong>Install</strong></li>
+</ol>
+<p>Это расширение даёт:
+- Подсветку синтаксиса Python (код становится цветным)
+- Подсказки при написании кода
+- Кнопку запуска скрипта прямо из редактора</p>
+<h3>Как открыть папку проекта</h3>
+<p>В VS Code ты работаешь с <strong>папками</strong>, а не с отдельными файлами:</p>
+<ol>
+<li><strong>File</strong> → <strong>Open Folder</strong> (или Cmd+O на macOS)</li>
+<li>Выбери папку с проектом</li>
+<li>Слева появится список файлов — можно кликать и редактировать</li>
+</ol>
+<h3>Встроенный терминал</h3>
+<p>VS Code имеет встроенный терминал — не нужно переключаться между окнами:</p>
+<ol>
+<li><strong>Terminal</strong> → <strong>New Terminal</strong> (или <code>Ctrl+`</code>)</li>
+<li>Внизу откроется терминал — прямо внутри редактора</li>
+<li>Здесь можно запускать Python-скрипты: <code>python3 my_script.py</code></li>
+</ol>
+<hr />
+<h2>Шаг 4: Создаём первый файл и запускаем</h2>
+<p>Давай убедимся, что всё работает вместе.</p>
+<h3>1. Создай папку для курса</h3>
+<pre class="highlight"><code class="language-bash"># macOS:
+mkdir -p ~/Documents/Projects/ai-academy
+cd ~/Documents/Projects/ai-academy
+
+# Windows:
+mkdir C:\Users\ТвоёИмя\Documents\Projects\ai-academy
+cd C:\Users\ТвоёИмя\Documents\Projects\ai-academy
+</code></pre>
+
+<h3>2. Открой папку в VS Code</h3>
+<pre class="highlight"><code class="language-bash">code .
+# Точка означает &quot;текущую папку&quot;
+# Если команда code не работает — открой VS Code вручную → File → Open Folder
+</code></pre>
+
+<h3>3. Создай файл <code>hello.py</code></h3>
+<p>В VS Code: правый клик в панели файлов → <strong>New File</strong> → назови <code>hello.py</code></p>
+<p>Напиши в файле:</p>
+<pre class="highlight"><code class="language-python"># hello.py — мой первый скрипт
+
+# print() — команда, которая выводит текст на экран
+print(&quot;Привет! Python работает!&quot;)
+
+# Давай посчитаем
+result = 2 + 2
+print(f&quot;2 + 2 = {result}&quot;)
+
+# f перед кавычками — это f-строка
+# Она позволяет вставлять переменные прямо в текст
+# {result} заменится на значение переменной result
+name = &quot;студент AI Academy&quot;
+print(f&quot;Добро пожаловать, {name}!&quot;)
+</code></pre>
+
+<h3>4. Запусти</h3>
+<p>В терминале VS Code (или в обычном терминале):</p>
+<pre class="highlight"><code class="language-bash"># macOS:
+python3 hello.py
+
+# Windows:
+python hello.py
+</code></pre>
+
+<h3>5. Что должно появиться</h3>
+<pre class="highlight"><code>Привет! Python работает!
+2 + 2 = 4
+Добро пожаловать, студент AI Academy!
+</code></pre>
+
+<p>Если видишь это — Python работает. Но мы пришли сюда ради AI. Давай сделаем ещё один шаг.</p>
+<hr />
+<h2>Шаг 5: Первый разговор с AI из кода</h2>
+<p>Это бонус — чтобы увидеть, ради чего всё это. Установим библиотеку для работы с Claude и зададим ему вопрос прямо из Python.</p>
+<h3>1. Установи библиотеку</h3>
+<pre class="highlight"><code class="language-bash"># macOS:
+pip3 install anthropic
+
+# Windows:
+pip install anthropic
+</code></pre>
+
+<h3>2. Получи API-ключ</h3>
+<ol>
+<li>Открой https://console.anthropic.com/</li>
+<li>Зарегистрируйся (или войди)</li>
+<li>Перейди в раздел <strong>API Keys</strong></li>
+<li>Нажми <strong>Create Key</strong> → скопируй ключ (начинается с <code>sk-ant-</code>)</li>
+</ol>
+<h3>3. Создай файл <code>ask_ai.py</code></h3>
+<pre class="highlight"><code class="language-python"># ask_ai.py — твой первый разговор с AI из кода
+
+from anthropic import Anthropic
+
+# Вставь свой ключ вместо sk-ant-...
+# (в уроке 2.3 научишься хранить ключ безопасно)
+client = Anthropic(api_key=&quot;sk-ant-api03-ВСТАВЬ-СВОЙ-КЛЮЧ-СЮДА&quot;)
+
+response = client.messages.create(
+    model=&quot;claude-haiku-4-5&quot;,       # быстрая и дешёвая модель
+    max_tokens=200,                  # максимум слов в ответе
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Привет! Я только начинаю изучать AI. Скажи что-нибудь вдохновляющее в 2-3 предложениях.&quot;
+    }]
+)
+
+# Выводим ответ Claude
+print(response.content[0].text)
+</code></pre>
+
+<h3>4. Запусти</h3>
+<pre class="highlight"><code class="language-bash"># macOS:
+python3 ask_ai.py
+
+# Windows:
+python ask_ai.py
+</code></pre>
+
+<h3>Что произойдёт</h3>
+<p>Claude ответит что-то вроде:</p>
+<pre class="highlight"><code>Здорово, что ты начинаешь этот путь! AI — это не магия,
+а инструмент, который может освоить каждый. Ты уже сделала
+первый шаг — и это самое важное.
+</code></pre>
+
+<p><strong>Ты только что поговорила с AI из собственного кода.</strong> Не через сайт, не через приложение — через программу, которую написала сама. Весь курс — это путь к тому, чтобы делать с AI всё, что захочешь.</p>
+<pre class="highlight"><code>Не получилось? Это нормально — подробно разберём API в уроке 2.3.
+Главное сейчас: Python работает, и ты видела, что AI можно вызвать из кода.
+Если нет API-ключа — пропусти этот шаг. Вернёшься к нему в уроке 2.3.
+</code></pre>
+
+<hr />
+<h2>Что делать, если не работает (шаг 4: hello.py)</h2>
+<pre class="highlight"><code>Ошибка: &quot;No such file or directory: 'hello.py'&quot;
+
+  → Ты не в той папке. Проверь:
+    pwd           (macOS)
+    cd            (Windows — покажет текущую папку)
+
+  → Перейди в папку с файлом:
+    cd ~/Documents/Projects/ai-academy       (macOS)
+    cd C:\Users\ТвоёИмя\Documents\Projects\ai-academy  (Windows)
+
+Ошибка: &quot;SyntaxError: invalid character&quot;
+
+  → В коде есть «умные» кавычки (« » или &quot; &quot; вместо &quot; &quot;)
+  → Это бывает, если скопировал из мессенджера или Word
+  → Перенабери кавычки вручную в VS Code
+
+Ошибка: &quot;IndentationError: unexpected indent&quot;
+
+  → В Python отступы важны. Убедись, что строки print()
+    начинаются от левого края (без пробелов в начале)
+</code></pre>
+
+<hr />
+<h2>Шаг 5: Виртуальное окружение (не обязательно сейчас, но полезно знать)</h2>
+<p>При установке библиотек через pip иногда возникают конфликты: одному проекту нужна версия 1.0, другому — версия 2.0. <strong>Виртуальное окружение</strong> решает эту проблему — оно создаёт изолированную «песочницу» для каждого проекта.</p>
+<p><strong>Аналогия.</strong> Представь, что у тебя два заказа: один клиент хочет синие шторы, другой — красные. Ты не смешиваешь их в одну коробку — каждый заказ в своей. Виртуальное окружение — отдельная «коробка» для каждого проекта.</p>
+<p>Сейчас это не критично — но когда в уроке 2.3 начнём устанавливать библиотеки для AI, будет полезно.</p>
+<h3>Как создать</h3>
+<pre class="highlight"><code class="language-bash"># macOS:
+python3 -m venv venv
+# Создаёт папку venv/ с изолированным Python
+# python3 — наш Python
+# -m venv — запустить модуль venv (создатель окружений)
+# venv — имя папки (можно назвать как угодно, но venv — стандарт)
+
+source venv/bin/activate
+# Активирует окружение
+# В начале строки терминала появится (venv) — значит, работает
+
+# Windows:
+python -m venv venv
+venv\Scripts\activate
+# В начале строки появится (venv)
+</code></pre>
+
+<h3>Как понять, что окружение активировано</h3>
+<pre class="highlight"><code>Без окружения:
+  katya@macbook ai-academy %
+
+С окружением:
+  (venv) katya@macbook ai-academy %
+  ^^^^^ — вот эта метка
+</code></pre>
+
+<h3>Как выйти</h3>
+<pre class="highlight"><code class="language-bash">deactivate
+# Метка (venv) исчезнет
+</code></pre>
+
+<p>Когда окружение активировано — все <code>pip install</code> устанавливают библиотеки только в эту папку, не трогая систему.</p>
+<hr />
+<h2>Итого: что должно быть готово</h2>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│                  ЧЕК-ЛИСТ ГОТОВНОСТИ                      │
+│                                                          │
+│  ☐ Python установлен                                     │
+│    Проверка: python3 --version (или python --version)   │
+│    Результат: Python 3.11+ или 3.12+ или 3.13+          │
+│                                                          │
+│  ☐ pip работает                                          │
+│    Проверка: pip3 --version (или pip --version)          │
+│    Результат: pip 23.x или новее                        │
+│                                                          │
+│  ☐ VS Code установлен                                    │
+│    Проверка: открывается, расширение Python установлено  │
+│                                                          │
+│  ☐ Первый скрипт запущен                                 │
+│    Проверка: python3 hello.py показывает &quot;Привет!&quot;      │
+│                                                          │
+│  ☐ (Бонус) AI ответил из кода                            │
+│    Проверка: python3 ask_ai.py — Claude написал ответ   │
+│                                                          │
+│  Всё готово? → Переходи к уроку 1.1 (Терминал)          │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<p><strong>Задание 1: Проверь своё окружение</strong></p>
+<p>Открой терминал и выполни по очереди:</p>
+<pre class="highlight"><code class="language-bash">python3 --version
+pip3 --version
+code --version
+</code></pre>
+
+<p>Запиши результаты. Если какая-то команда не сработала — вернись к соответствующему разделу урока и пройди установку заново.</p>
+<p><strong>Задание 2: Создай проект с виртуальным окружением</strong></p>
+<ol>
+<li>Создай папку <code>test-project</code></li>
+<li>Зайди в неё</li>
+<li>Создай виртуальное окружение: <code>python3 -m venv venv</code></li>
+<li>Активируй его</li>
+<li>Установи любую библиотеку: <code>pip install requests</code></li>
+<li>Проверь, что она установилась: <code>pip list</code></li>
+<li>Деактивируй окружение: <code>deactivate</code></li>
+</ol>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Ты набираешь <code>python3 --version</code> в терминале и видишь ошибку "command not found". Что это значит и что делать?</p>
+<details>
+<summary>Ответ</summary>
+
+Python не установлен или не добавлен в PATH. Нужно скачать Python с python.org и установить заново, убедившись, что при установке стоит галочка "Add Python to PATH".
+</details>
+
+<p><strong>Задача 2:</strong> Зачем нужно виртуальное окружение? Почему нельзя просто ставить все библиотеки глобально?</p>
+<details>
+<summary>Ответ</summary>
+
+Разные проекты могут требовать разные версии одной и той же библиотеки. Без виртуального окружения они будут конфликтовать. venv — как отдельная полка для каждого проекта: библиотеки одного не мешают другому.
+</details>
+
+<p><strong>Задача 3:</strong> Ты активировал виртуальное окружение и установил библиотеку <code>openai</code>. Потом закрыл терминал, открыл снова и набрал <code>python3 -c "import openai"</code>. Получил ошибку. Почему?</p>
+<details>
+<summary>Ответ</summary>
+
+При закрытии терминала виртуальное окружение деактивируется. Библиотека `openai` установлена только внутри venv. Нужно снова активировать окружение (`source venv/bin/activate` на Mac/Linux или `venv\Scripts\activate` на Windows), и тогда библиотека станет доступна.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Python</strong></td>
+<td>Язык программирования. На нём написаны почти все AI-инструменты. Бесплатный</td>
+</tr>
+<tr>
+<td><strong>pip</strong></td>
+<td>Менеджер пакетов Python. Устанавливает библиотеки командой <code>pip install имя</code></td>
+</tr>
+<tr>
+<td><strong>Библиотека (пакет)</strong></td>
+<td>Готовый код, который кто-то написал. Устанавливаешь через pip и используешь в своих программах</td>
+</tr>
+<tr>
+<td><strong>VS Code</strong></td>
+<td>Бесплатный редактор кода от Microsoft. Подсвечивает синтаксис, подсказывает ошибки</td>
+</tr>
+<tr>
+<td><strong>Терминал</strong></td>
+<td>Текстовый интерфейс для управления компьютером. Подробно — в уроке 1.1</td>
+</tr>
+<tr>
+<td><strong>PATH</strong></td>
+<td>Список папок, где компьютер ищет программы. Если Python не в PATH — терминал его не найдёт</td>
+</tr>
+<tr>
+<td><strong>Виртуальное окружение (venv)</strong></td>
+<td>Изолированная «песочница» для проекта. Библиотеки ставятся только туда, не мешая другим проектам</td>
+</tr>
+<tr>
+<td><strong>Расширение (extension)</strong></td>
+<td>Дополнение для VS Code, которое добавляет функции (подсветка Python, автодополнение)</td>
+</tr>
+<tr>
+<td><strong>Скрипт</strong></td>
+<td>Файл с кодом. Скрипт на Python — файл с расширением <code>.py</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>Рабочее место готово: Python установлен, редактор настроен, первый скрипт запущен. В следующем уроке — <strong>терминал</strong>: научишься перемещаться по папкам, создавать файлы и запускать программы через командную строку. Это основной инструмент для всего курса.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <span class="lesson-nav__btn lesson-nav__btn--disabled">← Предыдущий</span>
+      <a href="1-1-terminal.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мульти-шаговые задачи — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 3 · Урок 5 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 3.5 — Мульти-шаговые задачи</h1>
+<blockquote>
+<p>До сих пор мы смотрели на простые задачи: ответь на вопрос, вызови один инструмент, верни результат. Но настоящая сила агентов — в сложных задачах из нескольких шагов. Агент сам разбивает задачу на части, выполняет каждую, адаптируется к результатам и собирает итог. Эти принципы одинаковы для любого AI-агента — Claude, GPT, Gemini или локальных моделей.</p>
+</blockquote>
+<hr />
+<h2>Простая задача vs Мульти-шаговая</h2>
+<pre class="highlight"><code>Простая задача:
+  &quot;Какая погода в Москве?&quot;
+  → Один вызов инструмента → Один ответ
+
+Мульти-шаговая задача:
+  &quot;Проанализируй этот проект и напиши документацию&quot;
+  → Найти все файлы
+  → Прочитать каждый
+  → Понять структуру
+  → Написать описание каждого модуля
+  → Собрать всё в один документ
+  → Сохранить файл
+</code></pre>
+
+<p>В простой задаче — один шаг. В мульти-шаговой — агент <strong>сам решает</strong>, какие шаги нужны, в каком порядке их делать, и когда остановиться.</p>
+<p><strong>Аналогия.</strong> Простая задача — попросить курьера доставить посылку по адресу. Мульти-шаговая — попросить ассистента организовать переезд: он сам решает, что паковать первым, какую машину заказать, и в каком порядке всё делать.</p>
+<hr />
+<h2>Из чего состоит агент: 4 компонента</h2>
+<p>Прежде чем разбирать мульти-шаговые задачи, соберём всё, что знаем об агентах, в одну картину. По данным Anthropic и OpenAI, любой AI-агент строится из четырёх компонентов:</p>
+<pre class="highlight"><code>┌──────────────────────────────────────────────┐
+│                   AI-АГЕНТ                    │
+│                                               │
+│  1. Модель (мозг)                             │
+│     LLM, которая думает, планирует, решает    │
+│                                               │
+│  2. Инструменты (руки)                        │
+│     Функции: файлы, интернет, API, терминал   │
+│                                               │
+│  3. Инструкции (правила)                      │
+│     Системный промпт: как себя вести          │
+│                                               │
+│  4. Оркестрация (цикл)                        │
+│     Как шаги соединяются: цикл, проверки,     │
+│     передача между агентами                   │
+│                                               │
+└──────────────────────────────────────────────┘
+</code></pre>
+
+<p>Источник: <a href="https://developers.openai.com/resources/agents">OpenAI — Agents</a>, <a href="https://www.anthropic.com/research/building-effective-agents">Anthropic — Building Effective Agents</a></p>
+<p>Эти 4 компонента одинаковы в любом фреймворке: OpenAI Agents SDK, Claude Agent SDK, LangChain, CrewAI. Меняется синтаксис, но архитектура та же.</p>
+<hr />
+<h2>Как агент выполняет мульти-шаговую задачу</h2>
+<p>Агент работает в <strong>цикле</strong>: получает задачу → думает → действует → смотрит результат → думает снова → действует снова → ... → возвращает ответ.</p>
+<p>Anthropic описывает это так: на каждом шаге агент получает обратную связь от окружения (результаты инструментов), оценивает прогресс и решает, что делать дальше.</p>
+<pre class="highlight"><code>                    ┌──────────────┐
+                    │   Задача     │
+                    └──────┬───────┘
+                           │
+                    ┌──────▼───────┐
+              ┌────►│  LLM думает  │
+              │     │ &quot;Что дальше?&quot;│
+              │     └──────┬───────┘
+              │            │
+              │     ┌──────▼───────┐
+              │     │  Вызывает    │
+              │     │  инструмент  │
+              │     └──────┬───────┘
+              │            │
+              │     ┌──────▼───────┐
+              │     │  Получает    │
+              │     │  результат   │
+              │     └──────┬───────┘
+              │            │
+              │     ┌──────▼───────┐
+              │  да │ Задача       │  нет
+              └─────┤ выполнена?   ├──────► Финальный ответ
+                    └──────────────┘
+</code></pre>
+
+<p>Этот цикл может крутиться 3 раза (простая задача) или 30 раз (сложная). Агент сам определяет, когда остановиться.</p>
+<h3>Пример: поиск TODO в проекте</h3>
+<pre class="highlight"><code>Шаг 1: Поиск файлов → &quot;*.py&quot;
+  Результат: [main.py, utils.py, api.py, tests/test_main.py]
+
+Шаг 2: Поиск текста &quot;TODO&quot; в найденных файлах
+  Результат:
+    main.py:15    # TODO: добавить обработку ошибок
+    utils.py:42   # TODO: оптимизировать эту функцию
+    api.py:8      # TODO: добавить аутентификацию
+
+Шаг 3: Анализ результатов
+  &quot;Найдено 3 TODO. Самое важное — аутентификация в api.py&quot;
+
+Шаг 4: Формирование ответа
+  Оформленный список задач с приоритетами
+</code></pre>
+
+<p>Агент <strong>не знал заранее</strong>, какие файлы найдёт и сколько TODO будет. Он адаптировался на каждом шаге.</p>
+<hr />
+<h2>Ключевой принцип: адаптация</h2>
+<p>Самое важное отличие агента от обычной программы — он <strong>меняет план на ходу</strong>.</p>
+<pre class="highlight"><code>Обычная программа (скрипт):
+  Не нашёл файл → ошибка → стоп
+
+Агент:
+  Не нашёл .py файлы → &quot;Попробую .js&quot; →
+  Нашёл → продолжает работу
+</code></pre>
+
+<p>Anthropic в своём гайде подчёркивает: агент получает <strong>обратную связь от окружения</strong> (результаты инструментов, результаты выполнения кода) на каждом шаге. Эта обратная связь — основа адаптации.</p>
+<p>Примеры адаптации:</p>
+<pre class="highlight"><code>Ситуация 1: проект с 3 файлами
+  → Читает каждый → 4 шага
+
+Ситуация 2: проект с 200 файлами
+  → &quot;Слишком много. Сгруппирую по папкам и прочитаю
+     по одному из каждой&quot; → ~10 шагов
+
+Ситуация 3: тесты упали после исправления
+  → Читает ошибку → исправляет снова → запускает тесты →
+     тесты прошли → продолжает
+</code></pre>
+
+<p>Последний пример особенно важен: агент <strong>не сдаётся при ошибке</strong>. Он читает, что пошло не так, и пробует снова. Обычный скрипт просто упадёт.</p>
+<hr />
+<h2>5 паттернов организации агентов</h2>
+<p>Anthropic в своём исследовании <a href="https://www.anthropic.com/research/building-effective-agents">"Building Effective Agents"</a> выделяет 5 паттернов, как можно организовать работу агента. От простого к сложному:</p>
+<h3>1. Цепочка промптов (Prompt Chaining)</h3>
+<p>Задача разбивается на <strong>фиксированную последовательность</strong> шагов:</p>
+<pre class="highlight"><code>Шаг 1 → Шаг 2 → Шаг 3 → Результат
+
+Пример:
+  Написать статью → Перевести на английский → Проверить грамматику
+</code></pre>
+
+<p>Каждый шаг использует результат предыдущего. Между шагами можно вставить проверку: "Результат нормальный? Если нет — переделать."</p>
+<p><strong>Когда использовать:</strong> задача чётко делится на последовательные части.</p>
+<h3>2. Маршрутизация (Routing)</h3>
+<p>Входящая задача <strong>классифицируется</strong> и отправляется на нужный путь:</p>
+<pre class="highlight"><code>                    ┌─ Простой вопрос → быстрая модель (дешёвая)
+Запрос → Классификатор ─┤
+                    ├─ Сложный вопрос → мощная модель (дорогая)
+                    └─ Жалоба → специальный обработчик
+</code></pre>
+
+<p><strong>Пример из жизни:</strong> служба поддержки. Вопрос "какой у вас график работы" не нужно отправлять эксперту — с ним справится простой бот. А жалоба "сломался товар" требует человека или мощного агента.</p>
+<p><strong>Когда использовать:</strong> разные типы задач требуют разного подхода.</p>
+<h3>3. Параллелизация (Parallelization)</h3>
+<p>Несколько шагов выполняются <strong>одновременно</strong>:</p>
+<pre class="highlight"><code>              ┌─ Агент 1: проверяет безопасность кода
+Задача ──────►├─ Агент 2: проверяет качество кода    ──► Объединение
+              └─ Агент 3: проверяет документацию
+</code></pre>
+
+<p>Два варианта:
+- <strong>Разделение</strong>: разные подзадачи параллельно (как выше)
+- <strong>Голосование</strong>: одна задача выполняется несколько раз, результаты сравниваются (для надёжности)</p>
+<p><strong>Когда использовать:</strong> подзадачи независимы друг от друга.</p>
+<h3>4. Оркестратор и работники (Orchestrator-Workers)</h3>
+<p>Главный агент <strong>разбивает</strong> задачу и <strong>раздаёт</strong> подзадачи рабочим агентам:</p>
+<pre class="highlight"><code>              ┌─ Работник 1: изменить файл A
+Оркестратор ──├─ Работник 2: изменить файл B  ──► Оркестратор собирает
+              └─ Работник 3: написать тесты
+</code></pre>
+
+<p>В отличие от параллелизации, здесь <strong>оркестратор сам решает</strong>, какие подзадачи создать — на основе конкретной задачи.</p>
+<p><strong>Пример:</strong> кодинг-агент получает задачу "добавь авторизацию". Оркестратор анализирует код и решает: нужно изменить 3 файла и добавить тесты. Три работника выполняют каждый свою часть.</p>
+<p><strong>Когда использовать:</strong> сложные задачи, где заранее неизвестно, какие подзадачи понадобятся.</p>
+<h3>5. Оценщик-Оптимизатор (Evaluator-Optimizer)</h3>
+<p>Один агент <strong>делает</strong>, другой <strong>проверяет</strong>. И так по кругу:</p>
+<pre class="highlight"><code>Генератор → Оценщик → &quot;Не очень, вот замечания&quot; →
+Генератор (улучшает) → Оценщик → &quot;Теперь хорошо&quot; → Результат
+</code></pre>
+
+<p><strong>Пример:</strong> агент пишет код, второй агент запускает тесты. Если тесты не прошли — первый агент исправляет. Повторяется, пока все тесты не пройдут.</p>
+<p><strong>Когда использовать:</strong> есть чёткие критерии качества, и результат можно проверить автоматически.</p>
+<hr />
+<h2>Как правильно давать задачи агенту</h2>
+<p>OpenAI и Anthropic сходятся в одном: агенту нужно давать <strong>цель</strong>, а не пошаговую инструкцию.</p>
+<h3>Плохо: слишком размыто</h3>
+<pre class="highlight"><code>&quot;Сделай что-нибудь полезное с этим проектом&quot;
+</code></pre>
+
+<p>Агент не знает, что конкретно нужно → результат непредсказуем.</p>
+<h3>Плохо: микроменеджмент</h3>
+<pre class="highlight"><code>&quot;Выполни grep -r 'import' *.py, потом для каждого файла
+ выполни wc -l, потом отсортируй по количеству строк&quot;
+</code></pre>
+
+<p>Если расписывать каждый шаг — зачем агент? Это можно сделать скриптом.</p>
+<h3>Хорошо: цель + контекст</h3>
+<pre class="highlight"><code>&quot;Проанализируй Python-проект.
+ Мне нужно понять:
+ - Какая общая структура
+ - Какие основные модули
+ - Есть ли очевидные проблемы&quot;
+</code></pre>
+
+<p><strong>Правило:</strong> описывай <strong>ЧТО</strong> нужно получить, а не <strong>КАК</strong> это делать. Агент сам знает, какие инструменты использовать и в каком порядке.</p>
+<p>Anthropic пишет: "Агенты — это системы, где LLM <strong>сам</strong> управляет процессом и использованием инструментов, сохраняя контроль над тем, как выполнить задачу." Если ты контролируешь каждый шаг — это не агент, а скрипт.</p>
+<hr />
+<h2>Как проектировать инструменты для агентов</h2>
+<p>Anthropic опубликовала отдельное исследование <a href="https://www.anthropic.com/engineering/writing-tools-for-agents">"Writing Tools for Agents"</a> о том, как правильно создавать инструменты. Главные выводы:</p>
+<h3>Инструменты для агентов ≠ обычные API</h3>
+<p>Обычные API делают для программистов: они знают точный формат, читают документацию. Агент — не программист. Он выбирает инструмент по <strong>описанию</strong>. Поэтому:</p>
+<pre class="highlight"><code>Плохой инструмент:                  Хороший инструмент:
+────────────────                    ──────────────────
+list_contacts                       search_contacts
+(вернёт ВСЕ контакты —             (вернёт только нужные —
+ агент утонет в данных)              агент работает эффективно)
+
+get_customer_by_id                  get_customer_context
+(нужно знать ID заранее)            (найдёт по имени или email)
+</code></pre>
+
+<h3>Описания решают всё</h3>
+<p>Anthropic обнаружила, что <strong>даже маленькие изменения в описании инструмента кардинально меняют результат</strong>. Описание нужно писать так, будто объясняешь новому сотруднику — делая неявный контекст явным.</p>
+<h3>Ошибки должны помогать</h3>
+<pre class="highlight"><code>Плохая ошибка:                      Хорошая ошибка:
+──────────────                      ────────────────
+&quot;Error 422&quot;                         &quot;Неверный формат даты.
+                                     Ожидается: YYYY-MM-DD.
+                                     Пример: 2026-03-15&quot;
+</code></pre>
+
+<p>Когда инструмент возвращает понятную ошибку — агент исправляется и пробует снова. Непонятная ошибка ведёт в тупик.</p>
+<hr />
+<h2>Контроль: ходы и бюджет</h2>
+<p>Каждый шаг — запрос к API, а каждый запрос стоит денег (урок 2.5). Мульти-шаговая задача из 20 шагов стоит в 20 раз дороже простого вопроса.</p>
+<p>Поэтому важно <strong>ставить ограничения</strong>:</p>
+<pre class="highlight"><code>Ограничение по шагам:    &quot;Максимум 10 шагов&quot;
+Ограничение по бюджету:  &quot;Максимум 50 центов&quot;
+</code></pre>
+
+<p>Anthropic рекомендует: "Обычно в агентов включают условия остановки (например, максимальное количество итераций) для сохранения контроля."</p>
+<p>В Claude Agent SDK:</p>
+<pre class="highlight"><code class="language-python">options = ClaudeAgentOptions(
+    allowed_tools=[&quot;Read&quot;, &quot;Glob&quot;, &quot;Grep&quot;],
+    max_turns=10,          # максимум 10 шагов
+    max_budget_usd=0.50    # максимум 50 центов
+)
+</code></pre>
+
+<p>Другие фреймворки (OpenAI Agents SDK, LangChain) имеют аналогичные настройки.</p>
+<hr />
+<h2>Когда НЕ нужен агент</h2>
+<p>Anthropic подчёркивает: <strong>"Начинайте с простых промптов, оптимизируйте их, и добавляйте мульти-шаговые агентные системы только когда простые решения не справляются."</strong></p>
+<pre class="highlight"><code>Задача: Классифицировать текст (позитивный/негативный)
+→ Один вызов API. Агент не нужен.
+
+Задача: Перевести 10 предложений
+→ Один вызов API. Агент не нужен.
+
+Задача: Проанализировать проект из 50 файлов и написать отчёт
+→ Мульти-шаговая задача. Нужен агент.
+
+Задача: Исправить баг, запустить тесты, пофиксить если упали
+→ Нужна адаптация. Нужен агент.
+</code></pre>
+
+<p>Правило: если задача решается <strong>одним вызовом</strong> — не усложняй. Агент нужен, когда задача требует <strong>нескольких шагов и адаптации</strong>.</p>
+<hr />
+<h2>Мульти-шаговые агенты в реальных продуктах</h2>
+<h3>Claude Code (Anthropic)</h3>
+<p>Агент для программирования в терминале. Anthropic описывает типичный цикл:</p>
+<pre class="highlight"><code>Задача: &quot;Исправь баг в функции calculate_total&quot;
+
+1. Ищет функцию в проекте → находит файл
+2. Читает файл → видит код
+3. Анализирует → находит ошибку
+4. Исправляет файл
+5. Запускает тесты → тесты упали
+6. Читает ошибку → понимает, что нужно ещё
+7. Исправляет снова
+8. Запускает тесты → тесты прошли ✓
+</code></pre>
+
+<p>Ключевое: шаги 5–8 — <strong>автоматическое восстановление после ошибки</strong>. Агент не сдался, а прочитал ошибку и попробовал снова.</p>
+<h3>Codex (OpenAI)</h3>
+<p>Облачный кодинг-агент. Получает задачу и работает <strong>автономно в изолированном окружении</strong>: читает код, пишет код, запускает тесты, создаёт pull request. Всё — без участия человека между шагами.</p>
+<h3>Gemini Deep Research (Google)</h3>
+<p>Агент для исследований. Google описывает его как систему для "сложных, мульти-шаговых задач по поиску информации". Агент сам ищет в интернете, читает источники, сопоставляет данные и пишет отчёт с ссылками.</p>
+<h3>Долгоживущие агенты</h3>
+<p>Anthropic опубликовала исследование <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">"Effective Harnesses for Long-Running Agents"</a> о том, как агенты работают <strong>часами</strong> над сложными проектами:</p>
+<ul>
+<li>Агент работает <strong>через несколько сессий</strong> (контекстное окно ограничено)</li>
+<li>Между сессиями сохраняет прогресс в <strong>файлы и git</strong> (ведёт лог <code>progress.txt</code>)</li>
+<li>Каждая новая сессия начинается с чтения лога: "Где я остановился?"</li>
+<li>Задача разбита на <strong>200+ мелких фич</strong>, каждая помечена: сделана / не сделана</li>
+<li>Агент проверяет работу через <strong>скриншоты</strong> (имитируя проверку человеком)</li>
+</ul>
+<p>Это уже не просто мульти-шаговая задача — это мульти-<strong>сессионный</strong> агент, который работает как программист: пишет, тестирует, коммитит, ведёт заметки.</p>
+<hr />
+<h2>Полная картина: 5 уроков об агентах</h2>
+<p>За этап 3 ты узнала все ключевые компоненты AI-агента:</p>
+<table>
+<thead>
+<tr>
+<th>Урок</th>
+<th>Тема</th>
+<th>Главный вывод</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1</td>
+<td>Чат-бот vs Агент</td>
+<td>Агент = LLM + цикл + инструменты</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Tools</td>
+<td>Инструменты — функции, которые агент вызывает сам</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Память</td>
+<td>Без памяти агент забывает всё после каждого разговора</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td>Agent SDK</td>
+<td>SDK — готовая библиотека, чтобы не собирать всё вручную</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td>Мульти-шаги</td>
+<td>Настоящая сила — сложные задачи, где агент планирует и адаптируется</td>
+</tr>
+</tbody>
+</table>
+<p>Эти принципы одинаковы для <strong>любого</strong> AI-агента: Claude Code, ChatGPT, Copilot, Gemini, OpenClaw. Разные модели, разные SDK, но архитектура одна.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Разбей задачу на шаги</h3>
+<p>Без кода — просто подумай. Как бы агент выполнил эту задачу?</p>
+<pre class="highlight"><code>&quot;Найди в проекте все файлы, которые не менялись больше года,
+ и создай список: что удалить, что обновить&quot;
+</code></pre>
+
+<details>
+<summary>Примерный план агента</summary>
+
+1. Найти все файлы в проекте
+2. Проверить дату последнего изменения каждого
+3. Отфильтровать старше года
+4. Прочитать каждый такой файл
+5. Проверить, используется ли он в других файлах
+6. Для каждого дать рекомендацию: удалить или обновить
+7. Собрать в оформленный список
+</details>
+
+<h3>Задание 2: Определи паттерн</h3>
+<p>Какой из 5 паттернов (цепочка, маршрутизация, параллелизация, оркестратор, оценщик) подходит для каждой задачи?</p>
+<pre class="highlight"><code>A) Написать статью, потом перевести на английский
+B) Проверить код на безопасность, качество и стиль одновременно
+C) Рассортировать письма: спам, работа, личные
+D) Написать код, запустить тесты, исправить ошибки, повторить
+</code></pre>
+
+<details>
+<summary>Ответы</summary>
+
+A) **Цепочка** — фиксированные последовательные шаги
+B) **Параллелизация** — три независимые проверки одновременно
+C) **Маршрутизация** — классифицировать и отправить на нужный путь
+D) **Оценщик-оптимизатор** — один агент делает, другой проверяет, по кругу
+</details>
+
+<h3>Задание 3: Хорошая vs плохая формулировка</h3>
+<p>Какая формулировка лучше и почему?</p>
+<p><strong>Вариант А:</strong></p>
+<pre class="highlight"><code>&quot;Выполни grep -r 'import' *.py, потом для каждого файла
+ выполни wc -l, потом отсортируй&quot;
+</code></pre>
+
+<p><strong>Вариант Б:</strong></p>
+<pre class="highlight"><code>&quot;Проанализируй Python-проект: какие файлы самые сложные
+ и какие внешние библиотеки используются?&quot;
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+Вариант Б лучше. Он описывает **цель** (понять сложность и зависимости), а не пошаговые команды. Агент сам решит, как это сделать — может, он найдёт способ лучше, чем grep + wc. Вариант А — микроменеджмент: зачем тогда агент, если ты сам решаешь каждый шаг?
+</details>
+
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Чем мульти-шаговая задача отличается от простой?</p>
+<details>
+<summary>Ответ</summary>
+
+Простая задача — один шаг. Мульти-шаговая — несколько шагов, где каждый следующий зависит от результата предыдущего. Агент сам решает, сколько шагов нужно, и адаптируется к результатам.
+</details>
+
+<p><strong>Задача 2:</strong> Чем агент отличается от скрипта?</p>
+<details>
+<summary>Ответ</summary>
+
+Скрипт следует жёсткой программе: ошибка → стоп. Агент **адаптируется**: не нашёл файл → попробует другой путь, тесты упали → прочитает ошибку и исправит. Агент думает на каждом шаге.
+</details>
+
+<p><strong>Задача 3:</strong> Назови 5 паттернов организации агентов (по Anthropic).</p>
+<details>
+<summary>Ответ</summary>
+
+1. **Цепочка промптов** — последовательные шаги
+2. **Маршрутизация** — классификация и отправка на нужный путь
+3. **Параллелизация** — несколько подзадач одновременно
+4. **Оркестратор-работники** — главный агент раздаёт задачи
+5. **Оценщик-оптимизатор** — один делает, другой проверяет, по кругу
+</details>
+
+<p><strong>Задача 4:</strong> Когда агент НЕ нужен?</p>
+<details>
+<summary>Ответ</summary>
+
+Когда задача решается одним вызовом API: классификация текста, перевод, простой вопрос. Anthropic рекомендует начинать с простых решений и добавлять агентов только когда простое не справляется.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Мульти-шаговая задача</strong></td>
+<td>Задача из нескольких шагов, где каждый зависит от предыдущего</td>
+</tr>
+<tr>
+<td><strong>Цепочка действий</strong></td>
+<td>Последовательность: инструмент → результат → следующий инструмент</td>
+</tr>
+<tr>
+<td><strong>Адаптация</strong></td>
+<td>Способность агента менять план на основе результатов</td>
+</tr>
+<tr>
+<td><strong>Оркестрация</strong></td>
+<td>Управление тем, как шаги агента соединяются между собой</td>
+</tr>
+<tr>
+<td><strong>Prompt Chaining</strong></td>
+<td>Цепочка промптов — задача разбита на фиксированные последовательные шаги</td>
+</tr>
+<tr>
+<td><strong>Routing</strong></td>
+<td>Маршрутизация — классификация входа и отправка на нужный обработчик</td>
+</tr>
+<tr>
+<td><strong>Parallelization</strong></td>
+<td>Параллелизация — независимые подзадачи выполняются одновременно</td>
+</tr>
+<tr>
+<td><strong>Orchestrator-Workers</strong></td>
+<td>Главный агент раздаёт подзадачи рабочим агентам</td>
+</tr>
+<tr>
+<td><strong>Evaluator-Optimizer</strong></td>
+<td>Один агент делает, другой проверяет, цикл до нужного качества</td>
+</tr>
+<tr>
+<td><strong>max_turns</strong></td>
+<td>Ограничение количества шагов агента</td>
+</tr>
+<tr>
+<td><strong>Guardrails</strong></td>
+<td>Ограничители — правила, которые не дают агенту выйти за рамки</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Источники</h2>
+<p>Этот урок основан на публикациях и документации:</p>
+<ul>
+<li><a href="https://www.anthropic.com/research/building-effective-agents">Anthropic — Building Effective Agents</a> — 5 паттернов, когда использовать агентов</li>
+<li><a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Anthropic — Writing Tools for Agents</a> — как проектировать инструменты</li>
+<li><a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Anthropic — Effective Harnesses for Long-Running Agents</a> — долгоживущие агенты</li>
+<li><a href="https://developers.openai.com/resources/agents">OpenAI — Agents</a> — 4 компонента агента</li>
+<li><a href="https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/">OpenAI — A Practical Guide to Building Agents</a> — практическое руководство</li>
+<li><a href="https://techcrunch.com/2025/12/11/google-launched-its-deepest-ai-research-agent-yet-on-the-same-day-openai-dropped-gpt-5-2/">Google DeepMind — Gemini Deep Research</a> — мульти-шаговые исследования</li>
+</ul>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Мульти-шаговые задачи — главная сила агентов.
+
+Агент сам:
+  ✓ Разбивает задачу на шаги
+  ✓ Выбирает инструменты
+  ✓ Адаптируется к результатам
+  ✓ Пробует снова при ошибке
+
+5 паттернов (Anthropic):
+  1. Цепочка промптов — шаг за шагом
+  2. Маршрутизация — разные задачи → разные пути
+  3. Параллелизация — одновременно
+  4. Оркестратор-работники — главный раздаёт задачи
+  5. Оценщик-оптимизатор — делает + проверяет в цикле
+
+Как давать задачи:
+  ✗ &quot;Сделай grep, потом wc&quot; — микроменеджмент
+  ✗ &quot;Сделай что-нибудь&quot; — слишком размыто
+  ✓ &quot;Проанализируй проект и найди проблемы&quot; — цель + контекст
+
+Когда НЕ нужен агент:
+  Задача решается одним вызовом → не усложняй
+</code></pre>
+
+<hr />
+<h2>Итоги Этапа 3</h2>
+<p>Этап 3 завершён! Вот что ты теперь знаешь об AI-агентах:</p>
+<table>
+<thead>
+<tr>
+<th>Урок</th>
+<th>Тема</th>
+<th>Главный вывод</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1</td>
+<td>Чат-бот vs Агент</td>
+<td>Агент = LLM + цикл + инструменты</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Tools</td>
+<td>Инструменты — функции, которые агент вызывает сам</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Память</td>
+<td>Без памяти агент забывает всё после разговора</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td>Agent SDK</td>
+<td>SDK — готовая библиотека, не нужно собирать с нуля</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td>Мульти-шаги</td>
+<td>Настоящая сила — планирование и адаптация</td>
+</tr>
+</tbody>
+</table>
+<p>Ты понимаешь, как устроены AI-агенты изнутри. В следующем этапе — <strong>Продукты и интеграции</strong>: как превратить агента в продукт для реальных людей (Telegram-бот, сервер, база данных, деплой).</p>
+<hr />
+<h2>Что дальше?</h2>
+<p>Этап 3 завершён! Ты знаешь, как устроены AI-агенты: от простого чат-бота до мульти-шаговых задач. В Этапе 4 — превратим агента в продукт: Telegram-бот, база данных, деплой на сервер, безопасность.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="3-4-agent-sdk.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="4-1-telegram.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

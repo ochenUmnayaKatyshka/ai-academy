@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Файлы и форматы — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 3 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 1.2 — Файлы и форматы</h1>
+<blockquote>
+<p>Каждый файл на компьютере имеет расширение — буквы после точки. Расширение говорит, что внутри файла и чем его открывать. Как язык, на котором написан документ — если не знаешь язык, не поймёшь содержимое.</p>
+</blockquote>
+<hr />
+<h2>Зачем это знать</h2>
+<p>Когда ты работаешь с кодом и AI, ты постоянно видишь файлы:</p>
+<pre class="highlight"><code>app.py
+config.json
+.env
+README.md
+package.json
+requirements.txt
+</code></pre>
+
+<p>Если не понимаешь, что каждый из них делает — ты как в чужом городе без карты. Этот урок — твоя карта.</p>
+<hr />
+<h2>.py — файл с кодом на Python</h2>
+<p><strong>Что внутри:</strong> Инструкции для компьютера, написанные на языке Python.</p>
+<p><strong>Зачем:</strong> Это твой основной рабочий файл. Здесь ты пишешь программу — то, что компьютер будет выполнять.</p>
+<p><strong>Аналогия:</strong> Сценарий фильма. Актёры (компьютер) читают сценарий (.py файл) и выполняют действия по порядку.</p>
+<pre class="highlight"><code class="language-python"># файл: app.py
+# Это файл с Python-кодом. Компьютер читает его сверху вниз и выполняет каждую строку.
+
+name = &quot;Катя&quot;
+print(f&quot;Привет, {name}!&quot;)
+
+# Чтобы запустить: открываешь терминал и пишешь
+# python3 app.py
+# Результат: Привет, Катя!
+</code></pre>
+
+<hr />
+<h2>.js — файл с кодом на JavaScript</h2>
+<p><strong>Что внутри:</strong> Инструкции на языке JavaScript.</p>
+<p><strong>Зачем:</strong> JavaScript работает в браузере и на сервере. Почти каждый сайт, который ты открываешь — использует .js файлы. Когда ты лайкаешь пост и сердечко анимируется без перезагрузки страницы — это JavaScript.</p>
+<pre class="highlight"><code class="language-javascript">// файл: app.js
+// JavaScript-код. Двойной слеш — это комментарий (компьютер его игнорирует)
+
+let name = &quot;Катя&quot;;
+console.log(`Привет, ${name}!`);
+
+// console.log — как print в Python, выводит текст
+</code></pre>
+
+<hr />
+<h2>.json — файл с данными</h2>
+<p><strong>Что внутри:</strong> Структурированные данные. Не код — именно данные.</p>
+<p><strong>Зачем:</strong> Когда программы передают информацию друг другу — они используют JSON. Когда Instagram отправляет твоему телефону список постов в ленте — это JSON. Когда AI-модель получает запрос — это JSON.</p>
+<p><strong>Аналогия:</strong> Анкета с полями. У каждого поля есть название и значение.</p>
+<pre class="highlight"><code class="language-json">{
+    &quot;name&quot;: &quot;Катя&quot;,
+    &quot;age&quot;: 25,
+    &quot;city&quot;: &quot;Москва&quot;,
+    &quot;interests&quot;: [&quot;AI&quot;, &quot;дизайн&quot;, &quot;музыка&quot;]
+}
+
+// Правила JSON:
+// - данные в фигурных скобках {}
+// - каждое поле: &quot;название&quot;: значение
+// - текст в кавычках, числа без
+// - список в квадратных скобках []
+// - НЕЛЬЗЯ писать комментарии (я написал для объяснения, но в реальном .json файле их нет)
+</code></pre>
+
+<hr />
+<h2>.env — файл с секретами</h2>
+<p><strong>Что внутри:</strong> Пароли, API-ключи, секретные настройки.</p>
+<p><strong>Зачем:</strong> Когда твоя программа подключается к AI (Claude, OpenAI) или к базе данных — ей нужен ключ доступа. Этот ключ хранится в <code>.env</code>. Файл начинается с точки — значит он <strong>скрытый</strong>.</p>
+<p><strong>Аналогия:</strong> Сейф с паролями. Ты не кричишь свой пароль в комнате — ты хранишь его в надёжном месте. <code>.env</code> — это тот самый сейф.</p>
+<pre class="highlight"><code class="language-bash"># файл: .env
+# Каждая строка — одна переменная: НАЗВАНИЕ=значение
+# Без пробелов вокруг знака =
+# Без кавычек (обычно)
+
+ANTHROPIC_API_KEY=sk-ant-abc123def456
+DATABASE_URL=postgresql://localhost:5432/mydb
+SECRET_KEY=super-secret-value
+
+# ГЛАВНОЕ ПРАВИЛО: никогда не загружай .env в интернет (GitHub)
+# Для этого существует .gitignore (расскажем в уроке про Git)
+</code></pre>
+
+<hr />
+<h2>.md — Markdown, файл с текстом и разметкой</h2>
+<p><strong>Что внутри:</strong> Текст с простой разметкой — заголовки, списки, ссылки, жирный текст.</p>
+<p><strong>Зачем:</strong> Документация, описания проектов, этот самый урок — всё написано в <code>.md</code>. Когда ты заходишь на GitHub и видишь красиво оформленное описание проекта — это <code>.md</code> файл.</p>
+<p><strong>Аналогия:</strong> Google Docs, но в текстовом файле. Вместо кнопки "жирный" ты пишешь <code>**жирный**</code>.</p>
+<pre class="highlight"><code class="language-markdown"># Заголовок (решётка + пробел)
+
+## Подзаголовок (две решётки)
+
+Обычный текст. **Жирный текст**. *Курсив*.
+
+- Список
+- Ещё пункт
+- И ещё
+
+[Ссылка на Google](https://google.com)
+
+`код в строке`
+</code></pre>
+
+<hr />
+<h2>.gitignore — список того, что Git должен игнорировать</h2>
+<p><strong>Что внутри:</strong> Перечень файлов и папок, которые не нужно сохранять в историю и загружать на GitHub.</p>
+<p><strong>Зачем:</strong> Ты не хочешь, чтобы твои пароли (<code>.env</code>), временные файлы и тяжёлые папки попали в интернет.</p>
+<pre class="highlight"><code class="language-bash"># файл: .gitignore
+# Каждая строка — то, что Git будет игнорировать
+
+.env                # секреты
+node_modules/       # папка с библиотеками (тяжёлая, скачивается заново)
+__pycache__/        # временные файлы Python
+.DS_Store           # служебный файл macOS
+</code></pre>
+
+<hr />
+<h2>requirements.txt — список Python-библиотек</h2>
+<p><strong>Что внутри:</strong> Названия и версии библиотек, которые нужны твоему проекту.</p>
+<p><strong>Зачем:</strong> Когда ты отправляешь свой код другому человеку (или на сервер), он должен знать, какие библиотеки установить. Этот файл — как список покупок.</p>
+<pre class="highlight"><code># файл: requirements.txt
+# Одна библиотека на строку
+# == означает &quot;именно эта версия&quot;
+
+anthropic==0.43.0
+requests==2.31.0
+python-dotenv==1.0.0
+</code></pre>
+
+<pre class="highlight"><code class="language-bash"># Чтобы установить всё из списка:
+pip install -r requirements.txt
+</code></pre>
+
+<hr />
+<h2>package.json — описание JavaScript-проекта</h2>
+<p><strong>Что внутри:</strong> Название проекта, версия, список библиотек, скрипты для запуска.</p>
+<p><strong>Зачем:</strong> Как паспорт проекта. Когда кто-то скачивает твой проект — <code>package.json</code> говорит: "вот что нужно установить, вот как запустить".</p>
+<pre class="highlight"><code class="language-json">{
+    &quot;name&quot;: &quot;my-ai-bot&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;scripts&quot;: {
+        &quot;start&quot;: &quot;node app.js&quot;
+    },
+    &quot;dependencies&quot;: {
+        &quot;express&quot;: &quot;^4.18.0&quot;
+    }
+}
+
+// &quot;scripts&quot; — команды для запуска: npm run start
+// &quot;dependencies&quot; — библиотеки, которые нужны проекту
+</code></pre>
+
+<hr />
+<h2>Как всё связано</h2>
+<p>Типичный AI-проект выглядит так:</p>
+<pre class="highlight"><code>my-ai-agent/
+├── app.py              ← основной код (Python)
+├── requirements.txt    ← какие библиотеки нужны
+├── .env                ← API-ключи (секреты)
+├── .gitignore          ← что не загружать на GitHub
+├── config.json         ← настройки
+└── README.md           ← описание проекта
+</code></pre>
+
+<p>Каждый файл — на своём месте. Каждый делает одну задачу.</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Ты получила API-ключ от Claude: <code>sk-ant-xyz789</code>. В какой файл его сохранить?</p>
+<details>
+<summary>Ответ</summary>
+
+В `.env` файл:
+
+<pre class="highlight"><code>ANTHROPIC_API_KEY=sk-ant-xyz789
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 2:</strong> Подруга прислала тебе свой проект. Ты видишь файл <code>requirements.txt</code>. Что тебе нужно сделать?</p>
+<details>
+<summary>Ответ</summary>
+
+Установить все библиотеки из этого файла:
+
+<pre class="highlight"><code class="language-bash">pip install -r requirements.txt
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 3:</strong> Ты хочешь, чтобы файл <code>.env</code> не попал на GitHub. Что сделать?</p>
+<details>
+<summary>Ответ</summary>
+
+Добавить `.env` в файл `.gitignore`:
+
+<pre class="highlight"><code>.env
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Тебе нужно сохранить информацию о пользователе (имя, email, возраст) в формате, который понимают все программы. Какой формат выберешь и как это будет выглядеть?</p>
+<details>
+<summary>Ответ</summary>
+
+JSON:
+
+<pre class="highlight"><code class="language-json">{
+    &quot;name&quot;: &quot;Катя&quot;,
+    &quot;email&quot;: &quot;katya@example.com&quot;,
+    &quot;age&quot;: 25
+}
+</code></pre>
+
+
+</details>
+
+<hr />
+<h2>Практика</h2>
+<p><strong>Задание 1: Создай структуру проекта</strong></p>
+<p>Создай папку <code>my-first-project</code> и внутри неё вручную создай файлы:</p>
+<ul>
+<li><code>app.py</code> — напиши <code>print("Привет!")</code></li>
+<li><code>config.json</code> — добавь <code>{"name": "Мой проект", "version": 1}</code></li>
+<li><code>.env</code> — добавь <code>API_KEY=test123</code></li>
+<li><code>.gitignore</code> — добавь строку <code>.env</code></li>
+<li><code>README.md</code> — напиши заголовок <code># Мой первый проект</code> и краткое описание</li>
+<li><code>data.csv</code> — добавь пару строк с заголовками: <code>name,age,city</code> и данными</li>
+</ul>
+<p>Открой папку в VS Code и посмотри, как редактор подсвечивает каждый формат по-разному.</p>
+<p><strong>Задание 2: Угадай формат</strong></p>
+<p>Представь, что тебе нужно сохранить:
+1. Список покупок — какой формат выберешь?
+2. Настройки приложения (язык, тема, имя пользователя) — какой формат?
+3. Секретный ключ от API — какой формат?</p>
+<p>Запиши ответы, потом проверь себя ниже.</p>
+<details>
+<summary>Ответы</summary>
+
+1. `.txt` или `.md` — простой текст, не нужна структура
+2. `.json` — структурированные данные «ключ-значение»
+3. `.env` — секреты хранят в `.env` и никогда не кладут в git
+</details>
+
+<p><strong>Задание 3: Прочитай чужой JSON</strong></p>
+<p>Открой терминал и выполни:</p>
+<pre class="highlight"><code class="language-bash">echo '{&quot;city&quot;: &quot;Москва&quot;, &quot;temp&quot;: -5, &quot;wind&quot;: true}' &gt; weather.json
+</code></pre>
+
+<p>Открой файл в VS Code. Ответь: какого типа каждое значение? (строка, число, булево)</p>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>.py</strong></td>
+<td>Расширение файлов Python — в них пишут код, который выполняет компьютер</td>
+</tr>
+<tr>
+<td><strong>.json</strong></td>
+<td>Формат для структурированных данных (настройки, ответы от API) — читают и люди, и программы</td>
+</tr>
+<tr>
+<td><strong>.env</strong></td>
+<td>Файл для секретов (ключи, пароли) — никогда не загружается в git</td>
+</tr>
+<tr>
+<td><strong>.md</strong></td>
+<td>Markdown — формат для красивого текстового оформления (заголовки, списки, ссылки)</td>
+</tr>
+<tr>
+<td><strong>.txt</strong></td>
+<td>Простой текстовый файл без какого-либо форматирования</td>
+</tr>
+<tr>
+<td><strong>.csv</strong></td>
+<td>Таблица в текстовом виде, где значения разделены запятыми</td>
+</tr>
+<tr>
+<td><strong>.gitignore</strong></td>
+<td>Файл-список того, что git должен игнорировать и не отправлять на GitHub</td>
+</tr>
+<tr>
+<td><strong>Формат файла</strong></td>
+<td>Соглашение о том, как организованы данные внутри файла</td>
+</tr>
+<tr>
+<td><strong>Расширение</strong></td>
+<td>Часть имени файла после точки (<code>.py</code>, <code>.json</code>), по которой программы понимают, как с файлом работать</td>
+</tr>
+<tr>
+<td><strong>Кодировка UTF-8</strong></td>
+<td>Стандарт, который позволяет хранить в файле буквы любых языков — от русского до японского</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Расширение файла подсказывает, что внутри:
+  .py        — код на Python
+  .json      — структурированные данные (настройки, API)
+  .env       — секреты (ключи, пароли) — НЕ кладём в git!
+  .md        — текст с оформлением (README, документация)
+  .txt       — простой текст
+  .csv       — таблица (строки и столбцы через запятую)
+  .gitignore — список файлов, которые git должен игнорировать
+
+Правила:
+- Секреты → .env + добавить .env в .gitignore
+- Данные «ключ-значение» → .json
+- Таблицы → .csv
+- Описание проекта → README.md
+- Всегда сохраняй файлы в кодировке UTF-8
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Python: переменные и типы данных</strong>. Начнём писать настоящий код.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="1-1-terminal.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="1-3-variables.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

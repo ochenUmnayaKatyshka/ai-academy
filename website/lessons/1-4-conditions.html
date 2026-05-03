@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Условия и циклы — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 5 из 8</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 1.4 — Python: условия и циклы</h1>
+<blockquote>
+<p>Условие — программа принимает решение. Цикл — программа повторяет одно действие много раз. Это два механизма, которые превращают список команд в настоящую логику.</p>
+</blockquote>
+<hr />
+<h2>Условия (if / else)</h2>
+<h3>Что это и зачем</h3>
+<p>Программа должна вести себя по-разному в зависимости от ситуации. Когда ты открываешь Instagram — если ты залогинена, показывается лента. Если нет — экран входа. Это условие.</p>
+<p><strong>Аналогия:</strong> Турникет в метро. Если карта приложена и деньги есть — пропускает. Если нет — блокирует. Одно действие, два разных результата в зависимости от условия.</p>
+<pre class="highlight"><code class="language-python"># if = &quot;если&quot;
+# Проверяем условие. Если True — выполняем код внутри.
+
+age = 25
+
+if age &gt;= 18:
+    print(&quot;Доступ разрешён&quot;)
+# age &gt;= 18 — это условие (25 &gt;= 18 → True)
+# Код с отступом — то, что выполнится если условие True
+</code></pre>
+
+<hr />
+<h3>if / else — если да / если нет</h3>
+<pre class="highlight"><code class="language-python"># else = &quot;иначе&quot; — что делать, если условие False
+
+is_premium = False
+
+if is_premium:
+    print(&quot;Смотри без рекламы&quot;)
+else:
+    print(&quot;Смотри с рекламой&quot;)
+
+# is_premium = False, значит выполнится else
+# → &quot;Смотри с рекламой&quot;
+</code></pre>
+
+<hr />
+<h3>if / elif / else — несколько вариантов</h3>
+<pre class="highlight"><code class="language-python"># elif = &quot;else if&quot; = &quot;а если вот это?&quot;
+# Когда вариантов больше двух
+
+followers = 5000
+
+if followers &gt;= 1000000:
+    status = &quot;Звезда&quot;
+elif followers &gt;= 10000:
+    status = &quot;Блогер&quot;
+elif followers &gt;= 1000:
+    status = &quot;Активный&quot;
+else:
+    status = &quot;Новичок&quot;
+
+print(f&quot;Статус: {status}&quot;)
+# followers = 5000, подходит третье условие (&gt;= 1000)
+# → &quot;Статус: Активный&quot;
+</code></pre>
+
+<hr />
+<h3>Операторы сравнения</h3>
+<p>Условие — это вопрос, на который ответ <code>True</code> или <code>False</code>:</p>
+<pre class="highlight"><code class="language-python">a = 10
+b = 20
+
+a == b    # равно?           → False
+a != b    # не равно?        → True
+a &gt; b     # больше?          → False
+a &lt; b     # меньше?          → True
+a &gt;= 10   # больше или равно? → True
+a &lt;= 5    # меньше или равно? → False
+</code></pre>
+
+<hr />
+<h3>and, or, not — комбинирование условий</h3>
+<pre class="highlight"><code class="language-python">age = 25
+has_ticket = True
+
+# and = &quot;и&quot; — оба условия должны быть True
+if age &gt;= 18 and has_ticket:
+    print(&quot;Проходи&quot;)
+# 25 &gt;= 18? True. has_ticket? True. Оба True → проходим.
+
+# or = &quot;или&quot; — хотя бы одно условие True
+is_vip = False
+has_invite = True
+
+if is_vip or has_invite:
+    print(&quot;Добро пожаловать&quot;)
+# is_vip? False. has_invite? True. Одно True → заходим.
+
+# not = &quot;не&quot; — переворачивает True ↔ False
+is_banned = False
+
+if not is_banned:
+    print(&quot;Можешь писать комментарии&quot;)
+# not False → True → выполняется
+</code></pre>
+
+<hr />
+<h2>Циклы</h2>
+<h3>Что это и зачем</h3>
+<p>Цикл — это когда программа делает <strong>одно и то же действие</strong> много раз подряд, каждый раз с новыми данными.</p>
+<p>Представь: у тебя 100 непрочитанных сообщений в Telegram. Что ты делаешь?</p>
+<ol>
+<li>Открыла сообщение → прочитала</li>
+<li>Открыла следующее → прочитала</li>
+<li>Открыла следующее → прочитала</li>
+<li>...и так 100 раз</li>
+</ol>
+<p>Ты не делаешь 100 разных действий. Ты делаешь <strong>одно действие</strong> (открыть и прочитать), но <strong>повторяешь его для каждого сообщения</strong>.</p>
+<p>В коде — то же самое. Ты не пишешь 100 строк. Ты пишешь одну инструкцию и говоришь: "сделай это для каждого элемента".</p>
+<pre class="highlight"><code class="language-python"># У тебя есть список сообщений
+messages = [&quot;Привет&quot;, &quot;Как дела?&quot;, &quot;Ты идёшь?&quot;]
+
+# Без цикла — пишешь вручную для каждого
+print(messages[0])   # Привет
+print(messages[1])   # Как дела?
+print(messages[2])   # Ты идёшь?
+
+# С циклом — одна инструкция, работает для всех
+for msg in messages:
+    print(msg)
+
+# Результат тот же, но если сообщений 1000 — цикл справится,
+# а вручную ты 1000 строк не напишешь
+</code></pre>
+
+<hr />
+<h3>for — для каждого элемента сделай</h3>
+<pre class="highlight"><code class="language-python"># for = &quot;для каждого&quot;
+# Берёт элементы из списка по одному и выполняет действие с каждым
+
+friends = [&quot;Аня&quot;, &quot;Макс&quot;, &quot;Дима&quot;]
+
+for friend in friends:
+    print(f&quot;Привет, {friend}!&quot;)
+
+# friend — временная переменная, меняется на каждом шаге:
+# Шаг 1: friend = &quot;Аня&quot;  → &quot;Привет, Аня!&quot;
+# Шаг 2: friend = &quot;Макс&quot; → &quot;Привет, Макс!&quot;
+# Шаг 3: friend = &quot;Дима&quot; → &quot;Привет, Дима!&quot;
+</code></pre>
+
+<hr />
+<h3>for с числами — range()</h3>
+<pre class="highlight"><code class="language-python"># range(5) = числа от 0 до 4 (не включая 5)
+# Когда нужно повторить действие определённое количество раз
+
+for i in range(5):
+    print(f&quot;Сообщение #{i}&quot;)
+
+# i меняется: 0, 1, 2, 3, 4
+# → Сообщение #0
+# → Сообщение #1
+# → Сообщение #2
+# → Сообщение #3
+# → Сообщение #4
+
+# range(1, 6) = от 1 до 5
+for i in range(1, 6):
+    print(f&quot;День {i}&quot;)
+# → День 1, День 2, День 3, День 4, День 5
+</code></pre>
+
+<hr />
+<h3>while — пока условие верно, повторяй</h3>
+<pre class="highlight"><code class="language-python"># while = &quot;пока&quot;
+# Повторяет действие, пока условие True
+
+attempts = 3
+
+while attempts &gt; 0:
+    print(f&quot;Осталось попыток: {attempts}&quot;)
+    attempts = attempts - 1
+
+# Шаг 1: attempts=3, 3&gt;0? True  → &quot;Осталось попыток: 3&quot;, attempts стало 2
+# Шаг 2: attempts=2, 2&gt;0? True  → &quot;Осталось попыток: 2&quot;, attempts стало 1
+# Шаг 3: attempts=1, 1&gt;0? True  → &quot;Осталось попыток: 1&quot;, attempts стало 0
+# Шаг 4: attempts=0, 0&gt;0? False → стоп, выходим
+</code></pre>
+
+<p><strong>Аналогия:</strong> Ввод пароля на телефоне. Телефон даёт попытки, пока (<code>while</code>) они не закончатся. Каждая неверная попытка — минус одна. Когда попытки = 0 — блокировка.</p>
+<hr />
+<h3>break — остановить цикл досрочно</h3>
+<pre class="highlight"><code class="language-python"># break = &quot;стоп, выходим из цикла прямо сейчас&quot;
+
+messages = [&quot;привет&quot;, &quot;как дела&quot;, &quot;стоп&quot;, &quot;это не прочитается&quot;]
+
+for msg in messages:
+    if msg == &quot;стоп&quot;:
+        print(&quot;Встретили стоп, прекращаем&quot;)
+        break
+    print(f&quot;Читаем: {msg}&quot;)
+
+# → Читаем: привет
+# → Читаем: как дела
+# → Встретили стоп, прекращаем
+# &quot;это не прочитается&quot; — до него цикл не дошёл
+</code></pre>
+
+<hr />
+<h2>Условия + циклы вместе</h2>
+<p>Это основа логики любой программы:</p>
+<pre class="highlight"><code class="language-python"># Проверяем список пользователей и решаем, кому дать доступ
+
+users = [
+    {&quot;name&quot;: &quot;Аня&quot;, &quot;age&quot;: 22, &quot;is_premium&quot;: True},
+    {&quot;name&quot;: &quot;Макс&quot;, &quot;age&quot;: 16, &quot;is_premium&quot;: False},
+    {&quot;name&quot;: &quot;Дима&quot;, &quot;age&quot;: 30, &quot;is_premium&quot;: False},
+    {&quot;name&quot;: &quot;Лена&quot;, &quot;age&quot;: 14, &quot;is_premium&quot;: True},
+]
+
+for user in users:
+    if user[&quot;age&quot;] &gt;= 18:
+        if user[&quot;is_premium&quot;]:
+            print(f&quot;{user['name']} — полный доступ&quot;)
+        else:
+            print(f&quot;{user['name']} — базовый доступ&quot;)
+    else:
+        print(f&quot;{user['name']} — доступ запрещён (возраст)&quot;)
+
+# → Аня — полный доступ
+# → Макс — доступ запрещён (возраст)
+# → Дима — базовый доступ
+# → Лена — доступ запрещён (возраст)
+</code></pre>
+
+<hr />
+<h2>Отступы — это важно</h2>
+<p>В Python отступ (4 пробела) — это часть языка. Отступ показывает, какой код находится внутри <code>if</code>, <code>for</code>, <code>while</code>:</p>
+<pre class="highlight"><code class="language-python"># Правильно — print внутри if (есть отступ)
+if True:
+    print(&quot;Я внутри условия&quot;)
+
+# Неправильно — ошибка!
+if True:
+print(&quot;Нет отступа — Python не поймёт&quot;)
+# → IndentationError
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<p>Создай файл <code>logic.py</code>:</p>
+<pre class="highlight"><code class="language-python"># Система уведомлений
+notifications = [
+    {&quot;type&quot;: &quot;like&quot;, &quot;from&quot;: &quot;Аня&quot;},
+    {&quot;type&quot;: &quot;comment&quot;, &quot;from&quot;: &quot;Макс&quot;},
+    {&quot;type&quot;: &quot;follow&quot;, &quot;from&quot;: &quot;Дима&quot;},
+    {&quot;type&quot;: &quot;like&quot;, &quot;from&quot;: &quot;Лена&quot;},
+    {&quot;type&quot;: &quot;message&quot;, &quot;from&quot;: &quot;Аня&quot;},
+]
+
+for notif in notifications:
+    if notif[&quot;type&quot;] == &quot;like&quot;:
+        print(f&quot;Лайк от {notif['from']}&quot;)
+    elif notif[&quot;type&quot;] == &quot;comment&quot;:
+        print(f&quot;Комментарий от {notif['from']}&quot;)
+    elif notif[&quot;type&quot;] == &quot;follow&quot;:
+        print(f&quot;Подписка от {notif['from']}&quot;)
+    elif notif[&quot;type&quot;] == &quot;message&quot;:
+        print(f&quot;Сообщение от {notif['from']}&quot;)
+</code></pre>
+
+<p>Запусти: <code>python3 logic.py</code></p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что выведет этот код?</p>
+<pre class="highlight"><code class="language-python">x = 15
+
+if x &gt; 20:
+    print(&quot;A&quot;)
+elif x &gt; 10:
+    print(&quot;B&quot;)
+elif x &gt; 5:
+    print(&quot;C&quot;)
+else:
+    print(&quot;D&quot;)
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+`B` — потому что 15 > 20 нет, но 15 > 10 да. Python останавливается на первом подходящем условии и не проверяет остальные.
+</details>
+
+<p><strong>Задача 2:</strong> Напиши цикл, который выведет числа от 1 до 5.</p>
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">for i in range(1, 6):
+    print(i)
+</code></pre>
+
+
+`range(1, 6)` — от 1 до 5 (6 не включается).
+</details>
+
+<p><strong>Задача 3:</strong> Есть список оценок. Посчитай, сколько из них больше или равны 4.</p>
+<pre class="highlight"><code class="language-python">grades = [5, 3, 4, 2, 5, 4, 3, 5]
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">grades = [5, 3, 4, 2, 5, 4, 3, 5]
+count = 0
+
+for grade in grades:
+    if grade &gt;= 4:
+        count = count + 1
+
+print(f&quot;Хороших оценок: {count}&quot;)
+# → Хороших оценок: 5
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Что делает этот код? Объясни словами.</p>
+<pre class="highlight"><code class="language-python">numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+for n in numbers:
+    if n % 2 == 0:
+        print(n)
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+Выводит только чётные числа: 2, 4, 6, 8, 10.
+`n % 2` — остаток от деления на 2. Если остаток 0 — число чётное.
+</details>
+
+<p><strong>Задача 5:</strong> Напиши код, который проходит по списку и останавливается, когда встречает "exit".</p>
+<pre class="highlight"><code class="language-python">commands = [&quot;start&quot;, &quot;run&quot;, &quot;exit&quot;, &quot;stop&quot;]
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">commands = [&quot;start&quot;, &quot;run&quot;, &quot;exit&quot;, &quot;stop&quot;]
+
+for cmd in commands:
+    if cmd == &quot;exit&quot;:
+        print(&quot;Выходим!&quot;)
+        break
+    print(f&quot;Выполняю: {cmd}&quot;)
+
+# → Выполняю: start
+# → Выполняю: run
+# → Выходим!
+</code></pre>
+
+
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>if / elif / else</td>
+<td>Конструкция для принятия решений: «если — иначе если — иначе»</td>
+</tr>
+<tr>
+<td>Условие</td>
+<td>Выражение, которое даёт True или False и определяет, какой код выполнится</td>
+</tr>
+<tr>
+<td>Сравнение (==, !=, &lt;, &gt;)</td>
+<td>Операторы, которые сравнивают два значения и возвращают True или False</td>
+</tr>
+<tr>
+<td>Логические операторы (and, or, not)</td>
+<td>Слова для объединения нескольких условий: «и», «или», «не»</td>
+</tr>
+<tr>
+<td>Цикл for</td>
+<td>Цикл, который проходит по каждому элементу списка или другой коллекции</td>
+</tr>
+<tr>
+<td>Цикл while</td>
+<td>Цикл, который повторяется, пока условие остаётся True</td>
+</tr>
+<tr>
+<td>range()</td>
+<td>Функция, которая создаёт последовательность чисел для цикла for</td>
+</tr>
+<tr>
+<td>break</td>
+<td>Команда, которая немедленно останавливает цикл</td>
+</tr>
+<tr>
+<td>continue</td>
+<td>Команда, которая пропускает текущий шаг цикла и переходит к следующему</td>
+</tr>
+<tr>
+<td>Итерация</td>
+<td>Один проход (повторение) внутри цикла</td>
+</tr>
+<tr>
+<td>Вложенный цикл</td>
+<td>Цикл внутри другого цикла — внутренний выполняется полностью на каждом шаге внешнего</td>
+</tr>
+<tr>
+<td>Индекс</td>
+<td>Порядковый номер элемента в списке, начинается с 0</td>
+</tr>
+<tr>
+<td>enumerate()</td>
+<td>Функция, которая при переборе списка даёт и индекс, и значение одновременно</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>1. if / elif / else — программа выбирает, что делать, в зависимости от условия.
+2. Условие — это выражение, которое равно True или False.
+3. Сравнения (==, !=, &lt;, &gt;) и логические операторы (and, or, not) — строительные блоки условий.
+4. Цикл for — перебирает элементы коллекции один за другим.
+5. Цикл while — повторяет код, пока условие истинно (осторожно с бесконечными циклами!).
+6. range() — генерирует числа для for: range(5) → 0, 1, 2, 3, 4.
+7. break останавливает цикл, continue пропускает текущий шаг.
+8. enumerate() — удобный способ получить и индекс, и значение в цикле.
+9. Циклы можно вкладывать друг в друга — внутренний крутится полностью на каждом шаге внешнего.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Python: функции</strong>. Научишься создавать свои действия и вызывать их по имени.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="1-3-variables.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="1-5-functions.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

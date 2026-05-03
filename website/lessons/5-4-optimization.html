@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оптимизация и стоимость — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 5 · Урок 4 из 5</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 5.4 — Оптимизация и стоимость: как не разориться на AI</h1>
+<blockquote>
+<p>Ты построил бота, подключил базу данных, задеплоил на сервер. Всё работает. Но потом приходит счёт от Anthropic или OpenAI — и оказывается, что бот за месяц съел $200. А если пользователей станет 1000? $2000. Оптимизация стоимости — это не «потом», это «с первого дня». В этом уроке — конкретные техники, которые снижают расходы на 60-95%.</p>
+</blockquote>
+<hr />
+<h2>Откуда берутся расходы</h2>
+<p>Каждый запрос к Claude или GPT стоит денег. Стоимость складывается из двух частей:</p>
+<pre class="highlight"><code>Стоимость одного запроса = Входные токены × Цена + Выходные токены × Цена
+
+Входные токены (input):
+  Системный промпт + История чата + Вопрос пользователя
+
+Выходные токены (output):
+  Ответ модели
+
+Важно: выходные токены стоят в 3-5 раз дороже входных!
+</code></pre>
+
+<h3>Цены основных моделей (2026)</h3>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Вход (за 1M токенов)</th>
+<th>Выход (за 1M токенов)</th>
+<th>Для чего</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Haiku 4.5</td>
+<td>$1.00</td>
+<td>$5.00</td>
+<td>Простые задачи, классификация</td>
+</tr>
+<tr>
+<td>Claude Sonnet 4.6</td>
+<td>$3.00</td>
+<td>$15.00</td>
+<td>Баланс цена/качество</td>
+</tr>
+<tr>
+<td>Claude Opus 4.6</td>
+<td>$5.00</td>
+<td>$25.00</td>
+<td>Сложные задачи, агенты</td>
+</tr>
+<tr>
+<td>GPT-4o-mini</td>
+<td>$0.15</td>
+<td>$0.60</td>
+<td>Самый дешёвый от OpenAI</td>
+</tr>
+<tr>
+<td>GPT-4o</td>
+<td>$2.50</td>
+<td>$10.00</td>
+<td>Основная модель OpenAI</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Аналогия.</strong> Модели — как рестораны. Haiku — это столовая: быстро, дёшево, для простых блюд. Sonnet — кафе: хорошее качество за разумную цену. Opus — ресторан с мишленовской звездой: лучшее качество, но за каждое блюдо платишь втрое.</p>
+<pre class="highlight"><code>Источник: Anthropic — Pricing
+https://platform.claude.com/docs/en/about-claude/pricing
+</code></pre>
+
+<hr />
+<h2>Стратегия 1: Выбирай правильную модель</h2>
+<p>Самая простая и мощная оптимизация — <strong>не использовать дорогую модель там, где справится дешёвая</strong>.</p>
+<pre class="highlight"><code>┌─────────────────────────────────────────────────────────┐
+│           КАКУЮ МОДЕЛЬ ДЛЯ КАКОЙ ЗАДАЧИ                  │
+│                                                           │
+│  Haiku ($1/$5)                                           │
+│    Классификация: &quot;позитивный / негативный&quot;              │
+│    Извлечение данных: &quot;найди email в тексте&quot;             │
+│    Простые ответы: FAQ, шаблонные ответы                 │
+│    Маршрутизация: &quot;это вопрос про оплату или доставку?&quot;  │
+│                                                           │
+│  Sonnet ($3/$15)                                         │
+│    Генерация текста: статьи, письма, описания            │
+│    Анализ: разбор документа, резюме                      │
+│    Код: написание и объяснение кода                      │
+│    Чат-бот: основной рабочий бот                         │
+│                                                           │
+│  Opus ($5/$25)                                           │
+│    Сложный анализ: юридические документы, исследования   │
+│    Агенты: многошаговые задачи с инструментами          │
+│    Математика и логика: сложные вычисления               │
+│    Критические задачи: где ошибка стоит дорого           │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+
+<h3>Паттерн: маршрутизатор моделей</h3>
+<p>Вместо одной дорогой модели на все запросы — маленькая модель решает, какую использовать:</p>
+<pre class="highlight"><code class="language-python"># router.py — маршрутизатор: выбирает модель в зависимости от сложности
+
+from anthropic import Anthropic
+
+client = Anthropic()
+
+def classify_complexity(question):
+    &quot;&quot;&quot;Haiku классифицирует сложность вопроса.&quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5&quot;,
+        max_tokens=50,
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;&quot;&quot;Оцени сложность вопроса: simple или complex.
+simple = FAQ, факт, простой ответ
+complex = анализ, рассуждение, многошаговая задача
+
+Вопрос: {question}
+Ответь одним словом: simple или complex&quot;&quot;&quot;
+        }]
+    )
+    return response.content[0].text.strip().lower()
+
+
+def smart_answer(question):
+    &quot;&quot;&quot;Отправляет вопрос в подходящую модель.&quot;&quot;&quot;
+    complexity = classify_complexity(question)
+
+    if complexity == &quot;simple&quot;:
+        model = &quot;claude-haiku-4-5&quot;    # $1/$5 — дешёвый
+        print(f&quot;  → Haiku (простой вопрос)&quot;)
+    else:
+        model = &quot;claude-sonnet-4-6&quot;   # $3/$15 — средний
+        print(f&quot;  → Sonnet (сложный вопрос)&quot;)
+
+    response = client.messages.create(
+        model=model,
+        max_tokens=1024,
+        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    )
+    return response.content[0].text
+
+
+# Примеры
+print(smart_answer(&quot;Какая столица Франции?&quot;))       # → Haiku
+print(smart_answer(&quot;Объясни теорию относительности&quot;))  # → Sonnet
+</code></pre>
+
+<p><strong>Экономия:</strong> если 70% запросов простые — экономишь 60-70% бюджета.</p>
+<hr />
+<h2>Стратегия 2: Prompt caching (кеширование промптов)</h2>
+<h3>Проблема</h3>
+<pre class="highlight"><code>Каждый запрос к Claude содержит:
+  Системный промпт:        500 токенов   (одинаковый каждый раз!)
+  История разговора:       2000 токенов   (растёт с каждым сообщением)
+  Вопрос пользователя:     50 токенов    (новый каждый раз)
+
+Без кеширования: каждый запрос = 2550 входных токенов
+За 1000 запросов: 2,550,000 токенов × $3/1M = $7.65
+
+С кешированием: системный промпт + история кешируются
+  Первый запрос: 2550 токенов (полная цена + запись в кеш)
+  Последующие: 50 новых токенов + 2500 из кеша (скидка 90%)
+  За 1000 запросов: ~$1.00
+
+Экономия: ~87%
+</code></pre>
+
+<h3>Как работает</h3>
+<pre class="highlight"><code>Запрос 1 (первый раз):
+  [Системный промпт] [История] [Вопрос]
+  ────────────────── ────────── ───────
+  Записывается в кеш    Записывается   Обрабатывается
+  (×1.25 цена)          в кеш          (обычная цена)
+
+Запрос 2 (из кеша):
+  [Системный промпт] [История] [Новый вопрос]
+  ────────────────── ────────── ─────────────
+  Читается из кеша   Читается     Обрабатывается
+  (×0.1 цена — 90% скидка!)       (обычная цена)
+</code></pre>
+
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># Автоматическое кеширование (рекомендуемый способ)
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=1024,
+    cache_control={&quot;type&quot;: &quot;ephemeral&quot;},  # ← автоматическое кеширование
+    system=&quot;Ты — помощник техподдержки компании X. Вот правила: ...(длинный текст)...&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Как вернуть товар?&quot;}]
+)
+
+# Проверяем экономию
+usage = response.usage
+print(f&quot;Входные токены: {usage.input_tokens}&quot;)
+print(f&quot;Из кеша: {getattr(usage, 'cache_read_input_tokens', 0)}&quot;)
+print(f&quot;Записано в кеш: {getattr(usage, 'cache_creation_input_tokens', 0)}&quot;)
+</code></pre>
+
+<h3>Когда кеширование эффективно</h3>
+<pre class="highlight"><code>Идеально:
+  ✓ Большой системный промпт (500+ токенов)
+  ✓ Много запросов с одинаковым контекстом
+  ✓ Чат-бот с длинной историей
+  ✓ RAG с одним и тем же набором документов
+
+Не поможет:
+  ✗ Каждый запрос уникальный (нет повторяющегося контекста)
+  ✗ Промпт меньше 1024 токенов (минимум для кеширования)
+  ✗ Запросы реже чем раз в 5 минут (кеш истекает)
+</code></pre>
+
+<p><strong>Реальный результат:</strong> один разработчик описал снижение с $720 до $72 в месяц — <strong>экономия 90%</strong> — просто включив prompt caching.</p>
+<pre class="highlight"><code>Источники:
+Anthropic — Prompt Caching
+https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+</code></pre>
+
+<hr />
+<h2>Стратегия 3: Batch API (пакетная обработка)</h2>
+<h3>Что это</h3>
+<p>Если запросы не требуют мгновенного ответа — отправляй их пакетом. API обработает их в фоне за 50% стоимости.</p>
+<pre class="highlight"><code>Обычный запрос:
+  Отправил → Получил ответ через 2 секунды
+  Цена: 100%
+
+Batch (пакет):
+  Отправил 1000 запросов → Получил все ответы через 1-24 часа
+  Цена: 50% (скидка 50%)
+</code></pre>
+
+<h3>Когда использовать</h3>
+<pre class="highlight"><code>Идеально для batch:
+  ✓ Обработка 1000 отзывов → классификация
+  ✓ Перевод 500 описаний товаров
+  ✓ Генерация резюме для 200 документов
+  ✓ Еженочная аналитика данных
+  ✓ Подготовка ответов на FAQ
+
+Не подходит для batch:
+  ✗ Чат-бот (пользователь ждёт ответ прямо сейчас)
+  ✗ Интерактивные приложения
+  ✗ Срочные задачи
+</code></pre>
+
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># batch_classify.py — классификация 100 отзывов за 50% стоимости
+
+from anthropic import Anthropic
+from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
+from anthropic.types.messages.batch_create_params import Request
+
+client = Anthropic()
+
+# Список отзывов для классификации
+reviews = [
+    &quot;Отличный товар, буду заказывать ещё!&quot;,
+    &quot;Ужасное качество, верну обратно.&quot;,
+    &quot;Нормально, ничего особенного.&quot;,
+    # ... ещё 97 отзывов
+]
+
+# 1. Создаём пакет запросов
+requests = [
+    Request(
+        custom_id=f&quot;review-{i}&quot;,
+        params=MessageCreateParamsNonStreaming(
+            model=&quot;claude-haiku-4-5&quot;,  # дешёвая модель для простой задачи
+            max_tokens=50,
+            messages=[{
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: f&quot;Классифицируй отзыв одним словом (positive/negative/neutral): {review}&quot;
+            }]
+        )
+    )
+    for i, review in enumerate(reviews)
+]
+
+# 2. Отправляем пакет
+batch = client.messages.batches.create(requests=requests)
+print(f&quot;Пакет создан: {batch.id}&quot;)
+print(f&quot;Статус: {batch.processing_status}&quot;)
+
+# 3. Ждём результатов (обычно 1-24 часа)
+import time
+while True:
+    batch = client.messages.batches.retrieve(batch.id)
+    if batch.processing_status == &quot;ended&quot;:
+        break
+    print(f&quot;Обработка... ({batch.request_counts.processing} в очереди)&quot;)
+    time.sleep(60)
+
+# 4. Собираем результаты
+for result in client.messages.batches.results(batch.id):
+    if result.result.type == &quot;succeeded&quot;:
+        text = next(
+            (b.text for b in result.result.message.content if b.type == &quot;text&quot;),
+            &quot;&quot;
+        )
+        print(f&quot;{result.custom_id}: {text}&quot;)
+</code></pre>
+
+<h3>Расчёт экономии</h3>
+<pre class="highlight"><code>100 отзывов × Haiku:
+  Обычный API:  ~$0.03
+  Batch API:    ~$0.015 (скидка 50%)
+
+  Для 100 отзывов разница копеечная.
+
+100 000 отзывов × Haiku:
+  Обычный API:  ~$30
+  Batch API:    ~$15
+
+  $15 экономии — уже заметно.
+
+10 000 документов × Sonnet (генерация резюме):
+  Обычный API:  ~$500
+  Batch API:    ~$250
+
+  $250 экономии — существенно.
+</code></pre>
+
+<h3>Комбинация: batch + caching</h3>
+<pre class="highlight"><code>Batch API:      -50%
+Prompt caching: -90% на повторяющийся контекст
+Вместе:         до -95% от обычной цены
+
+Пример: 10 000 запросов с общим системным промптом
+  Обычная цена:     $500
+  Batch + caching:  $25-50
+</code></pre>
+
+<pre class="highlight"><code>Источники:
+Anthropic — Batch Processing
+https://platform.claude.com/docs/en/build-with-claude/batch-processing
+</code></pre>
+
+<hr />
+<h2>Стратегия 4: Оптимизация токенов</h2>
+<h3>Выходные токены дороже — контролируй длину ответа</h3>
+<pre class="highlight"><code class="language-python"># Плохо: модель генерирует длинный ответ
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=4096,  # ← разрешаем длинный ответ
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Какая столица Франции?&quot;}]
+)
+# Ответ: &quot;Столица Франции — Париж. Париж является крупнейшим городом
+# Франции и одним из важнейших... (500 токенов бла-бла-бла)&quot;
+# Стоимость вывода: 500 × $15/1M = $0.0075
+
+# Хорошо: ограничиваем и инструктируем
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=256,   # ← ограничиваем длину
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Какая столица Франции? Ответь одним предложением.&quot;
+    }]
+)
+# Ответ: &quot;Столица Франции — Париж.&quot;
+# Стоимость вывода: 10 × $15/1M = $0.00015
+# Экономия: 50 раз дешевле!
+</code></pre>
+
+<h3>Оптимизация системного промпта</h3>
+<pre class="highlight"><code class="language-python"># Плохо: раздутый промпт (300 токенов)
+system = &quot;&quot;&quot;Ты — дружелюбный помощник по имени Алекс.
+Ты работаешь в компании &quot;Электроника Плюс&quot;.
+Ты должен всегда быть вежливым и профессиональным.
+Ты должен отвечать на русском языке.
+Если ты не знаешь ответ, скажи что не знаешь.
+Не придумывай информацию.
+Используй простой язык, понятный обычному человеку.
+Если вопрос не по теме магазина, вежливо перенаправь.
+Форматируй ответы с помощью списков, когда уместно.
+Всегда спрашивай, нужна ли ещё помощь в конце ответа.&quot;&quot;&quot;
+
+# Хорошо: лаконичный промпт (100 токенов)
+system = &quot;&quot;&quot;Помощник &quot;Электроника Плюс&quot;. Отвечай кратко, на русском.
+Не знаешь — скажи. Не по теме — перенаправь. В конце: &quot;Чем ещё помочь?&quot;.&quot;&quot;&quot;
+</code></pre>
+
+<h3>Управление историей чата</h3>
+<pre class="highlight"><code class="language-python"># Проблема: история растёт → каждое сообщение дороже
+
+# Плохо: отправляем ВСЮ историю (может вырасти до 50 000 токенов)
+messages = full_conversation_history  # 100 сообщений = 50K токенов
+
+# Хорошо: ограничиваем историю последними N сообщениями
+MAX_HISTORY = 10  # последние 10 сообщений
+
+messages = full_conversation_history[-MAX_HISTORY:]
+
+# Ещё лучше: суммаризация + последние сообщения
+# (из урока 3.3 — память агента)
+def optimize_history(messages, max_messages=10):
+    &quot;&quot;&quot;Если история длинная — суммаризируем старые сообщения.&quot;&quot;&quot;
+    if len(messages) &lt;= max_messages:
+        return messages
+
+    old_messages = messages[:-max_messages]
+    recent_messages = messages[-max_messages:]
+
+    # Суммаризируем старые сообщения (дёшево, один раз)
+    summary = summarize(old_messages)  # из урока 3.3
+
+    return [
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;Краткое содержание предыдущего разговора: {summary}&quot;},
+        {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Понял, продолжаем.&quot;},
+        *recent_messages
+    ]
+</code></pre>
+
+<hr />
+<h2>Стратегия 5: Effort parameter (уровень усилий)</h2>
+<p>Claude позволяет контролировать, <strong>сколько думать</strong> перед ответом:</p>
+<pre class="highlight"><code class="language-python"># Простой вопрос — минимальные усилия
+response = client.messages.create(
+    model=&quot;claude-sonnet-4-6&quot;,
+    max_tokens=1024,
+    output_config={&quot;effort&quot;: &quot;low&quot;},  # ← быстро и дёшево
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Переведи 'hello' на русский&quot;}]
+)
+
+# Сложная задача — максимальные усилия
+response = client.messages.create(
+    model=&quot;claude-opus-4-6&quot;,
+    max_tokens=8192,
+    output_config={&quot;effort&quot;: &quot;max&quot;},  # ← глубокий анализ (только Opus)
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Проанализируй этот контракт...&quot;}]
+)
+</code></pre>
+
+<pre class="highlight"><code>Уровни усилий:
+  low    — быстрый ответ, минимум рассуждений. Для простых задач.
+  medium — стандартный баланс.
+  high   — глубокий анализ (по умолчанию).
+  max    — максимальная глубина (только Opus 4.6).
+</code></pre>
+
+<p>Используй <code>low</code> для простых задач — модель отвечает быстрее и тратит меньше выходных токенов.</p>
+<hr />
+<h2>Стратегия 6: Мониторинг расходов</h2>
+<h3>Отслеживай каждый запрос</h3>
+<pre class="highlight"><code class="language-python"># cost_tracker.py — простой трекер расходов
+
+import json
+from datetime import datetime
+
+COST_LOG = &quot;api_costs.jsonl&quot;
+
+# Цены за 1 токен (для расчёта)
+PRICES = {
+    &quot;claude-haiku-4-5&quot;: {&quot;input&quot;: 1.0 / 1_000_000, &quot;output&quot;: 5.0 / 1_000_000},
+    &quot;claude-sonnet-4-6&quot;: {&quot;input&quot;: 3.0 / 1_000_000, &quot;output&quot;: 15.0 / 1_000_000},
+    &quot;claude-opus-4-6&quot;: {&quot;input&quot;: 5.0 / 1_000_000, &quot;output&quot;: 25.0 / 1_000_000},
+}
+
+
+def log_cost(model, usage):
+    &quot;&quot;&quot;Записывает стоимость запроса в лог.&quot;&quot;&quot;
+    prices = PRICES.get(model, PRICES[&quot;claude-sonnet-4-6&quot;])
+
+    input_cost = usage.input_tokens * prices[&quot;input&quot;]
+    output_cost = usage.output_tokens * prices[&quot;output&quot;]
+    total_cost = input_cost + output_cost
+
+    entry = {
+        &quot;timestamp&quot;: datetime.now().isoformat(),
+        &quot;model&quot;: model,
+        &quot;input_tokens&quot;: usage.input_tokens,
+        &quot;output_tokens&quot;: usage.output_tokens,
+        &quot;cost_usd&quot;: round(total_cost, 6),
+    }
+
+    with open(COST_LOG, &quot;a&quot;) as f:
+        f.write(json.dumps(entry) + &quot;\n&quot;)
+
+    return total_cost
+
+
+def get_daily_spend():
+    &quot;&quot;&quot;Считает расходы за сегодня.&quot;&quot;&quot;
+    today = datetime.now().date().isoformat()
+    total = 0.0
+
+    try:
+        with open(COST_LOG) as f:
+            for line in f:
+                entry = json.loads(line)
+                if entry[&quot;timestamp&quot;].startswith(today):
+                    total += entry[&quot;cost_usd&quot;]
+    except FileNotFoundError:
+        pass
+
+    return total
+
+
+# Использование
+from anthropic import Anthropic
+client = Anthropic()
+
+model = &quot;claude-sonnet-4-6&quot;
+response = client.messages.create(
+    model=model,
+    max_tokens=1024,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Привет!&quot;}]
+)
+
+cost = log_cost(model, response.usage)
+print(f&quot;Запрос стоил: ${cost:.4f}&quot;)
+print(f&quot;Потрачено сегодня: ${get_daily_spend():.4f}&quot;)
+</code></pre>
+
+<h3>Установи лимиты</h3>
+<pre class="highlight"><code class="language-python"># Проверяем бюджет перед каждым запросом
+DAILY_BUDGET = 5.00  # $5 в день
+
+def safe_request(model, messages, max_tokens=1024):
+    &quot;&quot;&quot;Запрос с проверкой бюджета.&quot;&quot;&quot;
+    daily_spend = get_daily_spend()
+
+    if daily_spend &gt;= DAILY_BUDGET:
+        return &quot;Дневной бюджет исчерпан. Попробуйте завтра.&quot;
+
+    response = client.messages.create(
+        model=model,
+        max_tokens=max_tokens,
+        messages=messages
+    )
+
+    cost = log_cost(model, response.usage)
+    print(f&quot;Расход: ${cost:.4f} | Сегодня: ${daily_spend + cost:.4f} / ${DAILY_BUDGET}&quot;)
+
+    return response.content[0].text
+</code></pre>
+
+<hr />
+<h2>Стратегия 7: Структурированный вывод</h2>
+<p>Когда нужен конкретный формат — используй structured output. Модель возвращает JSON по схеме, без лишнего текста.</p>
+<pre class="highlight"><code class="language-python"># Без structured output:
+# &quot;Давайте проанализируем этот отзыв. Он содержит позитивные элементы,
+# в частности... В целом, я бы классифицировал его как позитивный
+# с уверенностью около 0.85...&quot;
+# → 80 токенов вывода
+
+# Со structured output:
+response = client.messages.create(
+    model=&quot;claude-haiku-4-5&quot;,
+    max_tokens=100,
+    output_config={
+        &quot;format&quot;: {
+            &quot;type&quot;: &quot;json_schema&quot;,
+            &quot;schema&quot;: {
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: {
+                    &quot;sentiment&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;positive&quot;, &quot;negative&quot;, &quot;neutral&quot;]},
+                    &quot;confidence&quot;: {&quot;type&quot;: &quot;number&quot;}
+                },
+                &quot;required&quot;: [&quot;sentiment&quot;, &quot;confidence&quot;],
+                &quot;additionalProperties&quot;: False
+            }
+        }
+    },
+    messages=[{
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Классифицируй: 'Отличный товар, рекомендую!'&quot;
+    }]
+)
+# → {&quot;sentiment&quot;: &quot;positive&quot;, &quot;confidence&quot;: 0.95}
+# → 15 токенов вывода (в 5 раз меньше!)
+</code></pre>
+
+<hr />
+<h2>Сводная таблица: все стратегии</h2>
+<pre class="highlight"><code>┌─────────────────────────────────────────────────────────┐
+│          СТРАТЕГИИ ОПТИМИЗАЦИИ СТОИМОСТИ                  │
+│                                                           │
+│  Стратегия            Экономия    Сложность   Когда       │
+│  ─────────            ────────    ─────────   ─────       │
+│  Правильная модель    60-80%      Низкая      Всегда      │
+│  Prompt caching       до 90%      Низкая      Повторы     │
+│  Batch API            50%         Средняя     Не срочно   │
+│  Короткие ответы      50-90%      Низкая      Всегда      │
+│  Управление историей  30-70%      Средняя     Чат-боты    │
+│  Effort parameter     20-50%      Низкая      Простые     │
+│  Structured output    50-80%      Средняя     Извлечение  │
+│  Маршрутизатор        60-70%      Высокая     Много задач │
+│                                                           │
+│  Комбинация всех:     до 95%                              │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>Пример: сколько стоит бот в продакшене</h2>
+<pre class="highlight"><code>Сценарий: Telegram-бот техподдержки
+  1000 пользователей
+  5 сообщений в день на пользователя
+  = 5000 запросов в день
+  = 150 000 запросов в месяц
+
+Без оптимизации (Sonnet, длинные ответы):
+  Средний запрос: 1000 входных + 500 выходных токенов
+  Входные: 150M × $3/1M = $450
+  Выходные: 75M × $15/1M = $1125
+  Итого: ~$1575/мес
+
+С полной оптимизацией:
+  1. Маршрутизатор: 70% запросов → Haiku
+     Haiku: 105K запросов × (1000×$1/1M + 200×$5/1M) = $210
+     Sonnet: 45K запросов × (1000×$3/1M + 300×$15/1M) = $337
+  2. Prompt caching: -90% на повторяющийся контекст
+     Эффективная стоимость: ~$80
+  3. Короткие ответы: &quot;Ответь в 2-3 предложениях&quot;
+     Ещё -40% на выходных токенах: ~$50
+
+  Итого: ~$50-80/мес (вместо $1575!)
+  Экономия: 95%
+</code></pre>
+
+<hr />
+<h2>Token counting: считай ДО отправки</h2>
+<pre class="highlight"><code class="language-python"># Проверяем стоимость запроса ДО отправки
+
+count = client.messages.count_tokens(
+    model=&quot;claude-sonnet-4-6&quot;,
+    messages=messages,
+    system=system_prompt
+)
+
+estimated_cost = count.input_tokens * 3.0 / 1_000_000
+print(f&quot;Входных токенов: {count.input_tokens}&quot;)
+print(f&quot;Оценка стоимости входа: ${estimated_cost:.4f}&quot;)
+
+# Если слишком дорого — обрежь историю или используй модель дешевле
+if count.input_tokens &gt; 10_000:
+    print(&quot;Слишком длинный контекст! Суммаризирую историю...&quot;)
+    messages = optimize_history(messages)
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Трекер расходов</h3>
+<p>Добавь <code>log_cost()</code> из этого урока в бота из урока 4.1. После каждого запроса к Claude записывай стоимость в файл. В конце дня выведи общую сумму.</p>
+<h3>Задание 2: Маршрутизатор моделей</h3>
+<p>Реализуй <code>classify_complexity()</code> из этого урока. Протестируй на 10 разных вопросах: простые («Который час?») и сложные («Объясни квантовую запутанность»). Правильно ли маршрутизатор выбирает модель?</p>
+<h3>Задание 3: Оптимизация промпта</h3>
+<p>Возьми системный промпт из бота (урок 4.1) и сократи его в 2-3 раза, сохранив смысл. Сравни качество ответов до и после. Изменилось ли что-то?</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Почему выходные токены дороже входных?</p>
+<details>
+<summary>Ответ</summary>
+
+Генерация текста (выход) требует больше вычислений, чем чтение текста (вход). При генерации модель должна последовательно предсказывать каждый следующий токен, что требует полного прохода через нейросеть для каждого токена. При чтении входных данных модель обрабатывает их параллельно за один проход. Поэтому провайдеры берут за выходные токены в 3-5 раз больше.
+</details>
+
+<p><strong>Задача 2:</strong> Бот отправляет 10 000 запросов в день с одинаковым системным промптом на 2000 токенов. Какую стратегию применить первой?</p>
+<details>
+<summary>Ответ</summary>
+
+Prompt caching — первое, что нужно включить. 2000 токенов системного промпта × 10 000 запросов = 20 000 000 входных токенов в день, и все с одинаковым контекстом. Кеширование снизит стоимость этих 20M токенов на 90%. Одна строчка кода (`cache_control={"type": "ephemeral"}`) может сэкономить сотни долларов в месяц.
+</details>
+
+<p><strong>Задача 3:</strong> Когда НЕ стоит использовать Batch API?</p>
+<details>
+<summary>Ответ</summary>
+
+Batch API не подходит, когда пользователь ждёт ответ в реальном времени: чат-боты, интерактивные приложения, голосовые ассистенты. Batch обрабатывает запросы в фоне за 1-24 часа. Он идеален для фоновых задач: массовая классификация, генерация отчётов, перевод документов, ночная аналитика.
+</details>
+
+<p><strong>Задача 4:</strong> Что эффективнее: сократить системный промпт с 1000 до 500 токенов или ограничить ответ с 500 до 100 токенов?</p>
+<details>
+<summary>Ответ</summary>
+
+Ограничить ответ эффективнее. Выходные токены стоят в 3-5 раз дороже входных. Сокращение ответа с 500 до 100 токенов экономит 400 выходных токенов (= 400 × $15/1M для Sonnet = $0.006 за запрос). Сокращение промпта на 500 входных токенов экономит 500 × $3/1M = $0.0015 за запрос. Ответ в 4 раза эффективнее. А ещё лучше — сделать оба.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Входные токены (input)</strong></td>
+<td>Токены, которые ты отправляешь модели (промпт + история + вопрос)</td>
+</tr>
+<tr>
+<td><strong>Выходные токены (output)</strong></td>
+<td>Токены, которые модель генерирует в ответ (стоят в 3-5× дороже)</td>
+</tr>
+<tr>
+<td><strong>Prompt caching</strong></td>
+<td>Кеширование повторяющегося контекста на серверах Anthropic — скидка 90%</td>
+</tr>
+<tr>
+<td><strong>Batch API</strong></td>
+<td>Пакетная обработка запросов в фоне — скидка 50%</td>
+</tr>
+<tr>
+<td><strong>Маршрутизатор моделей</strong></td>
+<td>Паттерн: дешёвая модель решает, какую модель использовать для ответа</td>
+</tr>
+<tr>
+<td><strong>Effort parameter</strong></td>
+<td>Управление глубиной рассуждений модели (low/medium/high/max)</td>
+</tr>
+<tr>
+<td><strong>Structured output</strong></td>
+<td>Принудительный формат ответа (JSON по схеме) — меньше лишних токенов</td>
+</tr>
+<tr>
+<td><strong>Token counting</strong></td>
+<td>Подсчёт токенов ДО отправки запроса для оценки стоимости</td>
+</tr>
+<tr>
+<td><strong>max_tokens</strong></td>
+<td>Ограничение максимальной длины ответа модели</td>
+</tr>
+<tr>
+<td><strong>cache_control</strong></td>
+<td>Параметр API для включения кеширования промптов</td>
+</tr>
+<tr>
+<td><strong>Суммаризация истории</strong></td>
+<td>Замена длинной истории чата кратким пересказом для экономии токенов</td>
+</tr>
+<tr>
+<td><strong>TTL (Time to Live)</strong></td>
+<td>Время жизни кеша: 5 минут (по умолчанию) или 1 час</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Проблема:
+  API стоит денег. Без оптимизации бот с 1000 пользователей
+  может обходиться в $1500/мес.
+
+7 стратегий (от простого к сложному):
+  1. Правильная модель — Haiku для простого, Sonnet для среднего
+  2. Prompt caching — 90% скидка на повторяющийся контекст
+  3. Batch API — 50% скидка на фоновые задачи
+  4. Короткие ответы — &quot;ответь в 2 предложениях&quot; = в 5 раз дешевле
+  5. Управление историей — не отправлять 100 сообщений, достаточно 10
+  6. Effort parameter — low для простых задач
+  7. Structured output — JSON вместо текста = меньше токенов
+
+Правила:
+  • Выходные токены в 3-5× дороже входных → контролируй длину ответа
+  • Считай расходы с первого дня → log_cost() в каждый запрос
+  • Комбинируй стратегии → batch + caching = до 95% экономии
+  • Ставь лимиты → DAILY_BUDGET защищает от сюрпризов
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Мы прошли все инструменты: от первого API-запроса до оптимизации на тысячи пользователей. В финальном уроке — <strong>архитектура AI-продуктов</strong>: как объединить всё изученное в одну систему. Проектирование, паттерны, масштабирование и реальные архитектуры продуктов.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="5-3-fine-tuning.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="5-5-architecture.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

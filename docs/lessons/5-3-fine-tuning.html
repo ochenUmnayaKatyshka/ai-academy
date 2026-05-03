@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fine-tuning — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 5 · Урок 3 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 5.3 — Fine-tuning: как дообучить модель под свои задачи</h1>
+<blockquote>
+<p>Claude знает миллионы фактов, может рассуждать и писать код. Но он не знает, как именно твоя компания отвечает клиентам, какие категории обращений у тебя есть и в каком формате должен быть отчёт. В уроке 5.1 мы решали это через RAG — подкладывали нужные документы в промпт. Fine-tuning решает это иначе: мы берём готовую модель и дообучаем её на своих примерах. После дообучения модель «знает» твой стиль, формат и терминологию — без длинных инструкций в каждом запросе.</p>
+</blockquote>
+<hr />
+<h2>Проблема: промпт не всегда достаточно</h2>
+<p>В уроке 2.4 (Prompt Engineering) мы научились писать хорошие инструкции для модели. Это работает для большинства задач. Но есть ситуации, когда даже идеальный промпт не справляется:</p>
+<pre class="highlight"><code>Ситуация 1: Нестабильный формат
+  Промпт: &quot;Отвечай строго в формате JSON с полями category, sentiment, priority&quot;
+  Реальность: в 90% случаев модель слушается. В 10% — добавляет пояснения,
+  меняет названия полей или забывает про JSON.
+
+Ситуация 2: Длинные повторяющиеся инструкции
+  Каждый запрос начинается с 500 токенов инструкций:
+  &quot;Ты — классификатор обращений. Категории: возврат, доставка, оплата...&quot;
+  При 10 000 запросов в день — 5 000 000 лишних токенов. Это деньги.
+
+Ситуация 3: Специфический стиль
+  Промпт: &quot;Отвечай дружелюбно, коротко, с конкретными шагами&quot;
+  Реальность: модель понимает &quot;дружелюбно&quot; по-своему.
+  А нужно — точно как в 500 реальных ответах службы поддержки.
+
+Ситуация 4: Специальная терминология
+  Модель пишет &quot;заболевание сердца&quot; вместо &quot;I25.1 по МКБ-10&quot;.
+  Медицинская, юридическая, финансовая терминология —
+  модель знает её, но не использует по умолчанию в нужном формате.
+</code></pre>
+
+<p>Все эти проблемы объединяет одно: <strong>модели нужно изменить поведение, а не дать новые факты</strong>. RAG даёт факты. Fine-tuning меняет поведение.</p>
+<hr />
+<h2>Что такое fine-tuning</h2>
+<p><strong>Fine-tuning (дообучение)</strong> — процесс, при котором готовую модель дополнительно тренируют на твоих примерах. Модель не учится с нуля. Она уже умеет понимать язык, рассуждать, генерировать текст. Fine-tuning добавляет поверх этого новый навык — как второй слой знаний.</p>
+<pre class="highlight"><code>Базовая модель (GPT-4o, Claude, Llama)
+  Умеет: понимать язык, рассуждать, отвечать на вопросы, писать код
+  Не умеет: писать в стиле твоей компании, классифицировать
+            по твоим категориям, следовать твоему формату
+
+         │
+         │  Fine-tuning
+         │  (показываем 200-5000 примеров &quot;вход → правильный выход&quot;)
+         ▼
+
+Дообученная модель
+  Умеет всё то же самое + новый навык:
+  ✓ Пишет в стиле твоих документов
+  ✓ Классифицирует по твоим категориям
+  ✓ Отвечает в точном формате без напоминаний
+</code></pre>
+
+<h3>Аналогия</h3>
+<p>Представь опытного врача, который закончил медицинский университет и умеет всё. Но он никогда не работал в скорой помощи. Ты отправляешь его на месячную стажировку — он смотрит 500 реальных случаев, видит, как заполнять протоколы, какие решения принимать за секунды. После стажировки он всё ещё тот же опытный врач — но теперь он знает специфику скорой помощи.</p>
+<p>Fine-tuning — это стажировка для модели. Базовые знания остаются. Добавляется специализация.</p>
+<hr />
+<h2>Три способа адаптировать модель</h2>
+<p>В курсе мы изучили три подхода. Каждый решает свою задачу:</p>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────────────┐
+│              ТРИ СПОСОБА АДАПТИРОВАТЬ МОДЕЛЬ                     │
+│                                                                  │
+│  1. Промпт-инженерия (урок 2.4)                                 │
+│     Что делаем: пишем подробную инструкцию в промпте            │
+│     Что меняется: контекст запроса                              │
+│     Модель: остаётся той же                                     │
+│     Данные: в промпте (каждый раз)                              │
+│     Обновление: мгновенно — поменял промпт и готово             │
+│     Стоимость: бесплатно (но длинный промпт = больше токенов)   │
+│                                                                  │
+│  2. RAG (урок 5.1)                                               │
+│     Что делаем: ищем нужные данные и вкладываем в промпт        │
+│     Что меняется: контекст запроса (динамически)                │
+│     Модель: остаётся той же                                     │
+│     Данные: в векторной базе (обновляются мгновенно)            │
+│     Обновление: добавил документ в базу — сразу доступен        │
+│     Стоимость: база + embeddings + токены контекста              │
+│                                                                  │
+│  3. Fine-tuning (этот урок)                                      │
+│     Что делаем: дообучаем модель на своих примерах              │
+│     Что меняется: сама модель (её параметры)                    │
+│     Модель: создаётся новая версия                              │
+│     Данные: «вшиты» в модель при обучении                       │
+│     Обновление: нужно переобучать (часы + деньги)               │
+│     Стоимость: обучение + использование дороже базовой модели   │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+</code></pre>
+
+<h3>Аналогия: три способа научить сотрудника</h3>
+<pre class="highlight"><code>Промпт-инженерия = должностная инструкция
+  Каждое утро даёшь сотруднику памятку: &quot;Отвечай так-то, формат такой-то.&quot;
+  Работает, но памятку нужно давать каждый раз.
+
+RAG = справочник на столе
+  Сотрудник не помнит все цены и правила — но у него есть справочник.
+  Когда клиент спрашивает — он находит ответ и говорит.
+  Справочник можно обновить в любой момент.
+
+Fine-tuning = обучение и стажировка
+  Сотрудник прошёл тренинг: 500 примеров, как отвечать клиентам.
+  Теперь он делает это автоматически, без памятки и справочника.
+  Но если правила поменялись — нужен новый тренинг.
+</code></pre>
+
+<h3>Дерево выбора: что использовать</h3>
+<pre class="highlight"><code>Задача решается хорошим промптом (с примерами)?
+│
+├── ДА → Промпт-инженерия. Не усложняй.
+│
+└── НЕТ → Модели нужны конкретные факты или документы?
+          │
+          ├── ДА → RAG. Данные в базе, обновляются мгновенно.
+          │
+          └── НЕТ → Модель должна изменить стиль, формат или поведение?
+                    Промпт слишком длинный и дорогой на масштабе?
+                    │
+                    ├── ДА → Fine-tuning.
+                    │
+                    └── НЕТ → Вернись к промпту.
+                              Скорее всего, он недостаточно хорош.
+</code></pre>
+
+<p><strong>Принцип: промпт → RAG → fine-tuning. Начинай с простого. Усложняй только когда простое не работает.</strong></p>
+<p>Этот принцип — из исследования Anthropic «Building Effective Agents». Он работает и для агентов (урок 5.2), и для адаптации моделей.</p>
+<pre class="highlight"><code>Источник: Anthropic — Building Effective Agents
+https://www.anthropic.com/research/building-effective-agents
+</code></pre>
+
+<hr />
+<h2>Когда fine-tuning нужен (и когда нет)</h2>
+<h3>Нужен</h3>
+<pre class="highlight"><code>1. Стабильный формат вывода
+   Модель ВСЕГДА должна отвечать JSON с конкретными полями.
+   Промпт работает в 90% — fine-tuning даёт 99%.
+
+2. Специфический стиль
+   500 примеров реальных ответов поддержки →
+   модель воспроизводит тон, длину, структуру точно.
+
+3. Экономия на масштабе
+   10 000 запросов/день × 500 токенов инструкции = 5 000 000 токенов.
+   С fine-tuning: инструкция не нужна → экономия 10x по токенам.
+
+4. Специализированная терминология
+   Медицинские коды, юридические формулировки, внутренний жаргон.
+   Модель выучивает не просто слова, а как и когда их применять.
+</code></pre>
+
+<h3>НЕ нужен</h3>
+<pre class="highlight"><code>1. Нужны актуальные данные
+   Fine-tuning — это снимок данных на момент обучения.
+   Через неделю данные устарели → нужно переобучать.
+   Используй RAG — данные обновляются мгновенно.
+
+2. Нужны факты из конкретных документов
+   &quot;Какая цена у товара X?&quot; — fine-tuning может запомнить неточно.
+   RAG найдёт точный фрагмент из прайс-листа.
+
+3. Мало данных (&lt; 50 примеров)
+   Fine-tuning требует минимум 50 примеров.
+   Рекомендуется 200-500 для хорошего качества.
+   Если данных мало — используй few-shot промпт (2-5 примеров в промпте).
+
+4. Задача решается промптом
+   Попробуй сначала. Добавь few-shot примеры (урок 2.4).
+   Если промпт работает в 95%+ случаев — fine-tuning не нужен.
+</code></pre>
+
+<hr />
+<h2>Как работает fine-tuning внутри</h2>
+<p>Не нужно знать математику. Достаточно понимать принцип — он простой.</p>
+<h3>Три шага</h3>
+<pre class="highlight"><code>ШАГ 1: Подготовка данных
+  Собираешь примеры: &quot;вот вход → вот правильный выход&quot;
+  Формат: файл JSONL (каждая строка — один пример)
+  Количество: 200-500 примеров для хорошего результата
+
+ШАГ 2: Обучение
+  Загружаешь файл в API провайдера (OpenAI, Google, и др.)
+  Провайдер прогоняет модель через твои примеры
+  Модель корректирует свои параметры на каждом примере
+  Занимает 10-60 минут
+
+ШАГ 3: Использование
+  Получаешь имя новой модели (например, ft:gpt-4o-mini:personal::abc123)
+  Используешь через тот же API, что и обычную модель
+  Промпт теперь можно сократить — модель уже знает формат
+</code></pre>
+
+<h3>Что происходит на шаге 2 подробнее</h3>
+<p>Модель проходит через все примеры несколько раз. Каждый полный проход называется <strong>эпоха (epoch)</strong>.</p>
+<pre class="highlight"><code>Пример обучения:
+  Вход:  &quot;Товар пришёл сломанным, хочу вернуть деньги&quot;
+  Правильный выход: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;negative&quot;}
+
+Что делает модель на каждом примере:
+  1. Получает вход
+  2. Генерирует свой ответ: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;}
+  3. Сравнивает с правильным ответом — видит, что ошиблась
+  4. Чуть-чуть корректирует свои параметры, чтобы в следующий раз
+     ответить ближе к правильному
+
+         Ошибка уменьшается с каждой эпохой:
+
+Эпоха 1: ████████████████████░░░░░  80% ошибок (модель ещё не выучила)
+Эпоха 2: ██████████░░░░░░░░░░░░░░░  40% ошибок (начала понимать паттерн)
+Эпоха 3: ████░░░░░░░░░░░░░░░░░░░░░  15% ошибок (почти выучила)
+Эпоха 4: ██░░░░░░░░░░░░░░░░░░░░░░░   5% ошибок (готово)
+</code></pre>
+
+<p><strong>Аналогия.</strong> Как ребёнок учит таблицу умножения. Первый раз — много ошибок. После 10 повторений — ошибается реже. После 50 — отвечает автоматически. Fine-tuning — это те же повторения, только для языковой модели.</p>
+<h3>Что такое JSONL</h3>
+<p><strong>JSONL (JSON Lines)</strong> — формат файла, где каждая строка — отдельный JSON-объект. Это стандартный формат для обучающих данных.</p>
+<p>Почему именно JSONL, а не обычный JSON? Обычный JSON — это один большой объект. Если в нём миллион строк, нужно загрузить весь файл в память. JSONL позволяет читать по одной строке — это быстрее и экономнее.</p>
+<pre class="highlight"><code>Обычный JSON (один объект):
+[
+  {&quot;input&quot;: &quot;...&quot;, &quot;output&quot;: &quot;...&quot;},
+  {&quot;input&quot;: &quot;...&quot;, &quot;output&quot;: &quot;...&quot;}
+]
+
+JSONL (каждая строка — отдельный объект):
+{&quot;input&quot;: &quot;...&quot;, &quot;output&quot;: &quot;...&quot;}
+{&quot;input&quot;: &quot;...&quot;, &quot;output&quot;: &quot;...&quot;}
+</code></pre>
+
+<p>Для OpenAI fine-tuning каждая строка — это диалог в формате <code>messages</code> (тот же формат, что и при обычном вызове API из урока 2.3):</p>
+<pre class="highlight"><code class="language-jsonl">{&quot;messages&quot;: [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Classify the message.&quot;}, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Товар сломан&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;{\&quot;category\&quot;: \&quot;return\&quot;}&quot;}]}
+{&quot;messages&quot;: [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Classify the message.&quot;}, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Спасибо!&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;{\&quot;category\&quot;: \&quot;feedback\&quot;}&quot;}]}
+</code></pre>
+
+<p>Модель учится: «когда system и user говорят вот это — assistant должен ответить вот это».</p>
+<hr />
+<h2>Типы fine-tuning</h2>
+<p>Есть два основных подхода к дообучению. Различие — в том, какую часть модели мы меняем.</p>
+<h3>Full fine-tuning (полное дообучение)</h3>
+<p>Меняются <strong>все</strong> параметры модели. У GPT-4 — сотни миллиардов параметров. Менять каждый из них — как перекрашивать каждый кирпич в многоэтажном доме.</p>
+<pre class="highlight"><code>Модель:    ████████████████████████████████  (все параметры)
+Меняем:    ████████████████████████████████  (все — каждый подстраивается)
+
+Требования: мощные GPU (A100, H100 — стоят $10 000+)
+Время:      часы — дни
+Стоимость:  $100 — $10 000+
+Кто делает: крупные компании с ML-командами
+</code></pre>
+
+<h3>LoRA (Low-Rank Adaptation) — частичное дообучение</h3>
+<p><strong>LoRA</strong> — метод, который не трогает основную модель. Вместо этого он добавляет маленький «адаптер» — дополнительный слой параметров, который учится новому навыку.</p>
+<p>Это как надеть на модель «очки специалиста»: базовое зрение (базовая модель) остаётся, а очки (адаптер) добавляют фокус на конкретную область.</p>
+<pre class="highlight"><code>Модель:    ████████████████████████████████  (все параметры)
+Меняем:    ██                                (только адаптер — 1-5%)
+
+Требования: обычная GPU (RTX 3090/4090) или облако
+Время:      минуты — часы
+Стоимость:  $1 — $100
+Кто делает: разработчики, стартапы, исследователи
+</code></pre>
+
+<p><strong>QLoRA</strong> — ещё более экономичная версия LoRA. Буква Q означает <strong>Quantization</strong> (квантизация) — сжатие модели, чтобы она занимала меньше памяти. С QLoRA можно дообучить модель с 7 миллиардами параметров на GPU с 8 ГБ памяти — например, на обычной игровой видеокарте.</p>
+<h3>Сравнение</h3>
+<pre class="highlight"><code>┌────────────────────────────────────────────────────────┐
+│                                                        │
+│  Full fine-tuning         LoRA / QLoRA                 │
+│  ─────────────────        ──────────────               │
+│  Меняет всю модель        Добавляет адаптер            │
+│  Нужны мощные GPU         Хватает обычной GPU          │
+│  Стоит $100-10 000        Стоит $1-100                 │
+│  Часы — дни               Минуты — часы                │
+│  Немного лучше качество   Почти такое же качество      │
+│  Для компаний с ML-       Для всех остальных           │
+│    командами                                           │
+│                                                        │
+│  Аналогия:                Аналогия:                    │
+│  Перекрасить весь дом     Повесить новые шторы         │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+</code></pre>
+
+<p>Для большинства задач <strong>LoRA достаточно</strong>. Full fine-tuning оправдан, только когда нужен максимально точный результат и есть ресурсы.</p>
+<pre class="highlight"><code>Источник: Hu et al. — &quot;LoRA: Low-Rank Adaptation of Large Language Models&quot; (2021)
+https://arxiv.org/abs/2106.09685
+</code></pre>
+
+<hr />
+<h2>Где можно дообучить модель</h2>
+<h3>Вариант 1: Managed fine-tuning (через API провайдера)</h3>
+<p>Провайдер берёт на себя всё: GPU, обучение, хостинг. Ты загружаешь данные → получаешь модель.</p>
+<table>
+<thead>
+<tr>
+<th>Провайдер</th>
+<th>Что можно дообучить</th>
+<th>Метод</th>
+<th>Стоимость обучения</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenAI</strong></td>
+<td>GPT-4o, GPT-4o-mini</td>
+<td>Managed</td>
+<td>От $0.30 за 500 примеров</td>
+</tr>
+<tr>
+<td><strong>Google</strong></td>
+<td>Gemini</td>
+<td>Managed</td>
+<td>Зависит от модели</td>
+</tr>
+<tr>
+<td><strong>Together AI</strong></td>
+<td>Llama, Mistral, Qwen</td>
+<td>LoRA в облаке</td>
+<td>От $0.50</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Anthropic</strong> (создатели Claude) пока не предлагают публичный API для fine-tuning. Поэтому для практики в этом уроке используется <strong>OpenAI</strong> — у них самый простой и доступный процесс.</p>
+<h3>Вариант 2: Самостоятельное дообучение (open-source модели)</h3>
+<p>Если данные нельзя отправлять на серверы OpenAI (конфиденциальность) или нужен полный контроль — можно дообучить open-source модель (Llama от Meta, Mistral, Qwen от Alibaba).</p>
+<pre class="highlight"><code>Что тебе нужно?
+│
+├── Быстро попробовать LoRA на бесплатном GPU
+│   → Unsloth (Python-библиотека, оптимизирована для скорости)
+│   → Google Colab с бесплатным GPU (T4)
+│
+├── Полноценный fine-tuning pipeline
+│   → Hugging Face Transformers + PEFT
+│   → Стандарт индустрии, много документации
+│
+├── Облачный fine-tuning без своего GPU
+│   → Together AI, Modal, Anyscale
+│   → Загружаешь данные → получаешь модель
+│
+└── Локально на своём Mac
+    → MLX (фреймворк от Apple для Apple Silicon)
+    → Ollama + LoRA-адаптеры
+</code></pre>
+
+<p>Для этого курса достаточно знать, что эти варианты существуют. На практике — OpenAI fine-tuning API покрывает большинство задач и не требует своих GPU.</p>
+<pre class="highlight"><code>Источники:
+  OpenAI Fine-tuning: https://platform.openai.com/docs/guides/fine-tuning
+  Unsloth: https://github.com/unslothai/unsloth
+  Hugging Face PEFT: https://huggingface.co/docs/peft
+</code></pre>
+
+<hr />
+<h2>Подготовка данных: как сделать правильно</h2>
+<p>Качество данных — самое важное в fine-tuning. Плохие данные → плохая модель. Никакое количество эпох не исправит ошибки в обучающих примерах.</p>
+<h3>Требования к данным</h3>
+<pre class="highlight"><code>Количество:
+  Минимум:      50 примеров (результат будет слабый)
+  Хорошо:       200-500 примеров
+  Отлично:      500-5000 примеров
+  Максимум:     до 50 000 (OpenAI)
+
+Качество важнее количества:
+  100 чистых, правильных примеров &gt; 1000 грязных с ошибками
+</code></pre>
+
+<h3>Три главных ошибки в данных</h3>
+<p><strong>Ошибка 1: Противоречивые примеры</strong></p>
+<pre class="highlight"><code>&quot;Товар сломан&quot;  → category: &quot;feedback&quot;    ← НЕПРАВИЛЬНО
+&quot;Товар сломан&quot;  → category: &quot;return&quot;      ← правильно
+
+Одинаковый вход — разный выход. Модель получает противоречивый сигнал.
+Она не знает, какой ответ правильный, и учится &quot;усреднённому&quot; —
+который неправильный в обоих случаях.
+</code></pre>
+
+<p><strong>Ошибка 2: Несбалансированные категории</strong></p>
+<pre class="highlight"><code>Данные:
+  300 примеров → category: &quot;return&quot;
+   50 примеров → category: &quot;delivery&quot;
+   20 примеров → category: &quot;payment&quot;
+   10 примеров → category: &quot;feedback&quot;
+
+Результат: модель будет всё подряд классифицировать как &quot;return&quot;,
+потому что видела эту категорию в 79% примеров.
+
+Решение: примерно одинаковое количество примеров на каждую категорию.
+</code></pre>
+
+<p><strong>Ошибка 3: Ответы не такие, какие нужны</strong></p>
+<pre class="highlight"><code>В данных: ассистент пишет по 500 слов с объяснениями
+В реальности: нужен короткий JSON без объяснений
+
+Модель выучит писать длинно — потому что так в примерах.
+
+Правило: ответ в обучающих данных должен быть ТОЧНО таким,
+какой ты хочешь получать от модели.
+</code></pre>
+
+<hr />
+<h2>Практика: fine-tuning через OpenAI API</h2>
+<h3>Что нужно</h3>
+<pre class="highlight"><code class="language-bash">pip install openai python-dotenv
+</code></pre>
+
+<p>Нужен API-ключ OpenAI (не Anthropic — у Anthropic нет публичного fine-tuning).</p>
+<pre class="highlight"><code>Получить ключ: https://platform.openai.com/api-keys
+</code></pre>
+
+<p>В файле <code>.env</code>:</p>
+<pre class="highlight"><code>OPENAI_API_KEY=sk-...
+</code></pre>
+
+<h3>Что строим</h3>
+<p>Классификатор обращений клиентов. На входе — сообщение клиента. На выходе — JSON с категорией, тональностью и приоритетом.</p>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│                                                          │
+│  Вход:  &quot;Товар пришёл сломанным, хочу вернуть деньги&quot;  │
+│                     │                                    │
+│                     ▼                                    │
+│          ┌────────────────────┐                          │
+│          │  Дообученная модель │                          │
+│          │  (ft:gpt-4o-mini)  │                          │
+│          └─────────┬──────────┘                          │
+│                    │                                     │
+│                    ▼                                     │
+│  Выход: {&quot;category&quot;: &quot;return&quot;,                          │
+│          &quot;sentiment&quot;: &quot;negative&quot;,                        │
+│          &quot;priority&quot;: &quot;high&quot;}                             │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<h3>Шаг 1: Создаём обучающие данные</h3>
+<pre class="highlight"><code class="language-python"># prepare_data.py — создаёт файл с обучающими данными для fine-tuning
+
+import json
+
+# === ОБУЧАЮЩИЕ ПРИМЕРЫ ===
+# Каждый пример: текст обращения клиента → правильная классификация
+# В реальном проекте таких примеров нужно 200-500
+# Для демонстрации используем 25
+
+training_examples = [
+
+    # --- ВОЗВРАТ (return) ---
+
+    {&quot;input&quot;: &quot;Товар пришёл сломанным, хочу вернуть деньги&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Можно ли обменять на другой размер?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;medium&quot;}},
+
+    {&quot;input&quot;: &quot;Хочу отменить заказ и получить возврат&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Товар не соответствует описанию на сайте&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Как оформить возврат? Не подошёл цвет&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;medium&quot;}},
+
+    # --- ДОСТАВКА (delivery) ---
+
+    {&quot;input&quot;: &quot;Когда будет доставка заказа #4521?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;medium&quot;}},
+
+    {&quot;input&quot;: &quot;Курьер не приехал в назначенное время&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Можно ли изменить адрес доставки?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;medium&quot;}},
+
+    {&quot;input&quot;: &quot;Заказ показывает статус 'в пути' уже неделю&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Доставка пришла вовремя, всё отлично&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;positive&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    # --- ОПЛАТА (payment) ---
+
+    {&quot;input&quot;: &quot;Деньги списались, но заказ не оформлен&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;payment&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Какие способы оплаты доступны?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;payment&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Не проходит оплата картой&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;payment&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    {&quot;input&quot;: &quot;Можно ли оплатить при получении?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;payment&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Пришёл двойной чек за один заказ&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;payment&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}},
+
+    # --- ОТЗЫВ (feedback) ---
+
+    {&quot;input&quot;: &quot;Отличный магазин, всё понравилось!&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;positive&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Качество товара превзошло ожидания&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;positive&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Обслуживание ужасное, больше не приду&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;medium&quot;}},
+
+    {&quot;input&quot;: &quot;Нормально, но ничего особенного&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Рекомендую друзьям, очень довольна покупкой&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;positive&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    # --- ВОПРОС (question) ---
+
+    {&quot;input&quot;: &quot;Есть ли у вас доставка в Казахстан?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Какой срок гарантии на электронику?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Работает ли магазин в праздники?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Есть ли скидки для постоянных клиентов?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+
+    {&quot;input&quot;: &quot;Можно ли заказать товар оптом?&quot;,
+     &quot;output&quot;: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}},
+]
+
+
+# === КОНВЕРТАЦИЯ В ФОРМАТ OPENAI (JSONL) ===
+
+# Системный промпт — одинаковый для всех примеров.
+# Он короткий, потому что после fine-tuning модель
+# уже &quot;знает&quot; формат и категории.
+system_prompt = &quot;Classify the customer message. Respond with JSON only.&quot;
+
+# Открываем файл для записи
+with open(&quot;training_data.jsonl&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    for example in training_examples:
+
+        # Каждая строка JSONL — диалог в формате messages
+        # Тот же формат, что и при обычном вызове API (урок 2.3)
+        line = {
+            &quot;messages&quot;: [
+                {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: system_prompt},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: example[&quot;input&quot;]},
+                {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: json.dumps(example[&quot;output&quot;])}
+                # json.dumps превращает словарь Python в строку JSON
+                # {&quot;category&quot;: &quot;return&quot;} → '{&quot;category&quot;: &quot;return&quot;}'
+            ]
+        }
+
+        # Записываем одну строку в файл
+        # ensure_ascii=False — чтобы кириллица сохранялась как есть
+        f.write(json.dumps(line, ensure_ascii=False) + &quot;\n&quot;)
+
+print(f&quot;Создано {len(training_examples)} примеров в training_data.jsonl&quot;)
+</code></pre>
+
+<p>После запуска появится файл <code>training_data.jsonl</code>. Каждая строка — один пример. Открой его в текстовом редакторе и убедись, что формат правильный: system → user → assistant.</p>
+<h3>Шаг 2: Загрузка данных и запуск fine-tuning</h3>
+<pre class="highlight"><code class="language-python"># fine_tune.py — загружает данные в OpenAI и запускает дообучение
+
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()  # загружает OPENAI_API_KEY из .env
+
+client = OpenAI()  # клиент OpenAI API (ключ берёт из переменной окружения)
+
+
+# === ШАГ 1: ЗАГРУЗКА ФАЙЛА ===
+
+# OpenAI нужно сначала загрузить файл на их сервер.
+# purpose=&quot;fine-tune&quot; говорит: &quot;этот файл — для дообучения&quot;
+print(&quot;Загружаю файл с данными на сервер OpenAI...&quot;)
+
+with open(&quot;training_data.jsonl&quot;, &quot;rb&quot;) as f:  # &quot;rb&quot; = read binary (требование API)
+    training_file = client.files.create(
+        file=f,
+        purpose=&quot;fine-tune&quot;
+    )
+
+print(f&quot;  Файл загружен. ID: {training_file.id}&quot;)
+# Пример ID: file-abc123
+
+
+# === ШАГ 2: ЗАПУСК FINE-TUNING ===
+
+# Создаём задачу на дообучение.
+# model — какую базовую модель дообучать.
+# gpt-4o-mini — самая дешёвая модель OpenAI для fine-tuning.
+print(&quot;\nЗапускаю fine-tuning...&quot;)
+
+job = client.fine_tuning.jobs.create(
+    training_file=training_file.id,
+    model=&quot;gpt-4o-mini-2024-07-18&quot;,
+    hyperparameters={
+        &quot;n_epochs&quot;: 3  # сколько раз пройти по всем примерам
+        # 3 эпохи — хороший дефолт для большинства задач
+        # Больше эпох = модель лучше запоминает, но может &quot;переучиться&quot;
+    }
+)
+
+print(f&quot;  Job создан. ID: {job.id}&quot;)
+print(f&quot;  Статус: {job.status}&quot;)
+# Статус &quot;validating_files&quot; → &quot;queued&quot; → &quot;running&quot; → &quot;succeeded&quot;
+
+print(f&quot;\n  Дообучение займёт 10-30 минут.&quot;)
+print(f&quot;  Проверить статус:&quot;)
+print(f&quot;    python check_status.py {job.id}&quot;)
+</code></pre>
+
+<h3>Шаг 3: Проверка статуса</h3>
+<pre class="highlight"><code class="language-python"># check_status.py — проверяет, готово ли дообучение
+
+import sys
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+client = OpenAI()
+
+# ID задачи — передаём аргументом при запуске:
+# python check_status.py ftjob-abc123
+job_id = sys.argv[1] if len(sys.argv) &gt; 1 else &quot;ftjob-xxxxxxxxxx&quot;
+# sys.argv — список аргументов командной строки
+# sys.argv[0] = &quot;check_status.py&quot; (имя скрипта)
+# sys.argv[1] = &quot;ftjob-abc123&quot; (первый аргумент — ID задачи)
+
+# Запрашиваем статус задачи
+job = client.fine_tuning.jobs.retrieve(job_id)
+
+print(f&quot;Статус: {job.status}&quot;)
+# validating_files — проверяет формат данных
+# queued — в очереди на обучение
+# running — идёт обучение
+# succeeded — готово!
+# failed — ошибка
+
+if job.status == &quot;succeeded&quot;:
+    print(f&quot;\nГотово! Имя модели: {job.fine_tuned_model}&quot;)
+    print(f&quot;Используй это имя в параметре model= при вызове API.&quot;)
+    # Пример имени: ft:gpt-4o-mini-2024-07-18:personal::abc123
+
+elif job.status == &quot;failed&quot;:
+    print(f&quot;\nОшибка: {job.error}&quot;)
+
+else:
+    print(f&quot;\nЕщё в процессе. Подожди и проверь снова.&quot;)
+
+
+# Показать последние события (что происходит внутри)
+print(&quot;\nПоследние события:&quot;)
+events = client.fine_tuning.jobs.list_events(
+    fine_tuning_job_id=job_id,
+    limit=5  # последние 5 событий
+)
+for event in events.data:
+    print(f&quot;  {event.message}&quot;)
+</code></pre>
+
+<h3>Шаг 4: Используем дообученную модель</h3>
+<pre class="highlight"><code class="language-python"># use_model.py — тестируем дообученную модель
+
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+client = OpenAI()
+
+# Имя дообученной модели — из check_status.py после &quot;succeeded&quot;
+# Замени на своё имя модели:
+FINE_TUNED_MODEL = &quot;ft:gpt-4o-mini-2024-07-18:personal::abc123&quot;
+
+
+def classify(message):
+    &quot;&quot;&quot;
+    Классифицирует обращение клиента.
+    Использует дообученную модель вместо базовой.
+    &quot;&quot;&quot;
+    response = client.chat.completions.create(
+        model=FINE_TUNED_MODEL,  # ← наша дообученная модель
+        messages=[
+            # Промпт короткий — модель уже знает формат и категории
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Classify the customer message. Respond with JSON only.&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: message}
+        ],
+        max_tokens=100  # ответ короткий — JSON в одну строку
+    )
+    return response.choices[0].message.content
+
+
+# === ТЕСТИРУЕМ НА НОВЫХ ОБРАЩЕНИЯХ ===
+# Эти сообщения НЕ были в обучающих данных.
+# Модель должна обобщить паттерн и правильно классифицировать.
+
+test_messages = [
+    &quot;Посылка потерялась где-то в пути&quot;,
+    &quot;Вы лучший магазин, буду заказывать ещё!&quot;,
+    &quot;Сколько стоит экспресс-доставка?&quot;,
+    &quot;Верните деньги немедленно, товар бракованный!&quot;,
+    &quot;Не могу войти в личный кабинет&quot;,
+]
+
+print(&quot;=== Тестирование дообученной модели ===\n&quot;)
+
+for msg in test_messages:
+    result = classify(msg)
+    print(f&quot;  Вход:  {msg}&quot;)
+    print(f&quot;  Выход: {result}&quot;)
+    print()
+</code></pre>
+
+<h3>Пример вывода</h3>
+<pre class="highlight"><code>=== Тестирование дообученной модели ===
+
+  Вход:  Посылка потерялась где-то в пути
+  Выход: {&quot;category&quot;: &quot;delivery&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}
+
+  Вход:  Вы лучший магазин, буду заказывать ещё!
+  Выход: {&quot;category&quot;: &quot;feedback&quot;, &quot;sentiment&quot;: &quot;positive&quot;, &quot;priority&quot;: &quot;low&quot;}
+
+  Вход:  Сколько стоит экспресс-доставка?
+  Выход: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;neutral&quot;, &quot;priority&quot;: &quot;low&quot;}
+
+  Вход:  Верните деньги немедленно, товар бракованный!
+  Выход: {&quot;category&quot;: &quot;return&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;high&quot;}
+
+  Вход:  Не могу войти в личный кабинет
+  Выход: {&quot;category&quot;: &quot;question&quot;, &quot;sentiment&quot;: &quot;negative&quot;, &quot;priority&quot;: &quot;medium&quot;}
+</code></pre>
+
+<p>Обрати внимание: промпт — одна строка. Никаких длинных инструкций, списков категорий, примеров формата. Модель уже всё знает после дообучения.</p>
+<hr />
+<h2>Разбор: что делает каждая часть</h2>
+<h3>Файл данных (<code>prepare_data.py</code>)</h3>
+<pre class="highlight"><code class="language-python">training_examples = [
+    {&quot;input&quot;: &quot;Товар сломан&quot;, &quot;output&quot;: {&quot;category&quot;: &quot;return&quot;, ...}},
+    ...
+]
+</code></pre>
+
+<p>Список словарей Python. Каждый словарь — один пример: <code>input</code> (что говорит клиент) и <code>output</code> (правильный ответ). Это человекочитаемый формат — удобно редактировать и добавлять примеры.</p>
+<pre class="highlight"><code class="language-python">json.dumps(example[&quot;output&quot;])
+</code></pre>
+
+<p><code>json.dumps()</code> превращает словарь Python в строку JSON. Это нужно, потому что в поле <code>content</code> API ожидает строку, а не словарь.</p>
+<pre class="highlight"><code class="language-python">f.write(json.dumps(line, ensure_ascii=False) + &quot;\n&quot;)
+</code></pre>
+
+<p>Записывает одну строку в файл и добавляет перенос строки (<code>\n</code>). Так получается формат JSONL — одна строка = один пример.</p>
+<h3>Запуск дообучения (<code>fine_tune.py</code>)</h3>
+<pre class="highlight"><code class="language-python">client.files.create(file=f, purpose=&quot;fine-tune&quot;)
+</code></pre>
+
+<p>Загружает файл на серверы OpenAI. <code>purpose="fine-tune"</code> говорит серверу, что файл предназначен для дообучения, а не для другой задачи.</p>
+<pre class="highlight"><code class="language-python">client.fine_tuning.jobs.create(
+    training_file=training_file.id,
+    model=&quot;gpt-4o-mini-2024-07-18&quot;,
+    hyperparameters={&quot;n_epochs&quot;: 3}
+)
+</code></pre>
+
+<p>Создаёт задачу на дообучение. Три параметра:
+- <code>training_file</code> — ID загруженного файла
+- <code>model</code> — какую базовую модель дообучать
+- <code>n_epochs</code> — сколько раз пройти по всем примерам (3 — хороший дефолт)</p>
+<h3>Использование модели (<code>use_model.py</code>)</h3>
+<pre class="highlight"><code class="language-python">client.chat.completions.create(
+    model=FINE_TUNED_MODEL,  # ft:gpt-4o-mini:personal::abc123
+    messages=[...]
+)
+</code></pre>
+
+<p>Точно тот же API, что и для обычной модели. Единственное отличие — в <code>model</code> указывается имя дообученной модели (начинается с <code>ft:</code>). Всё остальное — идентично.</p>
+<hr />
+<h2>Сколько стоит fine-tuning</h2>
+<h3>Стоимость обучения</h3>
+<p>OpenAI считает стоимость по количеству токенов в обучающих данных:</p>
+<pre class="highlight"><code>Формула:
+  токены в данных × цена за токен × количество эпох
+
+Пример с gpt-4o-mini:
+  25 примеров × ~100 токенов = 2 500 токенов
+  2 500 × $0.003 (за 1K) × 3 эпохи = ~$0.02
+
+  500 примеров × ~100 токенов = 50 000 токенов
+  50 000 × $0.003 × 3 = ~$0.45
+
+Для gpt-4o (более мощная модель):
+  500 примеров × ~100 токенов = 50 000 токенов
+  50 000 × $0.025 × 3 = ~$3.75
+</code></pre>
+
+<h3>Стоимость использования (inference)</h3>
+<pre class="highlight"><code>Дообученная модель чуть дороже базовой:
+
+gpt-4o-mini (базовая):      $0.15 / 1M input   $0.60 / 1M output
+gpt-4o-mini (fine-tuned):   $0.30 / 1M input   $1.20 / 1M output
+                             (2x дороже за токен)
+
+НО промпты после fine-tuning короче (не нужны инструкции),
+поэтому реальная стоимость за запрос может быть НИЖЕ.
+</code></pre>
+
+<h3>Где главная стоимость</h3>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────┐
+│                                                      │
+│  Обучение модели:     $0.50 — $5.00                 │
+│  Использование:       зависит от объёма              │
+│                                                      │
+│  Главная стоимость:   ВРЕМЯ НА ПОДГОТОВКУ ДАННЫХ    │
+│                                                      │
+│  Собрать 500 примеров,                              │
+│  проверить каждый на правильность,                  │
+│  сбалансировать категории,                          │
+│  привести к единому формату —                       │
+│  это часы или дни работы человека.                   │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+
+<pre class="highlight"><code>Источник: OpenAI — Pricing
+https://openai.com/api/pricing/
+</code></pre>
+
+<hr />
+<h2>Переобучение (overfitting): главная ловушка</h2>
+<p><strong>Overfitting (переобучение)</strong> — ситуация, когда модель слишком хорошо запомнила обучающие примеры, но не может обобщить на новые данные.</p>
+<h3>Как это выглядит</h3>
+<pre class="highlight"><code>На обучающих данных:
+  &quot;Товар пришёл сломанным&quot; → {&quot;category&quot;: &quot;return&quot;} ← правильно
+
+На новых данных:
+  &quot;Заказ повреждён при доставке&quot; → {&quot;category&quot;: &quot;delivery&quot;} ← ОШИБКА
+  (правильно: &quot;return&quot; — это тоже возврат, но модель не обобщила)
+</code></pre>
+
+<h3>Аналогия</h3>
+<p>Студент зазубрил ответы на 50 конкретных вопросов из билетов. На экзамене попался вопрос с той же темой, но другой формулировкой — студент не смог ответить. Он запомнил конкретные вопросы вместо того, чтобы понять тему.</p>
+<h3>Признаки переобучения</h3>
+<pre class="highlight"><code>✓ На обучающих примерах — идеальные результаты
+✗ На новых примерах — ошибки
+✗ Модель повторяет фразы из обучающих данных дословно
+✗ Модель не справляется с формулировками, которых не было в данных
+</code></pre>
+
+<h3>Как избежать</h3>
+<pre class="highlight"><code>1. Больше данных (200-500, не 25)
+   Чем больше разнообразных примеров — тем лучше обобщение.
+
+2. Меньше эпох (2-4, не 10)
+   Слишком много эпох = модель начинает зубрить.
+
+3. Validation data (проверочные данные)
+   Отложить 20% примеров и не использовать их для обучения.
+   Проверять качество на них — если на проверочных ошибки растут,
+   а на обучающих падают — это переобучение.
+
+4. Разнообразие формулировок
+   Разные способы сказать одно и то же для каждой категории.
+   &quot;Товар сломан&quot;, &quot;Пришёл бракованный&quot;, &quot;Не работает&quot; —
+   всё это &quot;return&quot;, но сказано по-разному.
+</code></pre>
+
+<hr />
+<h2>Fine-tuning в реальном мире</h2>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│           КТО И КАК ИСПОЛЬЗУЕТ FINE-TUNING                │
+│                                                           │
+│  Служба поддержки                                        │
+│    Модель классифицирует обращения по категориям          │
+│    и приоритетам. 100 000 обращений/день — промпт         │
+│    был бы слишком дорогим. Fine-tuning экономит 10x.      │
+│                                                           │
+│  Юридические компании                                    │
+│    Модель генерирует документы в точном формате:          │
+│    структура параграфов, юридические термины, ссылки      │
+│    на статьи закона. Промпт не даёт такой стабильности.   │
+│                                                           │
+│  Медицина                                                │
+│    Модель заполняет клинические записи в формате          │
+│    МКБ-10. Специфическая терминология + строгий формат    │
+│    = идеальная задача для fine-tuning.                     │
+│                                                           │
+│  E-commerce                                              │
+│    Автоматическая категоризация товаров.                  │
+│    &quot;Синяя хлопковая футболка XL&quot; →                        │
+│    {category: &quot;одежда/футболки&quot;, size: &quot;XL&quot;,              │
+│     material: &quot;хлопок&quot;, color: &quot;синий&quot;}                    │
+│                                                           │
+│  Контент и маркетинг                                     │
+│    Модель пишет посты, письма, описания в фирменном       │
+│    стиле компании. 500 примеров текстов компании →        │
+│    модель воспроизводит тон и структуру.                  │
+│                                                           │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Подготовь данные</h3>
+<p>Запусти <code>prepare_data.py</code>. Открой файл <code>training_data.jsonl</code> в текстовом редакторе. Найди в каждой строке три роли: system, user, assistant. Добавь 5 своих примеров в <code>training_examples</code> (придумай обращения клиентов) и пересоздай файл.</p>
+<h3>Задание 2: Запусти fine-tuning (опционально)</h3>
+<p>Если есть API-ключ OpenAI — запусти полный цикл: загрузка данных → обучение → проверка статуса → тестирование. Стоимость для 25 примеров на gpt-4o-mini — меньше $0.05. Протестируй модель на обращениях, которых не было в данных.</p>
+<h3>Задание 3: Сравни с промптом</h3>
+<p>Отправь те же тестовые обращения в обычную (не дообученную) модель с подробным промптом:
+- Опиши категории, формат JSON, примеры
+- Сравни: стабильность формата, длину промпта, качество классификации
+- Подсчитай разницу в токенах (длинный промпт vs. короткий после fine-tuning)</p>
+<p>Это поможет на практике увидеть, когда fine-tuning даёт преимущество, а когда достаточно хорошего промпта.</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Что такое fine-tuning простыми словами?</p>
+<details>
+<summary>Ответ</summary>
+
+Fine-tuning — дополнительное обучение готовой модели на своих примерах. Модель уже умеет понимать язык и рассуждать — fine-tuning добавляет конкретный навык: стиль, формат, терминологию. Как опытный врач, который прошёл стажировку в скорой помощи — базовые знания остались, добавилась специализация. После дообучения модель работает через тот же API, но с коротким промптом — она уже «знает», что от неё требуется.
+</details>
+
+<p><strong>Задача 2:</strong> Когда лучше RAG, а когда fine-tuning?</p>
+<details>
+<summary>Ответ</summary>
+
+RAG — когда модели нужны конкретные факты: документы, цены, правила, актуальные данные. Факты хранятся в базе и обновляются мгновенно. Fine-tuning — когда модель должна изменить поведение: стиль, формат, терминологию. Навык «вшивается» в модель при обучении. Пример: «ответить по документации компании» → RAG. «Всегда отвечать в формате JSON с полями category и priority» → fine-tuning.
+</details>
+
+<p><strong>Задача 3:</strong> Что такое LoRA и зачем она нужна?</p>
+<details>
+<summary>Ответ</summary>
+
+LoRA (Low-Rank Adaptation) — метод частичного дообучения. Вместо того чтобы менять все параметры модели (миллиарды), LoRA добавляет маленький «адаптер» — 1-5% дополнительных параметров. Базовая модель не меняется, адаптер учится новому навыку. Это в десятки раз дешевле и быстрее полного fine-tuning, а качество — почти такое же. Аналогия: не перекрашивать весь дом, а повесить новые шторы.
+</details>
+
+<p><strong>Задача 4:</strong> Почему 100 чистых примеров лучше, чем 1000 грязных?</p>
+<details>
+<summary>Ответ</summary>
+
+Модель учится воспроизводить паттерны из данных — какие бы они ни были. Если в данных противоречия (одинаковый вход → разный выход), модель получает конфликтующие сигналы и не может выучить стабильный паттерн. Если в данных ошибки (неправильные метки), модель выучит ошибки. 100 правильных, непротиворечивых примеров дают чёткий сигнал. 1000 грязных — шум, который модель не сможет превратить в надёжное поведение.
+</details>
+
+<p><strong>Задача 5:</strong> Что такое overfitting?</p>
+<details>
+<summary>Ответ</summary>
+
+Overfitting (переобучение) — когда модель слишком хорошо запомнила обучающие примеры, но не может обобщить на новые. Как студент, который зазубрил ответы на конкретные вопросы — на экзамене с другой формулировкой он теряется. Признаки: идеальные результаты на обучающих данных, ошибки на новых. Решение: больше данных, меньше эпох, разнообразные формулировки, проверочные данные (validation).
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fine-tuning</strong></td>
+<td>Дообучение готовой модели на своих примерах — модель получает новый навык (стиль, формат, терминологию)</td>
+</tr>
+<tr>
+<td><strong>JSONL</strong></td>
+<td>JSON Lines — формат файла, где каждая строка — отдельный JSON-объект. Стандарт для обучающих данных</td>
+</tr>
+<tr>
+<td><strong>Эпоха (epoch)</strong></td>
+<td>Один полный проход модели по всем обучающим примерам. 3 эпохи = модель прошла по данным 3 раза</td>
+</tr>
+<tr>
+<td><strong>LoRA</strong></td>
+<td>Low-Rank Adaptation — метод частичного дообучения. Добавляет маленький адаптер (~1-5% параметров) вместо изменения всей модели</td>
+</tr>
+<tr>
+<td><strong>QLoRA</strong></td>
+<td>LoRA + квантизация (сжатие модели). Позволяет дообучать на обычной GPU с 8 ГБ памяти</td>
+</tr>
+<tr>
+<td><strong>Full fine-tuning</strong></td>
+<td>Полное дообучение — меняются все параметры модели. Дорого, но максимально точно</td>
+</tr>
+<tr>
+<td><strong>Адаптер</strong></td>
+<td>Маленький набор дополнительных параметров при LoRA. Как «очки специалиста» для модели</td>
+</tr>
+<tr>
+<td><strong>Гиперпараметры</strong></td>
+<td>Настройки процесса обучения: количество эпох, learning rate, batch size</td>
+</tr>
+<tr>
+<td><strong>Training data</strong></td>
+<td>Обучающие данные — примеры «вход → правильный выход», на которых модель учится</td>
+</tr>
+<tr>
+<td><strong>Validation data</strong></td>
+<td>Проверочные данные — модель на них НЕ учится, но по ним измеряется качество</td>
+</tr>
+<tr>
+<td><strong>Overfitting</strong></td>
+<td>Переобучение — модель зазубрила примеры, но не обобщает на новые данные</td>
+</tr>
+<tr>
+<td><strong>Base model</strong></td>
+<td>Базовая модель до дообучения (GPT-4o-mini, Llama, Mistral)</td>
+</tr>
+<tr>
+<td><strong>Managed fine-tuning</strong></td>
+<td>Дообучение через API провайдера (OpenAI, Google) — без своих GPU</td>
+</tr>
+<tr>
+<td><strong>Open-source модель</strong></td>
+<td>Модель с открытым кодом (Llama, Mistral, Qwen) — можно скачать и дообучить самостоятельно</td>
+</tr>
+<tr>
+<td><strong>Inference</strong></td>
+<td>Использование обученной модели для генерации ответов (в отличие от training — обучения)</td>
+</tr>
+<tr>
+<td><strong>Unsloth</strong></td>
+<td>Python-библиотека для быстрого LoRA fine-tuning open-source моделей</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Fine-tuning = дообучение готовой модели на своих примерах
+  Модель не учится с нуля — она получает специализацию.
+
+Когда нужен:
+  • Стабильный формат вывода (JSON, структура)
+  • Специфический стиль или тон
+  • Экономия токенов на масштабе (короче промпты)
+  • Специализированная терминология
+
+Когда НЕ нужен:
+  • Нужны актуальные данные → RAG
+  • Задача решается промптом → промпт-инженерия
+  • Мало данных (&lt; 50 примеров) → few-shot в промпте
+
+Порядок: промпт → RAG → fine-tuning
+  Начинай с простого. Усложняй только когда простое не работает.
+
+Как работает:
+  1. Собрать 200-500 примеров &quot;вход → правильный выход&quot; (JSONL)
+  2. Загрузить в OpenAI → запустить обучение (10-30 минут)
+  3. Получить модель → использовать через тот же API
+
+Типы:
+  Full fine-tuning — дорого, все параметры, для больших компаний
+  LoRA — дёшево, маленький адаптер, для всех остальных
+
+Стоимость:
+  Обучение: $0.02-5.00 (зависит от данных и модели)
+  Главная цена: время на подготовку качественных данных
+
+Ловушка — overfitting:
+  Модель зазубрила примеры, но не обобщает на новые.
+  Решение: больше данных, меньше эпох, разнообразие, validation.
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Fine-tuning делает модель точнее для конкретных задач. Но AI-продукт — это не только точность. Это ещё и стоимость, скорость и масштаб. Как выбрать правильную модель для задачи? Как кешировать ответы? Как сократить промпты без потери качества? В следующем уроке — <strong>оптимизация и стоимость</strong>: экономика AI-продуктов.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="5-2-multi-agent.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="5-4-optimization.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

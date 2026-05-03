@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools — руки агента — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 3 · Урок 2 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 3.2 — Tools: руки агента</h1>
+<blockquote>
+<p>Tools (инструменты) — это функции, которые ты даёшь агенту. Без них он может только говорить. С ними — он может делать: проверять погоду, записывать в таблицу, отправлять сообщения, читать файлы. Инструменты — это руки агента.</p>
+</blockquote>
+<hr />
+<h2>Зачем агенту инструменты</h2>
+<p>В прошлом уроке мы увидели разницу: чат-бот отвечает текстом, а агент выполняет действия. Но как именно агент выполняет действия? Через <strong>tools</strong> — функции, которые он может вызывать.</p>
+<pre class="highlight"><code>Без tools: Claude может только генерировать текст
+С tools:   Claude может проверять погоду, отправлять письма,
+           записывать в таблицы, искать в интернете...
+</code></pre>
+
+<p><strong>Аналогия:</strong> Claude без инструментов — как сотрудник, которого заперли в комнате с бумагой и ручкой. Он может писать ответы, но не может позвонить, выйти, проверить данные. Инструменты — это телефон, компьютер, ключи от базы данных. С ними он превращается из писателя в исполнителя.</p>
+<hr />
+<h2>Как создать свой инструмент</h2>
+<p>Создание инструмента состоит из двух частей:</p>
+<h3>Часть 1: Описание для Claude (что он может делать)</h3>
+<p>Это JSON-схема, которую Claude читает и решает, когда вызвать.</p>
+<pre class="highlight"><code class="language-python">tools = [
+    {
+        &quot;name&quot;: &quot;get_exchange_rate&quot;,
+        # Имя инструмента — Claude будет ссылаться на него
+
+        &quot;description&quot;: &quot;Получить текущий курс обмена валют&quot;,
+        # Описание — Claude читает его, чтобы понять, когда использовать
+        # Чем точнее описание, тем лучше Claude решает, когда вызвать
+
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;from_currency&quot;: {
+                    &quot;type&quot;: &quot;string&quot;,
+                    &quot;description&quot;: &quot;Валюта, из которой конвертируем (например USD)&quot;
+                },
+                &quot;to_currency&quot;: {
+                    &quot;type&quot;: &quot;string&quot;,
+                    &quot;description&quot;: &quot;Валюта, в которую конвертируем (например RUB)&quot;
+                }
+            },
+            &quot;required&quot;: [&quot;from_currency&quot;, &quot;to_currency&quot;]
+            # required — обязательные параметры
+        }
+    }
+]
+</code></pre>
+
+<h3>Часть 2: Реальная функция (что ДЕЙСТВИТЕЛЬНО происходит)</h3>
+<pre class="highlight"><code class="language-python">def get_exchange_rate(from_currency, to_currency):
+    # В реальности — запрос к API курсов валют
+    # Для примера — хардкод
+    rates = {
+        (&quot;USD&quot;, &quot;RUB&quot;): 92.5,
+        (&quot;EUR&quot;, &quot;RUB&quot;): 100.3,
+        (&quot;USD&quot;, &quot;EUR&quot;): 0.92,
+    }
+    rate = rates.get((from_currency, to_currency), &quot;Курс не найден&quot;)
+    return f&quot;1 {from_currency} = {rate} {to_currency}&quot;
+</code></pre>
+
+<p><strong>Важно:</strong> Claude видит только описание (Часть 1). Он не видит код функции (Часть 2). Он не знает, как она работает внутри — он знает только что она делает и какие параметры принимает.</p>
+<hr />
+<h2>Полный пример: агент с тремя инструментами</h2>
+<p>Создадим агента, который умеет:
+- Проверять курс валют
+- Считать стоимость
+- Сохранять результат в файл</p>
+<pre class="highlight"><code class="language-python">from anthropic import Anthropic
+import json
+
+client = Anthropic()
+
+# === ОПИСАНИЯ ИНСТРУМЕНТОВ ===
+
+tools = [
+    {
+        &quot;name&quot;: &quot;get_exchange_rate&quot;,
+        &quot;description&quot;: &quot;Получить курс обмена валют&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;from_currency&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Из какой валюты&quot;},
+                &quot;to_currency&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;В какую валюту&quot;}
+            },
+            &quot;required&quot;: [&quot;from_currency&quot;, &quot;to_currency&quot;]
+        }
+    },
+    {
+        &quot;name&quot;: &quot;calculate&quot;,
+        &quot;description&quot;: &quot;Выполнить математический расчёт&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;expression&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Математическое выражение, например '100 * 92.5'&quot;}
+            },
+            &quot;required&quot;: [&quot;expression&quot;]
+        }
+    },
+    {
+        &quot;name&quot;: &quot;save_to_file&quot;,
+        &quot;description&quot;: &quot;Сохранить текст в файл&quot;,
+        &quot;input_schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;filename&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Имя файла&quot;},
+                &quot;content&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Содержимое файла&quot;}
+            },
+            &quot;required&quot;: [&quot;filename&quot;, &quot;content&quot;]
+        }
+    }
+]
+
+# === РЕАЛЬНЫЕ ФУНКЦИИ ===
+
+def get_exchange_rate(from_currency, to_currency):
+    rates = {
+        (&quot;USD&quot;, &quot;RUB&quot;): 92.5,
+        (&quot;EUR&quot;, &quot;RUB&quot;): 100.3,
+        (&quot;BTC&quot;, &quot;USD&quot;): 67000,
+    }
+    rate = rates.get((from_currency, to_currency))
+    if rate:
+        return f&quot;1 {from_currency} = {rate} {to_currency}&quot;
+    return f&quot;Курс {from_currency}/{to_currency} не найден&quot;
+
+def calculate(expression):
+    try:
+        result = eval(expression)
+        # eval() — вычисляет строку как математическое выражение
+        return str(result)
+    except Exception as e:
+        return f&quot;Ошибка: {e}&quot;
+
+def save_to_file(filename, content):
+    with open(filename, &quot;w&quot;) as f:
+        f.write(content)
+    return f&quot;Файл {filename} сохранён&quot;
+
+# === МАППИНГ: имя инструмента → функция ===
+
+tool_functions = {
+    &quot;get_exchange_rate&quot;: lambda args: get_exchange_rate(args[&quot;from_currency&quot;], args[&quot;to_currency&quot;]),
+    &quot;calculate&quot;: lambda args: calculate(args[&quot;expression&quot;]),
+    &quot;save_to_file&quot;: lambda args: save_to_file(args[&quot;filename&quot;], args[&quot;content&quot;]),
+}
+# lambda — маленькая функция, которая принимает args и вызывает нужную функцию
+# args — словарь с параметрами, которые Claude передал
+
+# === АГЕНТНЫЙ ЦИКЛ ===
+
+def run_agent(task):
+    messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task}]
+
+    print(f&quot;\nЗадача: {task}&quot;)
+    print(&quot;-&quot; * 50)
+
+    while True:
+        response = client.messages.create(
+            model=&quot;claude-sonnet-4-6&quot;,
+            max_tokens=1024,
+            tools=tools,
+            messages=messages
+        )
+
+        # Claude закончил
+        if response.stop_reason == &quot;end_turn&quot;:
+            for block in response.content:
+                if hasattr(block, &quot;text&quot;):
+                    print(f&quot;\nРезультат: {block.text}&quot;)
+            break
+
+        # Claude хочет вызвать инструмент
+        if response.stop_reason == &quot;tool_use&quot;:
+            messages.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: response.content})
+
+            tool_results = []
+            for block in response.content:
+                if block.type == &quot;tool_use&quot;:
+                    print(f&quot;  → Вызов: {block.name}({json.dumps(block.input, ensure_ascii=False)})&quot;)
+
+                    # Выполняем функцию
+                    result = tool_functions[block.name](block.input)
+                    print(f&quot;  ← Результат: {result}&quot;)
+
+                    tool_results.append({
+                        &quot;type&quot;: &quot;tool_result&quot;,
+                        &quot;tool_use_id&quot;: block.id,
+                        &quot;content&quot;: result
+                    })
+
+            messages.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: tool_results})
+
+# === ЗАПУСК ===
+
+run_agent(&quot;Сколько стоят 500 долларов в рублях? Сохрани результат в файл report.txt&quot;)
+</code></pre>
+
+<h3>Что произойдёт:</h3>
+<pre class="highlight"><code>Задача: Сколько стоят 500 долларов в рублях? Сохрани результат в файл report.txt
+--------------------------------------------------
+  → Вызов: get_exchange_rate({&quot;from_currency&quot;: &quot;USD&quot;, &quot;to_currency&quot;: &quot;RUB&quot;})
+  ← Результат: 1 USD = 92.5 RUB
+  → Вызов: calculate({&quot;expression&quot;: &quot;500 * 92.5&quot;})
+  ← Результат: 46250.0
+  → Вызов: save_to_file({&quot;filename&quot;: &quot;report.txt&quot;, &quot;content&quot;: &quot;500 USD = 46,250 RUB (курс: 1 USD = 92.5 RUB)&quot;})
+  ← Результат: Файл report.txt сохранён
+
+Результат: 500 долларов = 46,250 рублей по курсу 92.5.
+           Результат сохранён в файл report.txt.
+</code></pre>
+
+<p>Claude <strong>сам</strong> решил:
+1. Сначала вызвать <code>get_exchange_rate</code> чтобы узнать курс
+2. Потом <code>calculate</code> чтобы умножить
+3. Потом <code>save_to_file</code> чтобы сохранить</p>
+<p>Три шага, три инструмента, ноль ручного управления.</p>
+<hr />
+<h2>Как описывать инструменты правильно</h2>
+<h3>Описание (description) — самое важное</h3>
+<p>Claude решает, какой инструмент вызвать, по <strong>description</strong>. Если описание плохое — он выберет не тот инструмент или не вызовет его вообще.</p>
+<pre class="highlight"><code class="language-python"># Плохое описание — Claude не поймёт когда использовать
+{&quot;name&quot;: &quot;func1&quot;, &quot;description&quot;: &quot;Делает что-то&quot;}
+
+# Хорошее описание — Claude точно знает когда вызвать
+{&quot;name&quot;: &quot;get_weather&quot;, &quot;description&quot;: &quot;Получить текущую погоду (температуру, осадки, ветер) в указанном городе. Используй когда пользователь спрашивает про погоду.&quot;}
+</code></pre>
+
+<h3>Параметры — что функция принимает</h3>
+<pre class="highlight"><code class="language-python">&quot;input_schema&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+        &quot;city&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;Название города на русском или английском&quot;
+            # Описание параметра помогает Claude правильно заполнить
+        },
+        &quot;units&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;Единицы измерения: 'celsius' или 'fahrenheit'&quot;,
+            &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;]
+            # enum — ограничивает возможные значения
+        }
+    },
+    &quot;required&quot;: [&quot;city&quot;]
+    # required — обязательные поля
+    # units не в required — значит необязательный
+}
+</code></pre>
+
+<h3>Типы параметров</h3>
+<pre class="highlight"><code class="language-python">&quot;type&quot;: &quot;string&quot;   # текст: &quot;Москва&quot;, &quot;USD&quot;, &quot;hello@mail.com&quot;
+&quot;type&quot;: &quot;number&quot;   # число: 42, 3.14, -10
+&quot;type&quot;: &quot;integer&quot;  # целое число: 1, 2, 100
+&quot;type&quot;: &quot;boolean&quot;  # да/нет: true, false
+&quot;type&quot;: &quot;array&quot;    # список: [&quot;Москва&quot;, &quot;Питер&quot;]
+&quot;type&quot;: &quot;object&quot;   # словарь: {&quot;name&quot;: &quot;Иван&quot;, &quot;age&quot;: 25}
+</code></pre>
+
+<hr />
+<h2>Какие инструменты можно создать</h2>
+<p>Инструментом может быть <strong>любая функция</strong>. Вот примеры по категориям:</p>
+<h3>Работа с данными</h3>
+<pre class="highlight"><code class="language-python">{&quot;name&quot;: &quot;search_database&quot;, &quot;description&quot;: &quot;Поиск информации в базе данных по запросу&quot;}
+{&quot;name&quot;: &quot;add_row_to_sheets&quot;, &quot;description&quot;: &quot;Добавить строку в Google Таблицу&quot;}
+{&quot;name&quot;: &quot;read_csv&quot;, &quot;description&quot;: &quot;Прочитать CSV-файл и вернуть данные&quot;}
+</code></pre>
+
+<h3>Коммуникации</h3>
+<pre class="highlight"><code class="language-python">{&quot;name&quot;: &quot;send_telegram&quot;, &quot;description&quot;: &quot;Отправить сообщение в Telegram&quot;}
+{&quot;name&quot;: &quot;send_email&quot;, &quot;description&quot;: &quot;Отправить email&quot;}
+{&quot;name&quot;: &quot;post_to_instagram&quot;, &quot;description&quot;: &quot;Опубликовать пост в Instagram&quot;}
+</code></pre>
+
+<h3>Внешние API</h3>
+<pre class="highlight"><code class="language-python">{&quot;name&quot;: &quot;get_weather&quot;, &quot;description&quot;: &quot;Получить погоду&quot;}
+{&quot;name&quot;: &quot;get_exchange_rate&quot;, &quot;description&quot;: &quot;Получить курс валют&quot;}
+{&quot;name&quot;: &quot;search_web&quot;, &quot;description&quot;: &quot;Поиск в интернете&quot;}
+</code></pre>
+
+<h3>Работа с файлами</h3>
+<pre class="highlight"><code class="language-python">{&quot;name&quot;: &quot;read_file&quot;, &quot;description&quot;: &quot;Прочитать содержимое файла&quot;}
+{&quot;name&quot;: &quot;save_to_file&quot;, &quot;description&quot;: &quot;Сохранить текст в файл&quot;}
+{&quot;name&quot;: &quot;list_files&quot;, &quot;description&quot;: &quot;Список файлов в папке&quot;}
+</code></pre>
+
+<h3>Вычисления</h3>
+<pre class="highlight"><code class="language-python">{&quot;name&quot;: &quot;calculate&quot;, &quot;description&quot;: &quot;Математический расчёт&quot;}
+{&quot;name&quot;: &quot;convert_currency&quot;, &quot;description&quot;: &quot;Конвертация валют с расчётом&quot;}
+{&quot;name&quot;: &quot;generate_report&quot;, &quot;description&quot;: &quot;Сгенерировать отчёт из данных&quot;}
+</code></pre>
+
+<hr />
+<h2>Реальный пример: как OpenClaw использует tools</h2>
+<p><strong>OpenClaw</strong> — это бесплатный open-source AI-агент, созданный Peter Steinberger. Он работает локально на компьютере и подключается к 40+ мессенджерам (Telegram, WhatsApp, Discord, Slack, Signal, iMessage и др.). Внутри OpenClaw — ровно тот же принцип, который ты только что изучил: описания инструментов + реальные функции + агентный цикл.</p>
+<h3>Архитектура OpenClaw</h3>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────┐
+│              OpenClaw — как устроен               │
+│                                                   │
+│  1. Channel Adapters                              │
+│     Принимает сообщения из Telegram, WhatsApp,    │
+│     Discord и 40+ других мессенджеров.            │
+│     Приводит всё к единому формату.               │
+│                                                   │
+│  2. Gateway Server                                │
+│     Центральный координатор. Распределяет         │
+│     сообщения, управляет сессиями.                │
+│     Сам НЕ думает — только маршрутизирует.        │
+│                                                   │
+│  3. Agent Runner                                  │
+│     Собирает контекст перед отправкой в LLM:      │
+│     - выбирает модель                             │
+│     - собирает system prompt + tools              │
+│     - загружает историю разговора                 │
+│                                                   │
+│  4. Agentic Loop (мозг)                           │
+│     Цикл думай-действуй из урока 3.1:            │
+│     LLM отвечает → tool call? → выполни →         │
+│     → верни результат → повтори                   │
+│                                                   │
+│  5. Response Path                                 │
+│     Отправляет финальный ответ обратно             │
+│     в мессенджер через Channel Adapter            │
+│                                                   │
+└──────────────────────────────────────────────────┘
+</code></pre>
+
+<h3>Инструменты OpenClaw (~49 встроенных)</h3>
+<p>OpenClaw поставляется с примерно <strong>49 готовыми инструментами</strong> (skills). Вот основные категории:</p>
+<table>
+<thead>
+<tr>
+<th>Категория</th>
+<th>Что делают</th>
+<th>Примеры</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Браузер</strong></td>
+<td>Открывают сайты, заполняют формы</td>
+<td>Автоматический вход, сбор данных</td>
+</tr>
+<tr>
+<td><strong>Файлы</strong></td>
+<td>Читают/пишут файлы, обрабатывают PDF</td>
+<td>Создание отчётов, анализ документов</td>
+</tr>
+<tr>
+<td><strong>Команды</strong></td>
+<td>Выполняют команды в терминале</td>
+<td>Запуск скриптов, управление сервером</td>
+</tr>
+<tr>
+<td><strong>Веб-поиск</strong></td>
+<td>Ищут информацию в интернете</td>
+<td>Ответы на вопросы с актуальными данными</td>
+</tr>
+<tr>
+<td><strong>Почта</strong></td>
+<td>Читают и отправляют email (Gmail)</td>
+<td>Автоматические ответы, уведомления</td>
+</tr>
+<tr>
+<td><strong>Календарь</strong></td>
+<td>Управляют расписанием</td>
+<td>Создание встреч, напоминания</td>
+</tr>
+<tr>
+<td><strong>Мессенджеры</strong></td>
+<td>Отправляют/получают сообщения</td>
+<td>Ответы в чатах, мониторинг</td>
+</tr>
+<tr>
+<td><strong>Cron / Webhooks</strong></td>
+<td>Выполняют задачи по расписанию</td>
+<td>Ежедневные отчёты, мониторинг</td>
+</tr>
+</tbody>
+</table>
+<p>Сообщество добавляет свои инструменты через <strong>ClawHub</strong> — библиотеку расширений. Есть интеграции с GitHub, Spotify, умным домом (Philips Hue), фондовым рынком и другими сервисами.</p>
+<h3>Как OpenClaw обрабатывает сообщение</h3>
+<p>Допустим, в Telegram-чате появляется сообщение. Вот что происходит:</p>
+<pre class="highlight"><code>1. Channel Adapter: Telegram → единый формат
+   Сообщение: &quot;Ищу поставщика ASIC, контакт @mining_pro&quot;
+
+2. Agent Runner: собирает контекст
+   → Модель: Claude / GPT-4 / локальная (на выбор)
+   → System prompt + список tools + память
+
+3. Agentic Loop (ReAct-паттерн):
+   → LLM думает: &quot;Это потенциальный клиент. Нужно записать.&quot;
+   → Tool call: add_row_to_sheets(name=&quot;@mining_pro&quot;, request=&quot;поставщик ASIC&quot;)
+   → Результат: &quot;Строка добавлена&quot;
+   → LLM думает: &quot;Задача выполнена.&quot;
+   → Финальный ответ (или тишина — зависит от настройки)
+
+4. Response Path: ответ → Telegram
+</code></pre>
+
+<p>Внутри — ровно тот же <strong>agentic loop</strong>, который мы писали в уроке 3.1. Разница только в масштабе: 49 инструментов вместо 2, десятки мессенджеров вместо одного терминала.</p>
+<h3>Память OpenClaw</h3>
+<p>OpenClaw хранит информацию в <strong>Markdown-файлах</strong> (да, обычные <code>.md</code> файлы):</p>
+<pre class="highlight"><code>SOUL.md      — личность агента, стиль поведения
+TOOLS.md     — документация по инструментам
+user.md      — предпочтения пользователя
+memory.md    — что агент запомнил между разговорами
+HEARTBEAT.md — расписание автоматических задач
+</code></pre>
+
+<p>Эти файлы загружаются в контекст LLM при каждом сообщении. Благодаря этому агент <strong>помнит</strong> предыдущие разговоры и учитывает предпочтения. Подробнее о памяти — в следующем уроке.</p>
+<h3>Стоимость работы OpenClaw</h3>
+<p>Сам OpenClaw <strong>бесплатный и open-source</strong>. Платить нужно только за API модели:</p>
+<pre class="highlight"><code>Типичные расходы: $2-75/день в зависимости от активности
+
+Оптимизация: OpenClaw может маршрутизировать запросы —
+простые задачи → дешёвая модель (Haiku),
+сложные → мощная (Claude Sonnet / Opus).
+
+При таком подходе расходы ~$2.50/день.
+</code></pre>
+
+<p>Это применение стратегий из урока 2.5 — выбор модели по задаче, а не "самой умной" для всего.</p>
+<hr />
+<h2>Безопасность: что агент может и чего нельзя</h2>
+<p>Claude <strong>не имеет прямого доступа</strong> к системе. Он может вызвать только те инструменты, которые <strong>ему дали</strong>.</p>
+<pre class="highlight"><code class="language-python"># Ты даёшь:
+tools = [get_weather, calculate]
+# Claude может: проверить погоду, посчитать
+# Claude НЕ может: удалить файлы, отправить деньги, читать пароли
+
+# Ты контролируешь:
+# - Какие инструменты доступны
+# - Что они делают внутри
+# - Какие данные они возвращают
+</code></pre>
+
+<p><strong>Правила безопасности:</strong></p>
+<ol>
+<li><strong>Давай только нужные инструменты</strong> — не давай <code>delete_everything</code> если не нужно</li>
+<li><strong>Проверяй входные данные</strong> — валидируй параметры внутри функций</li>
+<li><strong>Логируй вызовы</strong> — записывай что агент делал (мы делали это в <code>print(f"→ Вызов: ...")</code>)</li>
+<li><strong>Опасные действия — с подтверждением</strong> — перед отправкой денег или удалением данных спрашивай пользователя</li>
+</ol>
+<p>OpenClaw, например, имеет встроенные <strong>approval gates</strong> — перед выполнением опасных команд он запрашивает разрешение у пользователя.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Создай свой инструмент</h3>
+<p>Напиши описание инструмента <code>search_contacts</code> — поиск контакта по имени в списке.</p>
+<pre class="highlight"><code class="language-python"># Заполни:
+tool = {
+    &quot;name&quot;: &quot;search_contacts&quot;,
+    &quot;description&quot;: &quot;???&quot;,
+    &quot;input_schema&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+            # ???
+        },
+        &quot;required&quot;: [???]
+    }
+}
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">tool = {
+    &quot;name&quot;: &quot;search_contacts&quot;,
+    &quot;description&quot;: &quot;Найти контакт по имени в списке контактов. Возвращает имя, email и телефон.&quot;,
+    &quot;input_schema&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+            &quot;name&quot;: {
+                &quot;type&quot;: &quot;string&quot;,
+                &quot;description&quot;: &quot;Имя или часть имени для поиска&quot;
+            }
+        },
+        &quot;required&quot;: [&quot;name&quot;]
+    }
+}
+</code></pre>
+
+
+</details>
+
+<h3>Задание 2: Запусти агента</h3>
+<p>Скопируй полный пример с тремя инструментами (курс, калькулятор, файл) и запусти. Попробуй разные задачи:
+- "Сколько стоят 1000 EUR в рублях?"
+- "Посчитай 15% от 46250 и сохрани в файл tax.txt"</p>
+<h3>Задание 3: Добавь новый инструмент</h3>
+<p>Добавь к агенту инструмент <code>get_time</code> — возвращает текущее время:</p>
+<pre class="highlight"><code class="language-python">from datetime import datetime
+
+def get_time():
+    return datetime.now().strftime(&quot;%H:%M:%S&quot;)
+</code></pre>
+
+<p>Опиши его в <code>tools</code> и добавь в <code>tool_functions</code>. Проверь, что работает: "Который сейчас час?"</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Зачем инструменту нужно описание (description)?</p>
+<details>
+<summary>Ответ</summary>
+
+Claude читает описание, чтобы решить, когда вызвать инструмент. Если описание плохое или неточное, Claude может выбрать не тот инструмент или не вызвать его, когда нужно.
+</details>
+
+<p><strong>Задача 2:</strong> Claude видит код функции?</p>
+<details>
+<summary>Ответ</summary>
+
+Нет. Claude видит только описание инструмента (name, description, input_schema). Он не знает, как функция работает внутри — только что она принимает и что делает.
+</details>
+
+<p><strong>Задача 3:</strong> Можно ли дать агенту 10 инструментов одновременно?</p>
+<details>
+<summary>Ответ</summary>
+
+Да. Claude сам выберет нужный инструмент из списка по описанию. Но чем больше инструментов, тем больше токенов тратится на их описания (они отправляются с каждым запросом). Давай только те, которые реально нужны для задачи.
+</details>
+
+<p><strong>Задача 4:</strong> OpenClaw — это чат-бот или агент? Почему?</p>
+<details>
+<summary>Ответ</summary>
+
+Агент. Потому что он имеет ~49 инструментов (tools), работает в агентном цикле (agentic loop), может выполнять действия (читать чаты, писать в таблицы, отправлять сообщения, искать в интернете), а не просто генерировать текст.
+</details>
+
+<hr />
+<h2>Главное</h2>
+<ul>
+<li><strong>Tool = описание (для Claude) + функция (реальный код)</strong></li>
+<li><strong>Claude сам выбирает</strong> какой инструмент вызвать и когда</li>
+<li><strong>Ты контролируешь</strong> какие инструменты доступны и что они делают</li>
+<li><strong>OpenClaw — реальный пример</strong> AI-агента с 49 tools и 40+ интеграциями</li>
+<li><strong>Безопасность</strong> — давай только нужные инструменты, логируй вызовы</li>
+</ul>
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tool (инструмент)</td>
+<td>Функция, которую ты описываешь для Claude, чтобы он мог выполнять действия во внешнем мире.</td>
+</tr>
+<tr>
+<td>tool_use</td>
+<td>Тип блока в ответе Claude, означающий, что модель хочет вызвать конкретный инструмент с определёнными параметрами.</td>
+</tr>
+<tr>
+<td>tool_result</td>
+<td>Тип сообщения, которое ты отправляешь обратно Claude с результатом выполнения запрошенного инструмента.</td>
+</tr>
+<tr>
+<td>input_schema</td>
+<td>Описание параметров инструмента в формате JSON Schema, чтобы Claude знал, какие данные передавать при вызове.</td>
+</tr>
+<tr>
+<td>JSON Schema</td>
+<td>Стандартный формат описания структуры данных, используемый для определения параметров инструментов.</td>
+</tr>
+<tr>
+<td>Function calling</td>
+<td>Механизм, при котором LLM выбирает нужную функцию и формирует параметры для её вызова на основе контекста разговора.</td>
+</tr>
+<tr>
+<td>Name (имя инструмента)</td>
+<td>Уникальное название инструмента, по которому Claude обращается к нему при вызове.</td>
+</tr>
+<tr>
+<td>Description (описание)</td>
+<td>Текстовое пояснение для Claude, объясняющее что делает инструмент и когда его стоит использовать.</td>
+</tr>
+<tr>
+<td>Параметры инструмента</td>
+<td>Входные данные, которые Claude передаёт при вызове инструмента — описываются через input_schema.</td>
+</tr>
+<tr>
+<td>MCP (Model Context Protocol)</td>
+<td>Открытый протокол от Anthropic, который позволяет подключать внешние инструменты и данные к LLM через единый стандарт.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Память агента</strong>. Как агент запоминает информацию между разговорами, чтобы не начинать каждый раз с чистого листа. На примере OpenClaw мы уже увидели, что он хранит память в Markdown-файлах — в следующем уроке разберём этот подход подробнее и реализуем его в коде.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="3-1-chatbot-vs-agent.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="3-3-memory.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

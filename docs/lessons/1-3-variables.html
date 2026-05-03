@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Переменные и типы — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← НАЗАД К КУРСУ</a>
+    <span class="lesson-header__meta">Этап 1 · Урок 4 из 8</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Урок 1.3 — Python: переменные и типы данных</h1>
+<blockquote>
+<p>Переменная — это имя для данных. Ты даёшь имя какому-то значению, чтобы потом использовать его в программе. Без переменных программа не может ничего запомнить.</p>
+</blockquote>
+<hr />
+<h2>Что такое переменная</h2>
+<p>Когда ты заполняешь профиль в Telegram — ты вводишь имя, и приложение его <strong>запоминает</strong>. В коде это работает точно так же: ты создаёшь переменную, кладёшь туда значение — и программа его помнит.</p>
+<pre class="highlight"><code class="language-python"># Создаём переменную: имя = значение
+name = &quot;Катя&quot;
+
+# Теперь программа знает, что name — это &quot;Катя&quot;
+# И ты можешь использовать это имя где угодно:
+print(name)   # → Катя
+</code></pre>
+
+<p><strong>Аналогия:</strong> Контакт в телефоне. Ты сохраняешь номер под именем "Мама". Теперь вместо того чтобы каждый раз набирать +7-999-123-45-67, ты просто нажимаешь "Мама". Переменная — это то же самое: имя, за которым стоит значение.</p>
+<hr />
+<h2>Зачем нужны переменные</h2>
+<p>Без переменных тебе пришлось бы каждый раз писать одно и то же значение заново:</p>
+<pre class="highlight"><code class="language-python"># Без переменных — повторяешь &quot;Катя&quot; каждый раз
+print(&quot;Привет, Катя!&quot;)
+print(&quot;Катя, у тебя 3 новых сообщения&quot;)
+print(&quot;Катя, твой заказ в пути&quot;)
+
+# С переменной — меняешь в одном месте, работает везде
+name = &quot;Катя&quot;
+print(f&quot;Привет, {name}!&quot;)
+print(f&quot;{name}, у тебя 3 новых сообщения&quot;)
+print(f&quot;{name}, твой заказ в пути&quot;)
+
+# Если имя изменится — меняешь только первую строку
+name = &quot;Аня&quot;
+# И все три сообщения теперь будут для Ани
+</code></pre>
+
+<hr />
+<h2>Типы данных</h2>
+<p>У каждого значения есть <strong>тип</strong> — что это за данные. Как в реальной жизни: имя — это текст, возраст — число, "подписан / не подписан" — да или нет.</p>
+<hr />
+<h3>Строка (string, str) — текст</h3>
+<p><strong>Что это:</strong> Любой текст. Всегда в кавычках.</p>
+<p><strong>Зачем:</strong> Имена, сообщения, адреса, всё что является текстом.</p>
+<pre class="highlight"><code class="language-python"># Строка — текст в кавычках (двойных или одинарных, без разницы)
+name = &quot;Катя&quot;
+message = 'Привет!'
+emoji = &quot;🔥&quot;
+
+# Строки можно соединять
+greeting = &quot;Привет, &quot; + name   # → &quot;Привет, Катя&quot;
+
+# Или использовать f-строку (f = format)
+greeting = f&quot;Привет, {name}!&quot;  # → &quot;Привет, Катя!&quot;
+# Внутри {} можно вставить любую переменную
+</code></pre>
+
+<hr />
+<h3>Число целое (integer, int) — без дробной части</h3>
+<p><strong>Что это:</strong> Целое число. Без точки, без кавычек.</p>
+<p><strong>Зачем:</strong> Возраст, количество подписчиков, номер страницы — всё, что считается целыми числами.</p>
+<pre class="highlight"><code class="language-python">age = 25
+followers = 15000
+messages_count = 3
+
+# С числами можно делать математику
+total = 10 + 5       # → 15
+double = age * 2      # → 50
+remaining = 100 - 30  # → 70
+</code></pre>
+
+<hr />
+<h3>Число дробное (float) — с точкой</h3>
+<p><strong>Что это:</strong> Число с дробной частью.</p>
+<p><strong>Зачем:</strong> Цена, рейтинг, координаты — всё, где нужна точность после запятой.</p>
+<pre class="highlight"><code class="language-python">price = 199.99
+rating = 4.8
+temperature = 36.6
+
+# В Python дробная часть отделяется ТОЧКОЙ, не запятой
+# 36,6 — ошибка
+# 36.6 — правильно
+</code></pre>
+
+<hr />
+<h3>Булево значение (boolean, bool) — да или нет</h3>
+<p><strong>Что это:</strong> Только два значения: <code>True</code> (да, правда) или <code>False</code> (нет, ложь).</p>
+<p><strong>Зачем:</strong> Любой вопрос, на который ответ — да или нет. Пользователь залогинен? Подписка активна? Сообщение прочитано?</p>
+<p><strong>Аналогия:</strong> Переключатель — вкл/выкл. Уведомления в телефоне — включены (<code>True</code>) или выключены (<code>False</code>).</p>
+<pre class="highlight"><code class="language-python">is_online = True       # пользователь онлайн? Да
+is_premium = False     # подписка премиум? Нет
+has_new_messages = True # есть новые сообщения? Да
+
+# Булево значение получается из сравнений
+age = 25
+print(age &gt; 18)    # → True  (25 больше 18? Да)
+print(age == 30)   # → False (25 равно 30? Нет)
+# == означает &quot;равно ли?&quot; (сравнение)
+# = означает &quot;присвоить&quot; (записать значение)
+</code></pre>
+
+<hr />
+<h3>Список (list) — набор значений по порядку</h3>
+<p><strong>Что это:</strong> Упорядоченная коллекция элементов. В квадратных скобках.</p>
+<p><strong>Зачем:</strong> Лента постов, список контактов, история сообщений — любой набор элементов.</p>
+<p><strong>Аналогия:</strong> Лента Instagram. Посты идут по порядку: первый, второй, третий. Можно добавить новый, удалить старый, посмотреть конкретный по номеру.</p>
+<pre class="highlight"><code class="language-python"># Список — значения в квадратных скобках, через запятую
+friends = [&quot;Аня&quot;, &quot;Макс&quot;, &quot;Дима&quot;]
+
+# Получить элемент по номеру (нумерация с 0, не с 1!)
+print(friends[0])   # → &quot;Аня&quot;   (первый элемент)
+print(friends[1])   # → &quot;Макс&quot;  (второй)
+print(friends[2])   # → &quot;Дима&quot;  (третий)
+
+# Добавить элемент
+friends.append(&quot;Лена&quot;)   # теперь: [&quot;Аня&quot;, &quot;Макс&quot;, &quot;Дима&quot;, &quot;Лена&quot;]
+
+# Узнать сколько элементов
+print(len(friends))   # → 4
+# len = length = длина
+</code></pre>
+
+<hr />
+<h3>Словарь (dictionary, dict) — данные с именами</h3>
+<p><strong>Что это:</strong> Коллекция пар "ключ: значение". В фигурных скобках.</p>
+<p><strong>Зачем:</strong> Когда у данных есть названия. Профиль пользователя, настройки, ответ от API — всё это словари.</p>
+<p><strong>Аналогия:</strong> Профиль в соцсети. У каждого поля есть название (имя, город, возраст) и значение (Катя, Москва, 25).</p>
+<pre class="highlight"><code class="language-python"># Словарь — пары ключ: значение в фигурных скобках
+profile = {
+    &quot;name&quot;: &quot;Катя&quot;,
+    &quot;age&quot;: 25,
+    &quot;city&quot;: &quot;Москва&quot;,
+    &quot;is_premium&quot;: True
+}
+
+# Получить значение по ключу
+print(profile[&quot;name&quot;])    # → &quot;Катя&quot;
+print(profile[&quot;city&quot;])    # → &quot;Москва&quot;
+
+# Добавить новое поле
+profile[&quot;email&quot;] = &quot;katya@mail.ru&quot;
+
+# Это тот же формат что JSON (урок 1.2), только в Python-коде
+</code></pre>
+
+<hr />
+<h3>None — пустота, ничего</h3>
+<p><strong>Что это:</strong> Специальное значение, которое означает "ничего", "пусто", "нет данных".</p>
+<p><strong>Зачем:</strong> Когда значение ещё неизвестно или не существует.</p>
+<p><strong>Аналогия:</strong> Пустое поле в анкете. Не ноль, не пробел — именно "не заполнено".</p>
+<pre class="highlight"><code class="language-python">middle_name = None   # отчество не указано
+phone = None         # телефон не добавлен
+
+# None — это не &quot;0&quot; и не &quot;&quot; (пустая строка)
+# Это именно &quot;данных нет&quot;
+</code></pre>
+
+<hr />
+<h2>Как узнать тип переменной</h2>
+<pre class="highlight"><code class="language-python">name = &quot;Катя&quot;
+age = 25
+price = 199.99
+is_online = True
+friends = [&quot;Аня&quot;, &quot;Макс&quot;]
+profile = {&quot;name&quot;: &quot;Катя&quot;}
+
+# type() — функция, которая говорит тип данных
+print(type(name))      # → &lt;class 'str'&gt;      строка
+print(type(age))       # → &lt;class 'int'&gt;      целое число
+print(type(price))     # → &lt;class 'float'&gt;    дробное число
+print(type(is_online)) # → &lt;class 'bool'&gt;     булево
+print(type(friends))   # → &lt;class 'list'&gt;     список
+print(type(profile))   # → &lt;class 'dict'&gt;     словарь
+</code></pre>
+
+<hr />
+<h2>f-строки — вставка переменных в текст</h2>
+<p>Ты будешь использовать это постоянно:</p>
+<pre class="highlight"><code class="language-python">name = &quot;Катя&quot;
+age = 25
+city = &quot;Москва&quot;
+
+# f перед кавычкой — и внутри {} можно вставлять переменные
+message = f&quot;Меня зовут {name}, мне {age} лет, живу в {city}&quot;
+print(message)
+# → Меня зовут Катя, мне 25 лет, живу в Москва
+</code></pre>
+
+<hr />
+<h2>Практика</h2>
+<p>Создай файл <code>profile.py</code> и напиши:</p>
+<pre class="highlight"><code class="language-python"># Твой профиль
+name = &quot;Катя&quot;          # замени на своё имя
+age = 25               # замени на свой возраст
+city = &quot;Москва&quot;        # замени на свой город
+is_learning_ai = True
+skills = [&quot;терминал&quot;, &quot;файлы&quot;, &quot;переменные&quot;]
+
+print(f&quot;Имя: {name}&quot;)
+print(f&quot;Возраст: {age}&quot;)
+print(f&quot;Город: {city}&quot;)
+print(f&quot;Изучаю AI: {is_learning_ai}&quot;)
+print(f&quot;Навыки: {skills}&quot;)
+print(f&quot;Количество навыков: {len(skills)}&quot;)
+</code></pre>
+
+<p>Запусти: <code>python3 profile.py</code></p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> Какой тип данных у каждого значения?</p>
+<pre class="highlight"><code class="language-python">a = &quot;Привет&quot;
+b = 42
+c = True
+d = 3.14
+e = [&quot;один&quot;, &quot;два&quot;]
+f = None
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+- `a` — str (строка)
+- `b` — int (целое число)
+- `c` — bool (булево)
+- `d` — float (дробное число)
+- `e` — list (список)
+- `f` — NoneType (пустота)
+</details>
+
+<p><strong>Задача 2:</strong> Есть список. Как получить "Макс"?</p>
+<pre class="highlight"><code class="language-python">users = [&quot;Аня&quot;, &quot;Макс&quot;, &quot;Дима&quot;]
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">print(users[1])   # → &quot;Макс&quot;
+# Нумерация с 0: Аня=0, Макс=1, Дима=2
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 3:</strong> Есть словарь. Как получить email?</p>
+<pre class="highlight"><code class="language-python">user = {
+    &quot;name&quot;: &quot;Катя&quot;,
+    &quot;email&quot;: &quot;katya@mail.ru&quot;,
+    &quot;age&quot;: 25
+}
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">print(user[&quot;email&quot;])   # → &quot;katya@mail.ru&quot;
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 4:</strong> Напиши f-строку, которая выведет: "Катя (25 лет) — Москва"</p>
+<pre class="highlight"><code class="language-python">name = &quot;Катя&quot;
+age = 25
+city = &quot;Москва&quot;
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+
+<pre class="highlight"><code class="language-python">print(f&quot;{name} ({age} лет) — {city}&quot;)
+</code></pre>
+
+
+</details>
+
+<p><strong>Задача 5:</strong> В чём разница?</p>
+<pre class="highlight"><code class="language-python">a = &quot;25&quot;
+b = 25
+</code></pre>
+
+<details>
+<summary>Ответ</summary>
+
+`a` — строка (текст "25"). С ней нельзя считать математику.
+`b` — число (целое 25). С ним можно: `b + 10` → `35`.
+
+`"25" + "25"` → `"2525"` (склейка текста)
+`25 + 25` → `50` (сложение чисел)
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Переменная</strong></td>
+<td>Именованная «коробка», в которой хранится значение — число, текст или что-то ещё</td>
+</tr>
+<tr>
+<td><strong>Тип данных</strong></td>
+<td>Категория значения, которая определяет, что с ним можно делать (складывать, склеивать и т.д.)</td>
+</tr>
+<tr>
+<td><strong>Строка (str)</strong></td>
+<td>Текстовый тип данных — любой текст в кавычках, например <code>"Привет"</code></td>
+</tr>
+<tr>
+<td><strong>Число (int, float)</strong></td>
+<td>int — целое число (42), float — дробное число (3.14)</td>
+</tr>
+<tr>
+<td><strong>Булево (bool)</strong></td>
+<td>Тип «да или нет» — принимает только два значения: <code>True</code> или <code>False</code></td>
+</tr>
+<tr>
+<td><strong>Список (list)</strong></td>
+<td>Упорядоченный набор значений в квадратных скобках: <code>[1, 2, 3]</code></td>
+</tr>
+<tr>
+<td><strong>Словарь (dict)</strong></td>
+<td>Набор пар «ключ-значение» в фигурных скобках: <code>{"name": "Катя", "age": 25}</code></td>
+</tr>
+<tr>
+<td><strong>f-строка</strong></td>
+<td>Строка с подстановкой переменных: <code>f"Привет, {name}"</code> — Python вставит значение вместо <code>{name}</code></td>
+</tr>
+<tr>
+<td><strong>print()</strong></td>
+<td>Функция, которая выводит значение на экран — главный способ увидеть результат работы кода</td>
+</tr>
+<tr>
+<td><strong>type()</strong></td>
+<td>Функция, которая показывает тип данных переменной — полезна для отладки</td>
+</tr>
+<tr>
+<td><strong>None</strong></td>
+<td>Специальное значение «ничего» — означает, что переменная пуста или результат отсутствует</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Переменная — это имя для значения:
+  name = &quot;Катя&quot;       — строка (str)
+  age = 25             — целое число (int)
+  pi = 3.14            — дробное число (float)
+  active = True        — булево (bool)
+  items = [1, 2, 3]    — список (list)
+  user = {&quot;name&quot;: &quot;Катя&quot;}  — словарь (dict)
+
+Полезные функции:
+  print(name)    — вывести значение на экран
+  type(name)     — узнать тип переменной
+  f&quot;Мне {age}&quot;   — подставить переменную в текст
+
+Важно помнить:
+  &quot;25&quot; и 25 — разные вещи (строка vs число)
+  &quot;25&quot; + &quot;25&quot; → &quot;2525&quot;  (склейка текста)
+  25 + 25     → 50      (сложение чисел)
+
+  None — значит «ничего», переменная пуста
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>В следующем уроке — <strong>Python: условия и циклы</strong>. Программа начнёт принимать решения и повторять действия.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <a href="1-2-files.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
+      <a href="1-4-conditions.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>

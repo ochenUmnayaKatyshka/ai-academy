@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Space Mono',monospace;background:#f5f5f0;color:#0a0a0a;font-size:15px;line-height:1.6;min-height:100vh}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+.page-header{display:flex;justify-content:space-between;align-items:center;padding:20px 28px;max-width:780px;margin:0 auto;border-bottom:1.5px solid #ddd}
+.page-header__back{font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.page-header__back:hover{color:#888}
+.page-header__title{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+.page-hero{text-align:center;padding:56px 28px 40px}
+.page-hero__title{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;text-transform:uppercase;letter-spacing:-1px;margin-bottom:8px}
+.page-hero__subtitle{font-size:13px;color:#888}
+
+.module{margin-bottom:48px}
+.module__label{font-size:13px;color:#888;margin-bottom:12px}
+.module__label strong{color:#0a0a0a}
+
+.lesson-list{display:flex;flex-direction:column;gap:8px}
+.lesson-card{
+  border:1.5px solid #222;
+  background:#141414;
+  padding:16px 20px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .2s ease;
+  text-decoration:none;color:#e5e5e5;
+  border-radius:12px;
+}
+.lesson-card:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600;transform:translateX(4px)}
+.lesson-card--completed{border-color:#6b8a00;background:rgba(200,230,0,0.05)}
+.lesson-card__icon{font-size:16px;flex-shrink:0;opacity:0.5}
+.lesson-card__name{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;line-height:1.3}
+.lesson-card__check{margin-left:auto;font-size:10px}
+
+.theme-toggle{position:fixed;top:20px;right:20px;background:#f5f5f0;border:1px solid #ccc;padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;color:#666;z-index:100;transition:all .2s}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* Dark */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .page-header{border-bottom-color:#222}
+body.dark .page-header__title{color:#555}
+body.dark .page-hero__title{color:#e5e5e5}
+body.dark .page-hero__subtitle{color:#555}
+body.dark .module__label{color:#666}
+body.dark .module__label strong{color:#e5e5e5}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+
+/* Girls */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .page-header{border-bottom-color:#e0d5d0}
+body.girls .page-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .page-hero__title{font-family:'Georgia',serif;font-weight:400;text-transform:none}
+body.girls .page-hero__subtitle{color:#9a8a8a}
+body.girls .module__label{color:#9a8a8a}
+body.girls .module__label strong{color:#3a3a3a}
+body.girls .lesson-card{background:#fff;border-color:#d0c5c0;color:#3a3a3a;border-radius:12px}
+body.girls .lesson-card:hover{border-color:#c47a8a;box-shadow:0 0 0 1.5px #c47a8a}
+body.girls .lesson-card__name{font-family:'Georgia',serif;font-weight:400}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+
+@media(max-width:640px){.page-hero__title{font-size:28px}.container{padding:0 20px}.page-header{padding:16px 20px}}
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">&#x1F338; для девочек</span>
+  </button>
+
+  <header class="page-header">
+    <a href="index.html" class="page-header__back">&larr; Назад к курсу</a>
+    <span class="page-header__title">Claude Code</span>
+  </header>
+
+  <div class="page-hero">
+    <h1 class="page-hero__title">CLAUDE CODE \\</h1>
+    <p class="page-hero__subtitle">21 урок · 5 модулей · от установки до продвинутых техник</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Модуль 1 -->
+    <div class="module">
+      <div class="module__label"><strong>Модуль 1:</strong> установка</div>
+      <div class="lesson-list">
+        <a href="lessons-cc/01-what-is-claude-code.html" class="lesson-card" data-lesson="cc-01">
+          <span class="lesson-card__icon">◎</span>
+          <span class="lesson-card__name">Что такое Claude Code</span>
+        </a>
+        <a href="lessons-cc/02-vs-code.html" class="lesson-card" data-lesson="cc-02">
+          <span class="lesson-card__icon">◎</span>
+          <span class="lesson-card__name">Программа VS Code</span>
+        </a>
+        <a href="lessons-cc/03-claude-code-extension.html" class="lesson-card" data-lesson="cc-03">
+          <span class="lesson-card__icon">◎</span>
+          <span class="lesson-card__name">Расширение Claude Code</span>
+        </a>
+        <a href="lessons-cc/04-first-project.html" class="lesson-card" data-lesson="cc-04">
+          <span class="lesson-card__icon">◎</span>
+          <span class="lesson-card__name">Твой первый проект</span>
+        </a>
+        <a href="lessons-cc/05-browser-result.html" class="lesson-card" data-lesson="cc-05">
+          <span class="lesson-card__icon">◎</span>
+          <span class="lesson-card__name">Смотрим результат в браузере</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Модуль 2 -->
+    <div class="module">
+      <div class="module__label"><strong>Модуль 2:</strong> GitHub и основы</div>
+      <div class="lesson-list">
+        <a href="lessons-cc/06-github.html" class="lesson-card" data-lesson="cc-06">
+          <span class="lesson-card__icon">🔑</span>
+          <span class="lesson-card__name">Подключение GitHub</span>
+        </a>
+        <a href="lessons-cc/07-interface.html" class="lesson-card" data-lesson="cc-07">
+          <span class="lesson-card__icon">🔑</span>
+          <span class="lesson-card__name">Интерфейс Claude Code</span>
+        </a>
+        <a href="lessons-cc/08-talking-to-claude.html" class="lesson-card" data-lesson="cc-08">
+          <span class="lesson-card__icon">🔑</span>
+          <span class="lesson-card__name">Как разговаривать с Claude</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Модуль 3 -->
+    <div class="module">
+      <div class="module__label"><strong>Модуль 3:</strong> документация</div>
+      <div class="lesson-list">
+        <a href="lessons-cc/09-why-docs.html" class="lesson-card" data-lesson="cc-09">
+          <span class="lesson-card__icon">📄</span>
+          <span class="lesson-card__name">Зачем документация</span>
+        </a>
+        <a href="lessons-cc/10-writing-docs.html" class="lesson-card" data-lesson="cc-10">
+          <span class="lesson-card__icon">📄</span>
+          <span class="lesson-card__name">Пишем документацию</span>
+        </a>
+        <a href="lessons-cc/11-improvement-cycle.html" class="lesson-card" data-lesson="cc-11">
+          <span class="lesson-card__icon">📄</span>
+          <span class="lesson-card__name">Цикл улучшения</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Модуль 4 -->
+    <div class="module">
+      <div class="module__label"><strong>Модуль 4:</strong> работа с файлами</div>
+      <div class="lesson-list">
+        <a href="lessons-cc/12-create-edit-files.html" class="lesson-card" data-lesson="cc-12">
+          <span class="lesson-card__icon">✏️</span>
+          <span class="lesson-card__name">Создание и изменение файлов</span>
+        </a>
+        <a href="lessons-cc/13-attach-files.html" class="lesson-card" data-lesson="cc-13">
+          <span class="lesson-card__icon">✏️</span>
+          <span class="lesson-card__name">Прикрепление файлов</span>
+        </a>
+        <a href="lessons-cc/14-git-save.html" class="lesson-card" data-lesson="cc-14">
+          <span class="lesson-card__icon">✏️</span>
+          <span class="lesson-card__name">Git: сохранение работы</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Модуль 5 -->
+    <div class="module">
+      <div class="module__label"><strong>Модуль 5:</strong> для продвинутых</div>
+      <div class="lesson-list">
+        <a href="lessons-cc/15-research-roles.html" class="lesson-card" data-lesson="cc-15">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Исследование и роли</span>
+        </a>
+        <a href="lessons-cc/16-multiple-chats.html" class="lesson-card" data-lesson="cc-16">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Несколько чатов</span>
+        </a>
+        <a href="lessons-cc/17-troubleshooting.html" class="lesson-card" data-lesson="cc-17">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Когда что-то не работает</span>
+        </a>
+        <a href="lessons-cc/18-claude-md.html" class="lesson-card" data-lesson="cc-18">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Файл CLAUDE.md</span>
+        </a>
+        <a href="lessons-cc/19-work-modes.html" class="lesson-card" data-lesson="cc-19">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Режимы работы</span>
+        </a>
+        <a href="lessons-cc/20-problems-solutions.html" class="lesson-card" data-lesson="cc-20">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Проблемы и решения</span>
+        </a>
+        <a href="lessons-cc/21-whats-next.html" class="lesson-card" data-lesson="cc-21">
+          <span class="lesson-card__icon">🚀</span>
+          <span class="lesson-card__name">Что дальше</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+// ===== PROGRESS =====
+(function(){
+  var SK='ai-academy-progress';
+  function gp(){try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}}}
+  document.addEventListener('DOMContentLoaded',function(){
+    var p=gp();
+    document.querySelectorAll('.lesson-card').forEach(function(card){
+      var id=card.getAttribute('data-lesson');
+      if(id&&p[id]){
+        card.classList.add('lesson-card--completed');
+        if(!card.querySelector('.lesson-card__check')){
+          var ch=document.createElement('span');ch.className='lesson-card__check';ch.textContent='\u2713';card.appendChild(ch);
+        }
+      }
+    });
+  });
+})();
+
+// ===== THEME =====
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+  </script>
+</body>
+</html>

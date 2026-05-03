@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мульти-агентные системы — AI Academy</title>
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e5e5e5;font-size:16px;line-height:1.6;min-height:100vh}
+a{color:#6b8afd;text-decoration:none}a:hover{color:#8ba4fd}
+.container{max-width:640px;margin:0 auto;padding:0 20px}
+.container--wide{max-width:720px}
+.lesson-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #1a1a1a}
+.lesson-header__back{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px}
+.lesson-header__meta{font-size:13px;color:#666}
+.lesson-video{margin:32px 0}
+.lesson-video__player{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px solid #2a2a2a;background:#141414;overflow:hidden}
+.lesson-video__player iframe{width:100%;height:100%;border:none}
+.lesson-content{padding:32px 0}
+.lesson-content h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
+.lesson-content h2{font-size:22px;font-weight:600;color:#fff;margin-top:40px;margin-bottom:16px;padding-top:24px;border-top:1px solid #1a1a1a}
+.lesson-content h3{font-size:18px;font-weight:600;color:#e5e5e5;margin-top:28px;margin-bottom:12px}
+.lesson-content h4{font-size:16px;font-weight:600;color:#e5e5e5;margin-top:20px;margin-bottom:8px}
+.lesson-content p{margin-bottom:16px;color:#ccc}
+.lesson-content strong{color:#e5e5e5;font-weight:600}
+.lesson-content em{color:#aaa}
+.lesson-content blockquote{border-left:3px solid #6b8afd;padding:12px 16px;margin:16px 0;background:#111;border-radius:0 8px 8px 0;color:#aaa;font-style:italic}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#ccc}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1px solid #1a1a1a;margin:32px 0}
+.lesson-content pre{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;overflow-x:auto;margin:16px 0;position:relative}
+.lesson-content code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:14px;line-height:1.5}
+.lesson-content p code,.lesson-content li code{background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:14px;color:#e5a0e0}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:#2a2a2a;border:1px solid #3a3a3a;color:#888;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{background:#3a3a3a;color:#e5e5e5}
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#1a1a1a;padding:10px 12px;text-align:left;font-weight:600;color:#e5e5e5;border-bottom:1px solid #2a2a2a}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+.lesson-content details{background:#111;border:1px solid #2a2a2a;border-radius:8px;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:600;color:#6b8afd;user-select:none}
+.lesson-content summary:hover{color:#8ba4fd}
+.lesson-content details[open] summary{border-bottom:1px solid #1a1a1a}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;border-radius:8px;margin:16px 0}
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1px solid #1a1a1a}
+.lesson-nav__btn{font-size:14px;color:#6b8afd;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;transition:border-color .2s}
+.lesson-nav__btn:hover{border-color:#6b8afd;color:#8ba4fd}
+.lesson-nav__btn--disabled{color:#444;pointer-events:none;opacity:.5}
+@media(max-width:480px){.container{padding:0 16px}.lesson-header{padding:16px}}
+
+.theme-toggle{position:fixed;top:16px;right:16px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:8px 16px;cursor:pointer;font-size:13px;z-index:100;transition:all .3s;display:flex;align-items:center;gap:8px;color:#888;font-family:inherit}
+.theme-toggle:hover{border-color:#6b8afd;color:#e5e5e5}
+
+body.girls{background:#f5f0ed;color:#2a2a2a;font-family:'Georgia','Times New Roman',serif}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a}
+body.girls .lesson-header__meta{color:#9a8a8a}
+body.girls a{color:#c47a8a}body.girls a:hover{color:#a05a6a}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content code{color:#8a5a6a}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{background:#fff;border-color:#e0d5d0;color:#c47a8a}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .copy-btn{background:#ece5e0;border-color:#e0d5d0;color:#8a7a7a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌸</span> <span id="theme-label">для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../index.html" class="lesson-header__back">← Назад к курсу</a>
+    <span class="lesson-header__meta">Этап 5 · Урок 2 из 5</span>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-content">
+      <h1>Урок 5.2 — Мульти-агентные системы</h1>
+<blockquote>
+<p>Один агент — это один мозг. Он думает, вызывает инструменты, помнит контекст. Для простых задач этого хватает. Но когда задача сложная — нужна команда. Один агент ищет информацию, другой пишет текст, третий проверяет качество. Каждый специалист в своём деле. В этом уроке — как устроены мульти-агентные системы, когда они нужны (и когда нет), и как построить свою.</p>
+</blockquote>
+<hr />
+<h2>Зачем нужно несколько агентов</h2>
+<p>В уроке 3.5 один агент выполнял мульти-шаговые задачи — сам планировал, сам делал, сам проверял. Это работает, пока задача помещается в «голову» одного агента. Но есть четыре ситуации, когда одного агента недостаточно:</p>
+<pre class="highlight"><code>Проблема 1: Контекстное окно переполняется
+  Агент прочитал 50 файлов, вызвал 20 инструментов — окно забито.
+  Старая информация начинает теряться.
+
+Проблема 2: Нужна специализация
+  Один агент пытается быть экспертом по безопасности, стилю кода,
+  бизнес-логике и документации одновременно. Результат — средний во всём.
+
+Проблема 3: Задача слишком сложная для одного плана
+  15 подзадач в разных областях. Агент теряет нить, путает шаги,
+  забывает, что уже сделал.
+
+Проблема 4: Независимые задачи идут последовательно
+  Агент делает шаг 1, потом шаг 2, потом шаг 3 — хотя шаги 2 и 3
+  не зависят друг от друга и могли бы выполняться параллельно.
+</code></pre>
+
+<h3>Аналогия</h3>
+<p>Один агент — это фрилансер. Отличный специалист для небольших проектов. Но строить дом в одиночку невозможно: нужен архитектор (планирование), электрик (проводка), сантехник (трубы) и прораб (координация). Каждый знает своё дело. Прорабу не нужно уметь паять трубы — ему нужно знать, кого вызвать и когда.</p>
+<p><strong>Мульти-агентная система</strong> — это команда агентов, где каждый выполняет свою роль, а координатор (оркестратор) управляет процессом.</p>
+<hr />
+<h2>Когда НЕ нужны несколько агентов</h2>
+<p>Anthropic в своём исследовании «Building Effective Agents» (декабрь 2024) предупреждает:</p>
+<blockquote>
+<p><strong>«Самая частая ошибка — строить мульти-агентную систему там, где один агент с хорошими инструментами справился бы сам.»</strong></p>
+</blockquote>
+<p>Вот простое правило выбора:</p>
+<pre class="highlight"><code>Задача решается одним вызовом API?
+  ДА → Не нужен даже агент. Просто промпт.
+
+Один агент с инструментами справляется в цикле?
+  ДА → Один агент (как в уроке 3.5).
+
+Задача требует разных специализаций?
+Контекстное окно одного агента переполняется?
+Подзадачи можно выполнять параллельно?
+  ДА на любой → Рассмотри мульти-агентную систему.
+</code></pre>
+
+<p><strong>Принцип: начинай с простого. Добавляй сложность только когда простое не работает.</strong></p>
+<pre class="highlight"><code>Источник: Anthropic — Building Effective Agents
+https://www.anthropic.com/research/building-effective-agents
+</code></pre>
+
+<hr />
+<h2>4 паттерна мульти-агентных систем</h2>
+<p>В уроке 3.5 были 5 паттернов Anthropic. Три из них — это мульти-агентные паттерны. Добавим ещё один (конвейер) и разберём каждый подробно.</p>
+<h3>Паттерн 1: Оркестратор и рабочие</h3>
+<pre class="highlight"><code>                    ┌─────────────────┐
+                    │   ОРКЕСТРАТОР   │
+                    │  (прораб)       │
+                    └───┬────┬────┬───┘
+                        │    │    │
+              ┌─────────▼┐ ┌▼────┴────┐
+              │ Рабочий A│ │ Рабочий B│  (параллельно или
+              │(электрик)│ │(сантехник)│   последовательно)
+              └─────┬────┘ └────┬─────┘
+                    │           │
+              ┌─────▼───────────▼─────┐
+              │  Оркестратор собирает  │
+              │  результаты → Итог    │
+              └───────────────────────┘
+</code></pre>
+
+<p>Оркестратор — «менеджер». Он получает задачу, <strong>сам решает</strong>, какие подзадачи нужны (не по шаблону, а динамически), создаёт рабочих агентов, собирает их результаты и формирует итог.</p>
+<p><strong>Это самый мощный и гибкий паттерн.</strong> Именно его использует Claude Code — когда сложная задача, он запускает суб-агентов через встроенный инструмент <code>Agent</code> (из урока 3.4).</p>
+<h3>Паттерн 2: Конвейер (pipeline)</h3>
+<pre class="highlight"><code>Агент 1           Агент 2           Агент 3
+(Исследователь) → (Писатель)    →   (Редактор)
+&quot;Найди факты&quot;     &quot;Напиши статью&quot;   &quot;Проверь и отредактируй&quot;
+</code></pre>
+
+<p>Каждый агент — специалист со своим системным промптом и инструментами. Выход одного агента становится входом для следующего. Как конвейер на заводе: каждый делает свою операцию и передаёт дальше.</p>
+<p><strong>Когда использовать:</strong> задача имеет чёткие последовательные этапы, где каждый этап требует других навыков.</p>
+<h3>Паттерн 3: Генератор и оценщик</h3>
+<pre class="highlight"><code>Генератор ──► Оценщик ──► &quot;Оценка: 6/10. Проблемы: ...&quot;
+    ▲              │
+    └──────────────┘  (цикл, пока оценка &lt; 9/10)
+</code></pre>
+
+<p>Два агента с разными ролями: один создаёт, другой критикует. Генератор улучшает работу на основе обратной связи. Это как отношения «автор + редактор» или «разработчик + ревьюер».</p>
+<p><strong>Когда использовать:</strong> есть чёткие критерии качества и задача выигрывает от итеративного улучшения.</p>
+<h3>Паттерн 4: Параллельные агенты</h3>
+<pre class="highlight"><code>              ┌─ Агент безопасности: ищет уязвимости
+Задача ───────┼─ Агент стиля: проверяет форматирование
+              └─ Агент логики: ищет ошибки
+                       │
+              Агрегатор: объединяет все находки
+</code></pre>
+
+<p>Несколько агентов получают одни и те же данные и обрабатывают их одновременно и независимо. Результаты объединяются.</p>
+<p><strong>Когда использовать:</strong> задачу можно разделить на независимые аспекты (безопасность, стиль, логика).</p>
+<hr />
+<h2>Как агенты общаются между собой</h2>
+<p>У агентов нет «телепатии». Им нужен способ передать информацию друг другу. Есть три основных механизма:</p>
+<h3>Механизм 1: Передача сообщений (message passing)</h3>
+<p>Самый простой. Выход одного агента вставляется во вход следующего.</p>
+<pre class="highlight"><code class="language-python"># Агент 1 выполняет задачу и возвращает результат
+research = researcher_agent(&quot;Мульти-агентные системы&quot;)
+
+# Результат передаётся Агенту 2 как входные данные
+article = writer_agent(f&quot;Напиши статью на основе:\n{research}&quot;)
+</code></pre>
+
+<p><strong>Аналогия:</strong> Передать папку с документами из одного отдела в другой.</p>
+<h3>Механизм 2: Общая память (shared state)</h3>
+<p>Все агенты читают и пишут в общее хранилище — словарь, файл или базу данных.</p>
+<pre class="highlight"><code class="language-python">shared = {}
+
+# Исследователь записывает в общую память
+shared[&quot;facts&quot;] = researcher_agent(&quot;...&quot;)
+
+# Писатель читает оттуда
+shared[&quot;draft&quot;] = writer_agent(shared[&quot;facts&quot;])
+
+# Редактор читает и дополняет
+shared[&quot;feedback&quot;] = editor_agent(shared[&quot;draft&quot;])
+</code></pre>
+
+<p><strong>Аналогия:</strong> Общий Google Doc, где каждый участник работает в своём разделе.</p>
+<h3>Механизм 3: Handoff (передача управления)</h3>
+<p>Один агент полностью передаёт управление другому вместе со всей историей разговора. Используется в OpenAI Agents SDK.</p>
+<pre class="highlight"><code>Агент A → обработал сообщение → передал управление Агенту B
+Агент B → видит всё, что делал Агент A → продолжает
+</code></pre>
+
+<p><strong>Аналогия:</strong> Перевод звонка в колл-центре — «Переключаю вас на отдел оплаты» — новый оператор видит заметки предыдущего.</p>
+<h3>Сравнение</h3>
+<table>
+<thead>
+<tr>
+<th>Механизм</th>
+<th>Плюсы</th>
+<th>Минусы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Передача сообщений</td>
+<td>Простой, понятный</td>
+<td>Нужно форматировать данные</td>
+</tr>
+<tr>
+<td>Общая память</td>
+<td>Гибкий, любой агент видит всё</td>
+<td>Сложнее отлаживать</td>
+</tr>
+<tr>
+<td>Handoff</td>
+<td>Сохраняется полный контекст</td>
+<td>Контекстное окно заполняется</td>
+</tr>
+</tbody>
+</table>
+<p>Для большинства задач <strong>передача сообщений</strong> — лучший выбор. Просто и предсказуемо.</p>
+<hr />
+<h2>Практика: строим мульти-агентную систему</h2>
+<p>Никакие фреймворки не нужны. Каждый агент — это функция, которая вызывает Claude API со своим системным промптом.</p>
+<h3>Что мы строим</h3>
+<p>Система из трёх агентов:
+1. <strong>Оркестратор</strong> — получает задачу, определяет тему и стиль
+2. <strong>Исследователь</strong> — собирает ключевые факты
+3. <strong>Писатель</strong> — превращает факты в статью</p>
+<pre class="highlight"><code>Пользователь: &quot;Напиши статью про RAG для новичков&quot;
+         │
+    ┌────▼─────┐
+    │Оркестратор│ → Тема: &quot;RAG&quot;, Стиль: &quot;для начинающих&quot;
+    └────┬─────┘
+         │
+    ┌────▼──────────┐
+    │ Исследователь │ → 5 ключевых фактов про RAG
+    └────┬──────────┘
+         │
+    ┌────▼────┐
+    │ Писатель│ → Готовая статья на основе фактов
+    └─────────┘
+</code></pre>
+
+<h3>Код</h3>
+<pre class="highlight"><code class="language-python"># multi_agent.py — мульти-агентная система без фреймворков
+
+import os
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+
+client = Anthropic()  # ключ из ANTHROPIC_API_KEY
+
+# === АГЕНТ 1: ИССЛЕДОВАТЕЛЬ ===
+
+def researcher_agent(topic):
+    &quot;&quot;&quot;
+    Агент-исследователь.
+    Получает тему → возвращает список ключевых фактов.
+    У него свой системный промпт (специализация).
+    &quot;&quot;&quot;
+    print(f&quot;  [Исследователь] Ищу факты по теме: {topic}&quot;)
+
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,  # дешёвая модель для рабочих агентов
+        max_tokens=1024,
+        system=(
+            &quot;Ты — агент-исследователь. Твоя задача — собрать &quot;
+            &quot;5-7 ключевых фактов по заданной теме. &quot;
+            &quot;Формат: нумерованный список. Без вступлений, только факты. &quot;
+            &quot;Каждый факт — 1-2 предложения.&quot;
+        ),
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Собери ключевые факты по теме: {topic}&quot;
+        }]
+    )
+
+    facts = response.content[0].text
+    print(f&quot;  [Исследователь] Готово ({len(facts)} символов)\n&quot;)
+    return facts
+
+
+# === АГЕНТ 2: ПИСАТЕЛЬ ===
+
+def writer_agent(facts, style):
+    &quot;&quot;&quot;
+    Агент-писатель.
+    Получает факты + стиль → возвращает статью.
+    &quot;&quot;&quot;
+    print(f&quot;  [Писатель] Пишу статью (стиль: {style})&quot;)
+
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        max_tokens=2048,
+        system=(
+            f&quot;Ты — агент-писатель. Твоя задача — написать короткую статью &quot;
+            f&quot;(3-4 абзаца) на основе предоставленных фактов. &quot;
+            f&quot;Стиль: {style}. Используй простые аналогии. &quot;
+            f&quot;Не добавляй факты от себя — используй только то, что дано.&quot;
+        ),
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Напиши статью на основе этих фактов:\n\n{facts}&quot;
+        }]
+    )
+
+    article = response.content[0].text
+    print(f&quot;  [Писатель] Готово ({len(article)} символов)\n&quot;)
+    return article
+
+
+# === ОРКЕСТРАТОР ===
+
+def orchestrator(task):
+    &quot;&quot;&quot;
+    Главный агент — оркестратор.
+    1. Анализирует задачу
+    2. Определяет тему и стиль
+    3. Вызывает рабочих агентов в нужном порядке
+    4. Возвращает итоговый результат
+    &quot;&quot;&quot;
+    print(f&quot;[Оркестратор] Анализирую задачу...\n&quot;)
+
+    # Шаг 1: Оркестратор понимает задачу
+    plan_response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        max_tokens=256,
+        system=(
+            &quot;Ты — оркестратор. У тебя есть два рабочих агента:\n&quot;
+            &quot;1. researcher — находит факты по теме\n&quot;
+            &quot;2. writer — пишет статью по фактам\n\n&quot;
+            &quot;Проанализируй задачу и определи:\n&quot;
+            &quot;- Какую тему передать исследователю\n&quot;
+            &quot;- В каком стиле писать статью\n\n&quot;
+            &quot;Ответь СТРОГО в формате:\n&quot;
+            &quot;ТЕМА: &lt;тема&gt;\n&quot;
+            &quot;СТИЛЬ: &lt;стиль&gt;&quot;
+        ),
+        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task}]
+    )
+
+    plan = plan_response.content[0].text
+    print(f&quot;[Оркестратор] План:\n{plan}\n&quot;)
+
+    # Шаг 2: Извлекаем тему и стиль из ответа
+    topic = task  # fallback
+    style = &quot;для начинающих&quot;
+    for line in plan.split(&quot;\n&quot;):
+        if line.upper().startswith(&quot;ТЕМА:&quot;):
+            topic = line.split(&quot;:&quot;, 1)[1].strip()
+        elif line.upper().startswith(&quot;СТИЛЬ:&quot;):
+            style = line.split(&quot;:&quot;, 1)[1].strip()
+
+    # Шаг 3: Вызываем исследователя
+    facts = researcher_agent(topic)
+
+    # Шаг 4: Передаём факты писателю
+    article = writer_agent(facts, style)
+
+    return article
+
+
+# === ЗАПУСК ===
+
+if __name__ == &quot;__main__&quot;:
+    print(&quot;=&quot; * 50)
+    print(&quot;  МУЛЬТИ-АГЕНТНАЯ СИСТЕМА&quot;)
+    print(&quot;  Оркестратор → Исследователь → Писатель&quot;)
+    print(&quot;=&quot; * 50 + &quot;\n&quot;)
+
+    task = input(&quot;Задача: &quot;).strip()
+    if not task:
+        task = &quot;Напиши статью про искусственный интеллект для школьников&quot;
+
+    result = orchestrator(task)
+
+    print(&quot;=&quot; * 50)
+    print(&quot;\nИТОГОВАЯ СТАТЬЯ:\n&quot;)
+    print(result)
+</code></pre>
+
+<h3>Как запустить</h3>
+<pre class="highlight"><code class="language-bash">pip install anthropic python-dotenv
+# Убедись, что .env содержит ANTHROPIC_API_KEY
+python multi_agent.py
+</code></pre>
+
+<h3>Пример работы</h3>
+<pre class="highlight"><code>==================================================
+  МУЛЬТИ-АГЕНТНАЯ СИСТЕМА
+  Оркестратор → Исследователь → Писатель
+==================================================
+
+Задача: Напиши статью про RAG для новичков
+
+[Оркестратор] Анализирую задачу...
+
+[Оркестратор] План:
+ТЕМА: RAG (Retrieval-Augmented Generation)
+СТИЛЬ: для начинающих, простым языком с аналогиями
+
+  [Исследователь] Ищу факты по теме: RAG (Retrieval-Augmented Generation)
+  [Исследователь] Готово (487 символов)
+
+  [Писатель] Пишу статью (стиль: для начинающих, простым языком)
+  [Писатель] Готово (1203 символов)
+
+==================================================
+
+ИТОГОВАЯ СТАТЬЯ:
+
+RAG — это способ дать AI доступ к вашим документам...
+</code></pre>
+
+<h3>Разбор: почему это работает</h3>
+<pre class="highlight"><code>Каждый агент — это ОТДЕЛЬНЫЙ вызов client.messages.create()
+
+Что у каждого своё:
+  • Системный промпт (специализация)
+  • Контекст (не забит чужими данными)
+  • Роль (исследователь не пишет статьи, писатель не ищет факты)
+
+Что общее:
+  • Один API-клиент (один API-ключ)
+  • Одна модель (можно разные — haiku для рабочих, sonnet для оркестратора)
+  • Данные передаются через аргументы функций
+</code></pre>
+
+<hr />
+<h2>Добавляем оценщика: цикл улучшения</h2>
+<p>Превратим конвейер в цикл «генератор-оценщик»:</p>
+<pre class="highlight"><code class="language-python">def evaluator_agent(article, criteria):
+    &quot;&quot;&quot;
+    Агент-оценщик.
+    Проверяет статью по критериям, ставит оценку.
+    &quot;&quot;&quot;
+    response = client.messages.create(
+        model=&quot;claude-haiku-4-5-20251001&quot;,
+        max_tokens=512,
+        system=(
+            &quot;Ты — агент-оценщик. Оцени текст по критериям. &quot;
+            &quot;Поставь оценку от 1 до 10. &quot;
+            &quot;Если оценка &lt; 8, напиши конкретные замечания для улучшения.\n\n&quot;
+            &quot;Формат ответа:\n&quot;
+            &quot;ОЦЕНКА: &lt;число&gt;\n&quot;
+            &quot;ЗАМЕЧАНИЯ: &lt;что улучшить&gt;&quot;
+        ),
+        messages=[{
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Критерии: {criteria}\n\nТекст:\n{article}&quot;
+        }]
+    )
+    return response.content[0].text
+
+
+def write_with_review(facts, style, max_rounds=3):
+    &quot;&quot;&quot;
+    Писатель + Оценщик в цикле.
+    Писатель пишет → Оценщик оценивает → Писатель переписывает.
+    Максимум max_rounds итераций.
+    &quot;&quot;&quot;
+    article = writer_agent(facts, style)
+
+    for round_num in range(max_rounds):
+        print(f&quot;  [Оценщик] Раунд {round_num + 1}...&quot;)
+        evaluation = evaluator_agent(article, &quot;Понятность, точность, стиль&quot;)
+
+        # Извлекаем оценку
+        score = 0
+        for line in evaluation.split(&quot;\n&quot;):
+            if &quot;ОЦЕНКА:&quot; in line.upper():
+                try:
+                    score = int(''.join(c for c in line.split(&quot;:&quot;)[-1] if c.isdigit()))
+                except ValueError:
+                    score = 0
+
+        print(f&quot;  [Оценщик] Оценка: {score}/10&quot;)
+
+        if score &gt;= 8:
+            print(f&quot;  [Оценщик] Статья принята!\n&quot;)
+            break
+
+        # Передаём замечания писателю для улучшения
+        print(f&quot;  [Оценщик] Отправляю замечания писателю...\n&quot;)
+        response = client.messages.create(
+            model=&quot;claude-haiku-4-5-20251001&quot;,
+            max_tokens=2048,
+            system=f&quot;Ты — писатель. Улучши статью на основе замечаний. Стиль: {style}.&quot;,
+            messages=[{
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: f&quot;Статья:\n{article}\n\nЗамечания:\n{evaluation}\n\nУлучши статью.&quot;
+            }]
+        )
+        article = response.content[0].text
+
+    return article
+</code></pre>
+
+<p>Теперь вместо <code>writer_agent(facts, style)</code> вызываем <code>write_with_review(facts, style)</code> — и статья проходит через цикл улучшений.</p>
+<hr />
+<h2>Параллельные агенты</h2>
+<p>Если подзадачи независимы — можно запустить агентов одновременно:</p>
+<pre class="highlight"><code class="language-python">import asyncio
+from anthropic import AsyncAnthropic
+
+async_client = AsyncAnthropic()
+
+async def review_code(code):
+    &quot;&quot;&quot;Три агента проверяют код параллельно.&quot;&quot;&quot;
+
+    async def check(system_prompt, code_text):
+        response = await async_client.messages.create(
+            model=&quot;claude-haiku-4-5-20251001&quot;,
+            max_tokens=512,
+            system=system_prompt,
+            messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: code_text}]
+        )
+        return response.content[0].text
+
+    # Запускаем три проверки одновременно
+    security, style, logic = await asyncio.gather(
+        check(&quot;Ты — эксперт по безопасности. Найди уязвимости.&quot;, code),
+        check(&quot;Ты — эксперт по стилю кода. Найди проблемы форматирования.&quot;, code),
+        check(&quot;Ты — эксперт по логике. Найди ошибки и edge cases.&quot;, code),
+    )
+
+    return {
+        &quot;security&quot;: security,
+        &quot;style&quot;: style,
+        &quot;logic&quot;: logic
+    }
+
+# Запуск: asyncio.run(review_code(&quot;def foo(): ...&quot;))
+</code></pre>
+
+<p>Без <code>asyncio.gather</code> три проверки заняли бы 6-15 секунд (последовательно). С параллельным запуском — 2-5 секунд (время самого медленного агента).</p>
+<hr />
+<h2>Фреймворки для мульти-агентных систем</h2>
+<p>Можно строить всё вручную (как в примерах выше), а можно использовать фреймворк:</p>
+<pre class="highlight"><code>Что тебе нужно?
+│
+├── Учёба, простые проекты
+│   → Без фреймворка (просто функции + anthropic)
+│   → Понимаешь, что происходит на каждом шаге
+│
+├── Команда агентов с ролями
+│   → CrewAI: Agent(&quot;Исследователь&quot;), Agent(&quot;Писатель&quot;)
+│   → Самый простой фреймворк для начала
+│
+├── Агенты обсуждают задачу между собой
+│   → AutoGen (Microsoft): агенты ведут диалог
+│
+├── Сложные графы с ветвлениями
+│   → LangGraph: визуальные графы, контрольные точки
+│
+├── Передача управления (handoff)
+│   → OpenAI Agents SDK: агенты переключают друг друга
+│
+└── Суб-агенты как инструменты
+    → Claude Agent SDK: агент запускает подчинённых
+    → Так работает Claude Code
+</code></pre>
+
+<h3>Сравнение</h3>
+<table>
+<thead>
+<tr>
+<th>Фреймворк</th>
+<th>Подход</th>
+<th>Сложность</th>
+<th>Модели</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Без фреймворка</strong></td>
+<td>Функции + API</td>
+<td>Минимальная</td>
+<td>Любые</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>Команда с ролями</td>
+<td>Простая</td>
+<td>Любые</td>
+</tr>
+<tr>
+<td><strong>AutoGen</strong></td>
+<td>Диалог агентов</td>
+<td>Средняя</td>
+<td>Любые</td>
+</tr>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>Граф с узлами</td>
+<td>Высокая</td>
+<td>Любые</td>
+</tr>
+<tr>
+<td><strong>OpenAI Agents SDK</strong></td>
+<td>Handoff</td>
+<td>Простая</td>
+<td>Только OpenAI</td>
+</tr>
+<tr>
+<td><strong>Claude Agent SDK</strong></td>
+<td>Суб-агенты</td>
+<td>Простая</td>
+<td>Только Claude</td>
+</tr>
+</tbody>
+</table>
+<p>Для обучения — начинай без фреймворка (как в этом уроке). Когда поймёшь принципы — фреймворк будет не магией, а удобным инструментом.</p>
+<pre class="highlight"><code>Источники:
+  CrewAI: https://docs.crewai.com/
+  AutoGen: https://microsoft.github.io/autogen/
+  LangGraph: https://langchain-ai.github.io/langgraph/
+  OpenAI Agents SDK: https://openai.github.io/openai-agents-python/
+</code></pre>
+
+<hr />
+<h2>Реальные продукты с мульти-агентами</h2>
+<pre class="highlight"><code>┌──────────────────────────────────────────────────────────┐
+│           КТО ИСПОЛЬЗУЕТ МУЛЬТИ-АГЕНТОВ                  │
+│                                                          │
+│  Claude Code (Anthropic)                                 │
+│    Главный агент запускает суб-агентов через             │
+│    инструмент Agent. Каждый суб-агент получает           │
+│    своё контекстное окно и фокусную задачу.              │
+│                                                          │
+│  Devin (Cognition)                                       │
+│    «AI-программист»: планировщик + кодер +               │
+│    браузер + терминал. Агенты делят рабочее              │
+│    пространство через файлы.                             │
+│                                                          │
+│  GitHub Copilot Workspace                                │
+│    Конвейер: спецификация → план → реализация →          │
+│    валидация. Человек может вмешаться на каждом шаге.    │
+│                                                          │
+│  Cursor (редактор кода)                                  │
+│    Разные агенты для разных задач: автодополнение        │
+│    (быстрая модель), чат (большая модель),              │
+│    применение изменений (специализированный агент).       │
+│                                                          │
+│  ChatGPT                                                 │
+│    Маршрутизация: текстовый запрос → один обработчик,   │
+│    генерация изображения → DALL-E, код → Code            │
+│    Interpreter. Каждый — отдельный специалист.            │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+
+<pre class="highlight"><code>Источники:
+  Anthropic — Claude Code: https://docs.anthropic.com/en/docs/claude-code
+  Devin: https://devin.ai/
+  GitHub Copilot Workspace: https://github.blog/news-insights/product-news/github-copilot-workspace/
+</code></pre>
+
+<hr />
+<h2>Проблемы и подводные камни</h2>
+<h3>1. Стоимость умножается</h3>
+<pre class="highlight"><code>Один агент:    1 задача = 1-5 вызовов API      = $0.01-0.05
+Три агента:    1 задача = 3 × 3-5 вызовов      = $0.05-0.30
++ оркестратор                                    = $0.10-0.50
+
+Итого: в 5-10 раз дороже одного агента
+</code></pre>
+
+<p><strong>Решение:</strong> дешёвая модель (Haiku) для рабочих агентов, дорогая (Sonnet) — только для оркестратора или сложных задач.</p>
+<h3>2. Ошибки накапливаются</h3>
+<p>Если Агент 1 нашёл неправильные факты, Агент 2 напишет уверенную статью с неправильными фактами, а Агент 3 отредактирует грамматику — но факты останутся неверными.</p>
+<p><strong>Решение:</strong> добавляй проверки между агентами. Агент-оценщик может ловить ошибки.</p>
+<h3>3. Сложнее отлаживать</h3>
+<p>С одним агентом — один лог. С пятью агентами — нужно проследить, как данные прошли через всех пятерых, и понять, кто сломал результат.</p>
+<p><strong>Решение:</strong> логируй вход и выход каждого агента. Как <code>print()</code> в примере выше — но для продакшна используй <code>logging</code>.</p>
+<h3>4. Медленнее</h3>
+<p>Каждый вызов API — 2-10 секунд. Цепочка из 4 агентов = 8-40 секунд ожидания.</p>
+<p><strong>Решение:</strong> параллельные агенты (asyncio) для независимых задач.</p>
+<hr />
+<h2>Практика</h2>
+<h3>Задание 1: Запусти базовую систему</h3>
+<p>Скопируй код <code>multi_agent.py</code>, запусти его с разными задачами:
+- «Напиши статью про квантовые компьютеры для детей»
+- «Напиши обзор AI-фреймворков для разработчиков»
+- «Напиши пост в блог про Python»</p>
+<p>Посмотри, как оркестратор определяет тему и стиль для каждой задачи.</p>
+<h3>Задание 2: Добавь оценщика</h3>
+<p>Добавь в систему <code>evaluator_agent</code> и функцию <code>write_with_review</code>. Запусти и посмотри:
+- Сколько раундов улучшений проходит статья?
+- Как меняется текст после каждого раунда?
+- Увеличился ли счёт за API?</p>
+<h3>Задание 3: Добавь четвёртого агента</h3>
+<p>Добавь агента-переводчика, который берёт готовую статью и переводит её на английский. Встрой его в конвейер после писателя.</p>
+<hr />
+<h2>Задачки на закрепление</h2>
+<p><strong>Задача 1:</strong> В чём главное отличие мульти-агентной системы от мульти-шагового агента?</p>
+<details>
+<summary>Ответ</summary>
+
+Мульти-шаговый агент (урок 3.5) — это ОДИН агент, который выполняет несколько шагов в цикле. У него одно контекстное окно, один системный промпт, одна «роль». Мульти-агентная система — несколько РАЗНЫХ агентов, каждый со своим контекстом, промптом и специализацией. Они общаются через передачу данных, а не через общую память одного цикла.
+</details>
+
+<p><strong>Задача 2:</strong> Почему Anthropic рекомендует начинать с одного агента?</p>
+<details>
+<summary>Ответ</summary>
+
+Потому что мульти-агентная система в 5-10 раз дороже, сложнее в отладке, медленнее и имеет больше точек отказа. Если один агент с хорошими инструментами справляется — нет смысла усложнять. Мульти-агентность нужна только когда одного агента объективно недостаточно: переполняется контекст, нужна специализация или параллелизм.
+</details>
+
+<p><strong>Задача 3:</strong> Какой паттерн лучше подходит для код-ревью (проверка кода)?</p>
+<details>
+<summary>Ответ</summary>
+
+Параллельные агенты. Проверка безопасности, стиля и логики — независимые задачи. Их можно запустить одновременно, каждый со своим системным промптом, и объединить результаты. Это быстрее, чем последовательная цепочка, и каждый агент сфокусирован на одном аспекте.
+</details>
+
+<p><strong>Задача 4:</strong> Что такое handoff?</p>
+<details>
+<summary>Ответ</summary>
+
+Handoff (передача управления) — механизм из OpenAI Agents SDK, при котором один агент полностью передаёт управление разговором другому агенту. Принимающий агент получает всю историю и продолжает с того места, где остановился предыдущий. Аналогия: перевод звонка в колл-центре, где новый оператор видит заметки предыдущего.
+</details>
+
+<hr />
+<h2>Глоссарий</h2>
+<table>
+<thead>
+<tr>
+<th>Термин</th>
+<th>Что значит</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Мульти-агентная система</strong></td>
+<td>Система из нескольких AI-агентов, которые вместе решают задачу</td>
+</tr>
+<tr>
+<td><strong>Оркестратор</strong></td>
+<td>Главный агент, который координирует работу других агентов</td>
+</tr>
+<tr>
+<td><strong>Рабочий агент (worker)</strong></td>
+<td>Агент-специалист, выполняющий конкретную подзадачу</td>
+</tr>
+<tr>
+<td><strong>Конвейер (pipeline)</strong></td>
+<td>Паттерн: агенты работают последовательно, каждый передаёт результат дальше</td>
+</tr>
+<tr>
+<td><strong>Генератор-оценщик</strong></td>
+<td>Паттерн: один агент создаёт, другой оценивает, цикл до нужного качества</td>
+</tr>
+<tr>
+<td><strong>Параллельные агенты</strong></td>
+<td>Паттерн: несколько агентов работают одновременно над разными аспектами</td>
+</tr>
+<tr>
+<td><strong>Message passing</strong></td>
+<td>Передача данных между агентами через аргументы функций</td>
+</tr>
+<tr>
+<td><strong>Shared state</strong></td>
+<td>Общая память, доступная всем агентам (словарь, БД, файл)</td>
+</tr>
+<tr>
+<td><strong>Handoff</strong></td>
+<td>Передача управления от одного агента к другому (с историей)</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>Фреймворк: агенты как команда с ролями</td>
+</tr>
+<tr>
+<td><strong>AutoGen</strong></td>
+<td>Фреймворк (Microsoft): агенты ведут диалог друг с другом</td>
+</tr>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>Фреймворк (LangChain): агенты как узлы в графе</td>
+</tr>
+<tr>
+<td><strong>Суб-агент</strong></td>
+<td>Подчинённый агент, запущенный основным (так работает Claude Code)</td>
+</tr>
+<tr>
+<td><strong>asyncio.gather</strong></td>
+<td>Функция Python для запуска нескольких задач параллельно</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Главное</h2>
+<pre class="highlight"><code>Мульти-агентная система = команда AI-агентов
+
+Когда нужна:
+  • Контекстное окно одного агента переполняется
+  • Задача требует разных специализаций
+  • Подзадачи можно выполнять параллельно
+  • Нужен цикл «создай → проверь → улучши»
+
+Когда НЕ нужна:
+  • Один агент справляется (большинство задач)
+  • Бюджет ограничен (в 5-10 раз дороже)
+  • Нужна скорость (каждый агент = +2-10 секунд)
+
+4 паттерна:
+  1. Оркестратор + рабочие — менеджер делегирует задачи
+  2. Конвейер — каждый агент передаёт результат дальше
+  3. Генератор + оценщик — цикл улучшений
+  4. Параллельные агенты — одновременная работа
+
+Реализация без фреймворка:
+  Агент = функция, которая вызывает client.messages.create()
+  со своим системным промптом. Данные передаются через аргументы.
+
+Реальные примеры:
+  Claude Code, Devin, Copilot Workspace, Cursor, ChatGPT
+</code></pre>
+
+<hr />
+<h2>Что дальше?</h2>
+<p>Мы научились строить команды агентов. Следующий урок — <strong>fine-tuning</strong>: как дообучить модель под свои задачи. Это альтернатива RAG — вместо поиска данных в базе, знания «вшиваются» в модель.</p>
+    </div>
+  </div>
+
+  <div class="container container--wide">
+    <div class="lesson-nav">
+      <a href="5-1-rag.html" class="lesson-nav__btn">← Предыдущий</a>
+      <a href="5-3-fine-tuning.html" class="lesson-nav__btn">Следующий →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='Копировать';
+      b.addEventListener('click',function(){var c=pre.querySelector('code'),t=c?c.textContent:pre.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Скопировано!';setTimeout(function(){b.textContent='Копировать'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+function toggleTheme(){var b=document.body,i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(b.classList.contains('girls')){b.classList.remove('girls');i.textContent='🌸';l.textContent='для девочек';localStorage.setItem('ai-academy-theme','dark')}else{b.classList.add('girls');i.textContent='💪';l.textContent='нормальный пацан';localStorage.setItem('ai-academy-theme','girls')}}
+(function(){var s=localStorage.getItem('ai-academy-theme');if(s==='girls'){document.body.classList.add('girls');var i=document.getElementById('theme-icon'),l=document.getElementById('theme-label');if(i)i.textContent='💪';if(l)l.textContent='нормальный пацан'}})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Что такое Claude Code — Claude Code — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:100%;margin:16px 0}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../claude-code.html" class="lesson-header__back">← НАЗАД К CLAUDE CODE</a>
+    <span class="lesson-header__meta">Модуль 1: Установка · Урок 1 из 5</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Что такое Claude Code и зачем он нужен</h1>
+<p>Представь: у тебя в голове есть проект. Сайт, бот, приложение, автоматизация — что угодно. Раньше между идеей и реализацией стояла стена: нужно было либо учиться программировать (месяцы), либо нанимать разработчика (деньги), либо забить и двигаться дальше без этого.</p>
+<p>В 2025 году эта стена рухнула. И Claude Code — один из инструментов, который её снёс.</p>
+<hr />
+<h2>Что это такое — простым языком</h2>
+<p>Claude Code — это AI-помощник от компании Anthropic. Он работает внутри специальной программы на твоём компьютере (мы установим её в следующем уроке — ничего сложного). Он не просто отвечает на вопросы в чате — он <strong>видит твои файлы</strong>, <strong>может их менять</strong>, <strong>создавать новые</strong>, <strong>удалять ненужные</strong> и <strong>запускать команды</strong> на твоём компьютере.</p>
+<p>Ты пишешь запрос: «сделай мне страницу с формой обратной связи». Он находит нужные файлы, вносит изменения, сохраняет — и ты видишь результат. Без копирования кода из браузера. Без вопроса «а куда это вставить».</p>
+<h3>На каком языке с ним разговаривать?</h3>
+<p>Честный ответ: <strong>Claude обучался в основном на английском</strong>. Это значит, что на английском он понимает точнее, формулирует чётче и реже ошибается.</p>
+<p>Но это <strong>не значит</strong>, что на русском он работает плохо. Для задач, которые мы будем делать в этом курсе, русского более чем достаточно. Claude отлично понимает русский язык — ты можешь писать ему обычными словами, и он будет делать то, что нужно.</p>
+<blockquote>
+<p>💡 <strong>Про язык — не переживай:</strong>
+На старте пиши на русском — так проще и понятнее. Чуть позже в курсе мы разберём, как формулировать запросы на английском, даже если ты его не знаешь (спойлер: Claude сам поможет с переводом). Но для первых проектов русский — идеальный выбор.</p>
+</blockquote>
+<hr />
+<h2>Почему именно Claude Code, а не ChatGPT</h2>
+<p>Этот вопрос задают все. Давай разберёмся честно.</p>
+<h3>Обычные AI-чаты (ChatGPT, Claude.ai, Gemini)</h3>
+<p>Это <strong>разговорные</strong> инструменты. Ты задаёшь вопрос — получаешь ответ в виде текста. Если тебе нужен код — он покажет его в окне чата. Дальше ты:
+- Копируешь код
+- Создаёшь файл
+- Вставляешь туда код
+- Если что-то не работает — копируешь ошибку обратно в чат
+- Получаешь новый код, опять копируешь...</p>
+<p>Это работает. Но это <strong>медленно</strong> и <strong>утомительно</strong>, особенно когда проект разрастается до десятков файлов.</p>
+<h3>Claude Code</h3>
+<p>Это <strong>агентный</strong> инструмент. Слово «агентный» означает, что он не просто отвечает — он <strong>действует</strong>. У него есть доступ к твоим файлам и возможность выполнять действия:</p>
+<ul>
+<li>Прочитать любой файл в проекте</li>
+<li>Создать новый файл</li>
+<li>Изменить существующий код</li>
+<li>Удалить файл</li>
+<li>Запустить команду в терминале (например, установить библиотеку)</li>
+<li>Посмотреть результат и исправить ошибки</li>
+</ul>
+<p>И всё это — <strong>внутри одного окна</strong>. Без переключений, без копирования, без вопросов «а куда это вставить».</p>
+<blockquote>
+<p>💭 <strong><a href="https://www.instagram.com/k8tsap/">Комментарий от Катеньки</a>:</strong>
+Я не призываю бросить ChatGPT или любой другой инструмент. Каждый хорош для своего. ChatGPT отлично объясняет, гуглит, рассуждает. Но когда дело доходит до «сделай мне проект» — Claude Code на другом уровне.</p>
+</blockquote>
+<hr />
+<h2>Как это устроено технически (без паники)</h2>
+<p>Не нужно запоминать это наизусть. Но полезно понимать <strong>как</strong> инструмент работает, чтобы потом не удивляться его поведению.</p>
+<p><strong>Claude Code работает локально на твоём компьютере.</strong> Это ключевое отличие от обычного чата. Когда ты открываешь Claude Code в VS Code:</p>
+<ol>
+<li>Он получает доступ к папке твоего проекта</li>
+<li>Может читать все файлы внутри этой папки</li>
+<li>Перед каждым изменением показывает тебе <strong>что</strong> он хочет изменить</li>
+<li>Ждёт твоего подтверждения (или работает в автоматическом режиме — об этом позже)</li>
+<li>Вносит изменения только после твоего «ок»</li>
+</ol>
+<p><strong>Контекстное окно</strong> — это сколько информации Claude может держать «в голове» одновременно. У Claude Code это около 200 000 токенов. Грубо говоря — это как прочитать небольшую книгу за раз. Когда проект большой и информации становится слишком много, Claude сам «сжимает» разговор — убирает неважное, оставляет суть, и продолжает работу.</p>
+<p><strong>Модели.</strong> За кулисами Claude Code использует разные AI-модели от Anthropic:
+- <strong>Opus</strong> — самая умная, медленная и дорогая. Для сложных задач.
+- <strong>Sonnet</strong> — золотая середина. Быстрая и достаточно умная. Это основная рабочая лошадка.
+- <strong>Haiku</strong> — самая быстрая и дешёвая. Для простых задач.</p>
+<p>Ты не выбираешь модель вручную (хотя можешь). По умолчанию Claude Code сам решает что использовать.</p>
+<hr />
+<h2>Что конкретно можно делать</h2>
+<p>Не абстрактно, а <strong>конкретно</strong> — примеры реальных задач:</p>
+<h3>Создать с нуля</h3>
+<ul>
+<li>Лендинг или многостраничный сайт</li>
+<li>Телеграм-бот (уведомления, автоответы, приём заказов)</li>
+<li>Веб-приложение (калькулятор, таск-менеджер, CRM)</li>
+<li>Скрипт для автоматизации (парсинг данных, отправка писем, обработка файлов)</li>
+</ul>
+<h3>Работать с чужим кодом</h3>
+<ul>
+<li>Разобраться в проекте, который ты видишь впервые — Claude прочитает все файлы и объяснит что к чему</li>
+<li>Найти и исправить ошибку</li>
+<li>Добавить новую функцию в существующий проект</li>
+<li>Переписать кусок кода, который работает, но выглядит как кошмар</li>
+</ul>
+<h3>Задачи, где кодинг — не главное</h3>
+<ul>
+<li>Написать техническую документацию</li>
+<li>Составить ТЗ (техническое задание) для проекта</li>
+<li>Проанализировать данные из CSV/Excel</li>
+<li>Настроить деплой (публикацию проекта в интернет)</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Важный принцип:</strong>
+Всё что можно описать словами — Claude может попробовать сделать. Он не всегда сделает идеально с первого раза. Но направление задаёшь ты, а черновую работу делает он.</p>
+</blockquote>
+<hr />
+<h2>Сколько это стоит</h2>
+<p>Честный разговор про деньги — без этого никуда.</p>
+<p>Claude Code <strong>не бесплатный</strong>. Есть несколько способов его использовать:</p>
+<h3>Подписка на Claude (через claude.ai)</h3>
+<table>
+<thead>
+<tr>
+<th>План</th>
+<th>Цена</th>
+<th>Что даёт</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pro</strong></td>
+<td>$20/мес</td>
+<td>Доступ к Claude Code с лимитом использования. Для старта и обучения — хватит</td>
+</tr>
+<tr>
+<td><strong>Max 5x</strong></td>
+<td>$100/мес</td>
+<td>В 5 раз больше лимитов. Для активной ежедневной работы</td>
+</tr>
+<tr>
+<td><strong>Max 20x</strong></td>
+<td>$200/мес</td>
+<td>В 20 раз больше лимитов. Для тех, кто работает с Claude Code как с основным инструментом</td>
+</tr>
+</tbody>
+</table>
+<h3>Через API (для продвинутых)</h3>
+<p>Можно платить <strong>за использование</strong> — по токенам (количество текста, которое обрабатывает AI). Это гибче, но сложнее в настройке. В этом курсе мы используем <strong>подписку</strong> — это проще.</p>
+<blockquote>
+<p>⚠️ <strong>Важно:</strong>
+Бесплатного варианта с полным функционалом нет. План Pro за $20/мес — это минимальный вход. Но для курса этого достаточно, а первые проекты окупят подписку быстрее, чем кажется.</p>
+<p>⚠️ <strong>Покупка из России:</strong>
+Из-за ограничений оплата напрямую невозможна. Услуги по покупке подписки предоставляют посредники.</p>
+</blockquote>
+<hr />
+<h2>А если я не программист?</h2>
+<p>Весь смысл Claude Code — дать возможность создавать проекты <strong>без</strong> знания языков программирования. Это не маркетинговый ход — это реально работает.</p>
+<p>Что <strong>нужно</strong> для старта:
+- Уметь объяснить что ты хочешь (обычными словами, по-русски)
+- Быть готовым к тому, что с первого раза будет не идеально
+- Не бояться пробовать и экспериментировать</p>
+<p>Что <strong>не нужно</strong>:
+- Знать Python, JavaScript или любой другой язык
+- Понимать что такое «переменная», «функция» или «класс»
+- Иметь техническое образование</p>
+<p>Со временем ты <strong>неизбежно</strong> начнёшь понимать код — просто от того, что будешь видеть его каждый день. Это как с иностранным языком: если живёшь в среде — начинаешь понимать без учебников.</p>
+<blockquote>
+<p>💭 <strong><a href="https://www.instagram.com/k8tsap/">Комментарий от Катеньки</a>:</strong>
+Я создавала этот курс для тех, кто никогда не программировал. Все инструкции написаны так, чтобы можно было повторить каждый шаг. Если где-то непонятно — это проблема инструкции, не ваша.</p>
+</blockquote>
+<hr />
+<h2>Сравнение с другими инструментами</h2>
+<p>На рынке есть несколько AI-инструментов для работы с кодом. Вот честное сравнение:</p>
+<table>
+<thead>
+<tr>
+<th>Инструмент</th>
+<th>Тип</th>
+<th>Плюсы</th>
+<th>Минусы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ChatGPT</strong></td>
+<td>Чат</td>
+<td>Хорошо объясняет, широкие знания</td>
+<td>Не работает с файлами напрямую, нужно копировать код вручную</td>
+</tr>
+<tr>
+<td><strong>GitHub Copilot</strong></td>
+<td>Автодополнение</td>
+<td>Быстрые подсказки прямо в коде</td>
+<td>Подсказывает по строчке, не понимает проект целиком</td>
+</tr>
+<tr>
+<td><strong>Cursor</strong></td>
+<td>Редактор с AI</td>
+<td>Мощный, работает с файлами</td>
+<td>Отдельный редактор, к которому надо привыкать</td>
+</tr>
+<tr>
+<td><strong>Claude Code</strong></td>
+<td>Агент в VS Code</td>
+<td>Видит весь проект, сам вносит изменения, работает в знакомой среде</td>
+<td>Платный, зависит от интернета</td>
+</tr>
+</tbody>
+</table>
+<p>Каждый инструмент хорош для своего. Мы используем Claude Code, потому что он самый популярный и лучше всего подходит для нашей задачи: <strong>создание проектов с нуля силами человека без опыта в коде</strong>.</p>
+<hr />
+<h2>Честные ограничения</h2>
+<p>Было бы нечестно говорить только о плюсах. Вот что нужно знать:</p>
+<ul>
+<li><strong>Интернет обязателен.</strong> Claude Code отправляет твои запросы на серверы Anthropic. Без интернета он не работает.</li>
+<li><strong>Он ошибается.</strong> Иногда генерирует код с багами. Иногда неправильно понимает задачу. Это нормально — ты учишься с ним итеративно (попросить → проверить → поправить).</li>
+<li><strong>Большие проекты = больше сложностей.</strong> На маленьком лендинге Claude работает как волшебник. На проекте с сотней файлов — нужно больше структуры и дисциплины.</li>
+<li><strong>Конфиденциальность.</strong> Твой код отправляется на серверы Anthropic для обработки. Для учебных проектов это не проблема, но для работы с секретными данными — имей в виду.</li>
+</ul>
+<hr />
+<h2>Что дальше</h2>
+<p>В следующих уроках мы пошагово:
+1. Установим <strong>VS Code</strong> — бесплатный редактор, где будет работать Claude Code
+2. Подключим <strong>расширение Claude Code</strong> и авторизуемся
+3. Создадим <strong>первый проект</strong> и напишем первый запрос
+4. Увидим результат <strong>в браузере</strong></p>
+<p>Каждый урок — маленький шаг. Читаешь, повторяешь за инструкцией, идёшь дальше.</p>
+<hr />
+<h2>Тест</h2>
+<div class="test__note">💭 Так как я учу очень много всего, я заметила на себе, что закрепление материала — это суперважно. Поэтому в конце каждого урока я оставляю маленький тест — советую не пропускать! — <a href="https://www.instagram.com/k8tsap/">Катенька</a></div>
+
+<form id="test-form" data-lesson="cc-01">
+<div class="test__question" data-correct="b">
+<p><strong>1. В чём главное отличие Claude Code от обычных AI-чатов?</strong></p>
+<label class="test__option"><input type="radio" name="q1" value="a"> Он умнее и даёт более точные ответы</label>
+<label class="test__option"><input type="radio" name="q1" value="b"> Он работает внутри редактора кода и сам создаёт/изменяет файлы проекта</label>
+<label class="test__option"><input type="radio" name="q1" value="c"> Он бесплатный в отличие от ChatGPT</label>
+</div>
+<div class="test__question" data-correct="c">
+<p><strong>2. Что означает слово «агентный» применительно к Claude Code?</strong></p>
+<label class="test__option"><input type="radio" name="q2" value="a"> Он работает через специального агента-посредника</label>
+<label class="test__option"><input type="radio" name="q2" value="b"> Он запоминает все разговоры навсегда</label>
+<label class="test__option"><input type="radio" name="q2" value="c"> Он не только отвечает, но и выполняет действия — создаёт файлы, редактирует код, запускает команды</label>
+</div>
+<div class="test__question" data-correct="b">
+<p><strong>3. Какой минимальный план подписки нужен для работы с Claude Code?</strong></p>
+<label class="test__option"><input type="radio" name="q3" value="a"> Бесплатный план</label>
+<label class="test__option"><input type="radio" name="q3" value="b"> Pro за $20/мес</label>
+<label class="test__option"><input type="radio" name="q3" value="c"> Max за $100/мес</label>
+</div>
+</form>
+<p><button id="test-submit">Проверить ответы</button></p>
+<div id="test-result" class="test__result" style="display:none"></div>
+<p></content></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lesson-nav">
+      <span class="lesson-nav__btn lesson-nav__btn--disabled">← ПРЕДЫДУЩИЙ</span>
+      <a href="02-vs-code.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>
