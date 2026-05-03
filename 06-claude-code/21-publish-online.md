@@ -37,15 +37,25 @@
 
 **Шаг 2.** В верхнем меню репозитория нажми **Settings** (шестерёнка справа).
 
+![Вкладка Settings в репозитории](../img/cc/21-github-settings-tab.png)
+
 **Шаг 3.** В левом меню найди раздел **Pages**.
+
+![Раздел Pages в левом меню](../img/cc/21-pages-menu.png)
 
 **Шаг 4.** В блоке «Build and deployment»:
 
 - **Source** → выбери **Deploy from a branch**
 
+![Source: Deploy from a branch](../img/cc/21-source-dropdown.png)
+
 - **Branch** → выбери **main** (или **master** — смотря как у тебя называется)
 
+![Выбор ветки main](../img/cc/21-branch-dropdown.png)
+
 - **Folder** → выбери **/ (root)** если `index.html` лежит в корне. Или **/docs** если он в папке `docs/`.
+
+![Выбор папки /docs или /(root)](../img/cc/21-folder-dropdown.png)
 
 - Нажми **Save**
 
