@@ -172,6 +172,18 @@ a{color:#0a0a0a;text-decoration:none}
 .big-card--disabled .big-card__icon{filter:grayscale(1)}
 body.dark .big-card--disabled{border-color:#222;color:#555;opacity:0.45}
 body.girls .big-card--disabled{border-color:#e0d5d0;color:#b0a0a0;opacity:0.55}
+.big-card--pink{
+  background:linear-gradient(135deg,#ffb6c1 0%,#ff69b4 100%);
+  border-color:#e91e63;color:#fff;
+}
+.big-card--pink:hover{
+  border-color:#c2185b;
+  box-shadow:0 0 0 2px #c2185b;
+  transform:scale(1.04);
+}
+.big-card--pink:active{background:linear-gradient(135deg,#ff69b4 0%,#e91e63 100%)}
+body.dark .big-card--pink{background:linear-gradient(135deg,#ad1457 0%,#880e4f 100%);border-color:#f48fb1;color:#fff}
+body.girls .big-card--pink{background:linear-gradient(135deg,#f8e0e6 0%,#f4b4c4 100%);border-color:#c47a8a;color:#3a3a3a}
 
 /* ===== STAGES ===== */
 .stage{margin-bottom:56px}
@@ -407,10 +419,10 @@ body.girls a{color:#3a3a3a}
       <span class="big-card__icon">⚡</span>
       <span class="big-card__title">Claude Code</span>
     </a>
-    <div class="big-card big-card--disabled">
+    <a href="materials.html" class="big-card big-card--pink">
       <span class="big-card__icon">📂</span>
       <span class="big-card__title">Материалы</span>
-    </div>
+    </a>
     <div class="big-card big-card--disabled">
       <span class="big-card__icon">🇷🇺</span>
       <span class="big-card__title">Как использовать ИИ<br>если я в РФ</span>
