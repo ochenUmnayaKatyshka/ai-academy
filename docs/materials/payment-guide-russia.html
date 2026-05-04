@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оплата Claude и ChatGPT из РФ — Материалы — AI Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Mono',monospace;
+  background:#f5f5f0;color:#0a0a0a;
+  font-size:15px;line-height:1.7;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
+  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1}
+a{color:#0a0a0a;text-decoration:none}
+.container{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Header */
+.lesson-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 28px;max-width:780px;margin:0 auto;
+  border-bottom:1.5px solid #ddd;
+}
+.lesson-header__back{
+  font-size:12px;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;color:#0a0a0a;
+}
+.lesson-header__back:hover{color:#888}
+.lesson-header__meta{font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Content */
+.lesson-content{padding:40px 0}
+.lesson-content h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;font-weight:700;color:#0a0a0a;
+  margin-bottom:20px;line-height:1.2;
+  text-transform:uppercase;letter-spacing:-1px;
+}
+.lesson-content h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;color:#0a0a0a;
+  margin-top:48px;margin-bottom:16px;
+  padding-top:24px;border-top:1.5px solid #ddd;
+  text-transform:uppercase;letter-spacing:-0.5px;
+}
+.lesson-content h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#0a0a0a;
+  margin-top:32px;margin-bottom:12px;
+}
+.lesson-content h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#333;
+  margin-top:24px;margin-bottom:8px;
+}
+.lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content strong{color:#0a0a0a;font-weight:700}
+.lesson-content em{color:#666;font-style:italic}
+.lesson-content blockquote{
+  border-left:3px solid #c8e600;
+  padding:12px 16px;margin:16px 0;
+  background:rgba(200,230,0,0.06);color:#555;
+}
+.lesson-content ul,.lesson-content ol{margin:12px 0 16px 24px;color:#333}
+.lesson-content li{margin-bottom:6px}
+.lesson-content hr{border:none;border-top:1.5px solid #ddd;margin:32px 0}
+
+/* Code */
+.lesson-content pre{
+  background:#1a1a1a;border:1.5px solid #333;
+  padding:16px;overflow-x:auto;margin:16px 0;position:relative;
+}
+.lesson-content code{
+  font-family:'Space Mono','JetBrains Mono',monospace;
+  font-size:13px;line-height:1.6;
+}
+.lesson-content p code,.lesson-content li code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content table code{
+  background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
+}
+.lesson-content table td:first-child{position:relative;padding-right:36px}
+.copy-icon{
+  position:absolute;top:50%;right:8px;transform:translateY(-50%);
+  background:transparent;border:1px solid #ccc;border-radius:4px;
+  width:24px;height:24px;padding:0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#666;transition:all .15s;
+}
+.copy-icon:hover{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+.copy-icon--ok{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+.lesson-content pre code{background:none;padding:0;color:#e5e5e5}
+.code-block{position:relative}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:#c8e600;border:none;color:#0a0a0a;
+  padding:4px 12px;font-size:11px;cursor:pointer;
+  font-family:'Space Mono',monospace;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;
+}
+.copy-btn:hover{background:#b8d600}
+
+/* Tables */
+.lesson-content table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.lesson-content th{background:#e8e8e0;padding:10px 12px;text-align:left;font-weight:700;color:#0a0a0a;border-bottom:1.5px solid #ccc}
+.lesson-content td{padding:10px 12px;border-bottom:1px solid #ddd;color:#333}
+
+/* Details/spoilers */
+.lesson-content details{border:1.5px solid #ddd;margin:12px 0;overflow:hidden}
+.lesson-content summary{padding:12px 16px;cursor:pointer;font-weight:700;color:#0a0a0a;user-select:none}
+.lesson-content summary:hover{background:rgba(200,230,0,0.1)}
+.lesson-content details[open] summary{border-bottom:1.5px solid #ddd}
+.lesson-content details>*:not(summary){padding:0 16px}
+.lesson-content details>p:first-of-type{padding-top:12px}
+.lesson-content img{max-width:560px;width:100%;margin:16px 0;display:block;border-radius:6px}
+
+/* Test */
+.test__question{margin-bottom:24px}
+.test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
+.test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.06)}
+.test__option input[type=radio]{margin-right:8px}
+.test__option--correct{border-color:#4caf50;background:rgba(76,175,80,0.08)}
+.test__option--wrong{border-color:#f44336;background:rgba(244,67,54,0.08)}
+#test-submit{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:#c8e600;border:1.5px solid #0a0a0a;color:#0a0a0a;
+  padding:10px 24px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all .2s;margin-top:8px;
+}
+#test-submit:hover{background:#b8d600}
+.test__result{margin-top:16px;padding:12px 16px;font-weight:700;font-size:14px}
+.test__result--pass{background:rgba(76,175,80,0.1);border:1px solid #4caf50;color:#2e7d32}
+.test__result--fail{background:rgba(244,67,54,0.1);border:1px solid #f44336;color:#c62828}
+.test__note{font-size:12px;color:#999;font-style:italic;margin-bottom:20px;padding:8px 0;border-left:2px solid #ddd;padding-left:12px;opacity:0.8}
+
+/* Dark test */
+body.dark .test__option{border-color:#333;color:#bbb}
+body.dark .test__option:hover{border-color:#c8e600;background:rgba(200,230,0,0.08)}
+body.dark #test-submit{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .test__note{color:#666;border-left-color:#333}
+
+/* Girls test */
+body.girls .test__option{border-color:#e0d5d0;font-family:'Georgia',serif}
+body.girls .test__option:hover{border-color:#c47a8a;background:#faf5f3}
+body.girls #test-submit{background:#f8e0e6;border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Georgia',serif}
+
+/* Nav */
+.lesson-nav{display:flex;justify-content:space-between;padding:32px 0;margin-top:32px;border-top:1.5px solid #ddd}
+.lesson-nav__btn{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:#0a0a0a;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border:1.5px solid #0a0a0a;
+  transition:all .2s;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;
+}
+.lesson-nav__btn:hover{border-color:#c8e600;box-shadow:0 0 0 1.5px #c8e600}
+.lesson-nav__btn--disabled{color:#ccc;border-color:#ddd;pointer-events:none}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;top:20px;right:20px;
+  background:#f5f5f0;border:1px solid #ccc;
+  padding:6px 14px;cursor:pointer;font-family:'Space Mono',monospace;
+  font-size:12px;color:#666;z-index:100;transition:all .2s;
+}
+.theme-toggle:hover{border-color:#0a0a0a;color:#0a0a0a}
+
+/* ===== DARK THEME ===== */
+body.dark{background:#0a0a0a;color:#e5e5e5}
+body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark a{color:#e5e5e5}
+body.dark .lesson-header{border-bottom-color:#222}
+body.dark .lesson-header__back{color:#e5e5e5}
+body.dark .lesson-header__meta{color:#555}
+body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
+body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content strong{color:#e5e5e5}
+body.dark .lesson-content em{color:#888}
+body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
+body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
+body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content table code{background:#1a1a1a;color:#c8e600}
+body.dark .copy-icon{border-color:#333;color:#888}
+body.dark .copy-icon:hover{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
+body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
+body.dark .lesson-content hr{border-top-color:#222}
+body.dark .lesson-content details{border-color:#333}
+body.dark .lesson-content details[open] summary{border-bottom-color:#333}
+body.dark .lesson-nav{border-top-color:#222}
+body.dark .lesson-nav__btn{border-color:#333;color:#e5e5e5}
+body.dark .lesson-nav__btn:hover{border-color:#c8e600}
+body.dark .lesson-nav__btn--disabled{color:#444;border-color:#222}
+body.dark .theme-toggle{background:#111;border-color:#333;color:#888}
+body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
+
+/* ===== GIRLS THEME ===== */
+body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
+body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls a{color:#3a3a3a}
+body.girls .lesson-header{border-bottom-color:#e0d5d0}
+body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
+body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
+body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content strong{color:#3a3a3a}
+body.girls .lesson-content em{color:#7a6a6a}
+body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
+body.girls .lesson-content ul,body.girls .lesson-content ol{color:#5a5a5a}
+body.girls .lesson-content pre{background:#faf5f3;border-color:#e0d5d0}
+body.girls .lesson-content pre code{color:#5a4a4a}
+body.girls .lesson-content p code,body.girls .lesson-content li code{color:#8a5a6a;background:#faf5f3}
+body.girls .lesson-content th{background:#faf5f3;color:#3a3a3a;border-bottom-color:#e0d5d0}
+body.girls .lesson-content td{border-bottom-color:#ece5e0;color:#5a5a5a}
+body.girls .lesson-content hr{border-top-color:#e0d5d0}
+body.girls .lesson-content details{border-color:#e0d5d0}
+body.girls .lesson-content summary{color:#c47a8a}
+body.girls .lesson-content details[open] summary{border-bottom-color:#e0d5d0}
+body.girls .lesson-nav{border-top-color:#e0d5d0}
+body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
+body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
+body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .lesson-content table code{background:#faf5f3;color:#8a5a6a}
+body.girls .copy-icon{border-color:#e0d5d0;color:#9a8a8a}
+body.girls .copy-icon:hover{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
+body.girls .copy-icon--ok{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
+body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
+body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
+
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .lesson-header{padding:16px 20px}
+  .lesson-content h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">🌸 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="../materials.html" class="lesson-header__back">← НАЗАД К МАТЕРИАЛАМ</a>
+    <span class="lesson-header__meta">Материалы</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      <h1>Регистрация и оплата Claude и ChatGPT из РФ в 2026</h1>
+<p>Как зарегистрироваться и оплатить подписку в Claude и ChatGPT, если ты из РФ в 2026 году.</p>
+<hr />
+<h2>Зачем это вообще нужно</h2>
+<p>Вот честная картина по состоянию на апрель 2026:</p>
+<ul>
+<li>
+<p>Россия не входит в список 175 стран, где Anthropic (Claude) и OpenAI (ChatGPT) официально работают. Из СНГ поддерживаются Казахстан, Армения, Грузия, Узбекистан, Кыргызстан, Молдова и ещё несколько стран — но не РФ и не Беларусь.</p>
+</li>
+<li>
+<p>За вторую половину 2025 Anthropic (Claude) заблокировал 1.45 млн аккаунтов. Апелляции подали 52 000 человек, успешно — 1 700. То есть шанс разбана — 3.3%.</p>
+</li>
+<li>
+<p>Российские карты Visa и Mastercard заблокированы Stripe (это платёжная система, через которую идут все платежи OpenAI и Anthropic) ещё с 2022 года.</p>
+</li>
+</ul>
+<p>Этот гайд поможет тебе пройти весь путь — от регистрации аккаунта в Claude, ChatGPT и других зарубежных сервисах до оплаты подписки — и максимально снизить риски: блокировок аккаунта, отвалившихся оплат и переплат.</p>
+<p>Поехали.</p>
+<hr />
+<h2>Главный принцип: «Цифровой след»</h2>
+<p>Это самая важная часть гайда. Без понимания этого принципа все дальнейшие шаги бессмысленны.</p>
+<p>Anthropic и OpenAI не просто чекают твой IP при заходе на сайт. Они анализируют десятки параметров: IP-адрес, страну выпуска карты, биллинг-адрес, страну номера телефона, страну Google-аккаунта (если регался через Google), отпечаток твоего браузера (User-Agent, разрешение экрана, шрифты), стабильность всего этого во времени.</p>
+<p>Если все эти параметры указывают на одну страну (или на пару связанных — например, IP в Финляндии и казахстанская карта, оба региона разрешены) — ты выглядишь обычным пользователем. Аккаунт в безопасности.</p>
+<p>Если параметры противоречивы — IP сегодня в США, завтра в Германии, карта индонезийская, номер телефона казахский — система видит подозрительный паттерн. И может не пропустить оплату или заблокировать аккаунт.</p>
+<blockquote>
+<p><strong>Главное правило:</strong> настроил один раз — старайся ничего не менять.</p>
+</blockquote>
+<p>Не прыгай между странами, не заходи с разных IP, не оплачивай разными картами, не передавай аккаунт друзьям. К этому принципу будем возвращаться на каждом шаге.</p>
+<hr />
+<h2>Шаг 1. Трёхбуквенный — твой фундамент</h2>
+<p>Всем нам он уже давно знаком, если вы понимаете о чём я.</p>
+<p>Под трёхбуквенным дальше я имею в виду сервис, который позволяет «зайти» в интернет из другой страны, подменив твой реальный IP-адрес.</p>
+<p>Без трёхбуквенного ничего не работает. Claude и ChatGPT не пускают пользователей с российских IP, даже на страницу регистрации.</p>
+<p><strong>Бесплатные трёхбуквенные не подходят.</strong> Там IP-адреса общие на тысячу человек, и Anthropic заносит их в чёрные списки целиком — все аккаунты на этом IP банятся разом.</p>
+<p>Поэтому используем только платные.</p>
+<h3>Что нужно</h3>
+<ul>
+<li>
+<p>Платный трёхбуквенный с возможностью выбора страны и (в идеале) выделенным IP</p>
+</li>
+<li>
+<p>Одна страна навсегда. Выбираешь и больше не меняешь.</p>
+</li>
+</ul>
+<p><strong>Какие страны лучше:</strong> Финляндия, Германия, Нидерланды, Польша. Это «чистые» европейские IP — стабильные, не под подозрением. Также можно США.</p>
+<h3>Главные правила</h3>
+<ul>
+<li>
+<p>Выбрал страну — выбрал навсегда. Не прыгаешь США → Германия → Япония.</p>
+</li>
+<li>
+<p>Никогда не выключай трёхбуквенный на устройстве, где открыт Claude/ChatGPT. Если хоть раз словишь российский IP при открытом сервисе — рискуешь баном.</p>
+</li>
+<li>
+<p>Заходи с одного устройства и одного браузерного профиля.</p>
+</li>
+</ul>
+<h3>Дополнительно</h3>
+<p>Проверь WebRTC leak. Это техническая фича, через которую браузер может «слить» твой реальный IP даже при включённом трёхбуквенном. Заходишь на <code>browserleaks.com/webrtc</code> → если видишь свой реальный российский IP — отключи WebRTC. В Chrome это делается через расширение «WebRTC Leak Prevent».</p>
+<p><strong>Если хочешь максимальной защиты:</strong> возьми ISP-прокси (выделенный IP реального интернет-провайдера) вместо обычного трёхбуквенного. Дороже, но IP выглядит как обычный домашний пользователь и никогда не «спалится». Самый параноидальный вариант — собственный VPS в Европе (от $10/мес), на котором ты единственный пользователь.</p>
+<hr />
+<h2>Шаг 2. Подготовка инфраструктуры</h2>
+<h3>Заведи новый Gmail (отдельный, не личный)</h3>
+<p><strong>Зачем:</strong> многие ИИ-сервисы больше всего доверяют аккаунтам Google. Регистрация через email и пароль работает, но через Google-вход выше шанс, что пройдёт без проверок.</p>
+<p><strong>Важно:</strong> лучше не использовать личный Gmail. Заведи отдельный — он будет рабочим инструментом для нейросетей. К нему не привязывай персональные данные.</p>
+<p>При регистрации нового Gmail обязательно:</p>
+<ul>
+<li>
+<p>Включи трёхбуквенный с правильной страной</p>
+</li>
+<li>
+<p>Укажи эту же страну в настройках Google-аккаунта</p>
+</li>
+<li>
+<p>Если используешь существующий Gmail — поменяй страну в настройках Google под включённым трёхбуквенным на ту же</p>
+</li>
+</ul>
+<p>Также можно купить готовый Gmail-аккаунт.</p>
+<h3>Подготовь иностранный номер для SMS</h3>
+<p><strong>Зачем:</strong> часто при регистрации Claude (и иногда ChatGPT) просит подтвердить номер телефона. Российский номер не принимается.</p>
+<p><strong>Одноразовый номер:</strong></p>
+<ul>
+<li>
+<p><code>online-sim.io</code> — пополнение от $5, номер для Claude около $0.04</p>
+</li>
+<li>
+<p><code>grizzlysms.com</code> — рублями, через СБП</p>
+</li>
+<li>
+<p><code>hero-sms.com</code> — минимальное пополнение $1 через СБП</p>
+</li>
+</ul>
+<p>Какую страну взять: ту же, что у твоего трёхбуквенного, или близкую. США, Великобритания, Германия, Нидерланды и т. д.</p>
+<p>Если SMS не приходит — попробуй другую страну. Иногда у сервисов бывают сбои на конкретных направлениях.</p>
+<p><strong>Постоянный номер:</strong></p>
+<ul>
+<li>
+<p>eSIM Казахстан — постоянная eSIM на твоём телефоне. Удобнее, но дороже.</p>
+</li>
+<li>
+<p>Либо, если уже есть свой номер другой страны (не РФ).</p>
+</li>
+</ul>
+<hr />
+<h2>Шаг 3. Регистрация аккаунта</h2>
+<h3>Регистрация Claude</h3>
+<ol>
+<li>
+<p>Включи трёхбуквенный на правильной стране</p>
+</li>
+<li>
+<p>Зайди на <code>claude.ai</code> в режиме инкогнито или в новом браузерном профиле</p>
+</li>
+<li>
+<p>Нажми «Continue with Google» → выбери новый Gmail</p>
+</li>
+<li>
+<p>Когда попросят SMS — введи иностранный номер</p>
+</li>
+<li>
+<p>Подтверди код из SMS</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Важно:</strong> на этом этапе НИЧЕГО не оплачивай. Сначала прогрев — об этом в Шаге 5.</p>
+</blockquote>
+<p>Если попросит KYC-верификацию (документы, селфи) — это новая фича Anthropic для активации платных подписок. Тут сложнее: либо проходишь верификацию по своим документам, либо переходишь к продвинутым вариантам оплаты, где верификация уже встроена в карту (Bybit Card / банковская карта СНГ).</p>
+<h3>Регистрация ChatGPT</h3>
+<p>ChatGPT попроще — даже базовый сайт <code>chat.openai.com</code> открывается с российских IP без трёхбуквенного.</p>
+<ol>
+<li>
+<p>Включи трёхбуквенный (всё равно включи — пригодится для оплаты)</p>
+</li>
+<li>
+<p>Зайди на <code>chat.openai.com</code> → Sign Up</p>
+</li>
+<li>
+<p>Введи email</p>
+</li>
+<li>
+<p>Подтверди через ссылку</p>
+</li>
+<li>
+<p>Введи иностранный номер</p>
+</li>
+</ol>
+<p>Готово. Бесплатный аккаунт у тебя есть.</p>
+<hr />
+<h2>Шаг 4. Оплата подписки</h2>
+<p>Здесь есть несколько вариантов.</p>
+<h3>Вариант А (лайт): через сервис-посредник</h3>
+<p>Самый простой способ. Заходишь к посреднику, платишь рублями через СБП — он сам оплачивает подписку зарубежной картой и активирует её на твой аккаунт.</p>
+<p><strong>Рекомендую:</strong></p>
+<ul>
+<li><strong>Claude Store</strong> — сервис в телеграме, много отличных отзывов на оплату подписки Claude. Есть гарантия. Могут даже помочь с регистрацией. Также у них есть ChatGPT и другие ИИ.</li>
+</ul>
+<p><strong>Другие сервисы:</strong></p>
+<ul>
+<li>
+<p>Маркетплейс цифровых товаров — пишешь в поиск что хочешь купить, выбираешь продавца с рейтингом и отзывами, читаешь условия и покупаешь.</p>
+</li>
+<li>
+<p>Ещё один маркетплейс — то же самое.</p>
+</li>
+<li>
+<p><code>Oplatym.ru</code> — работает с 2022 года, через Telegram-бот, оплата через СБП. По промокоду <code>TREYSI</code> скидка 15% на комиссию. Но оплата Claude сейчас временно недоступна.</p>
+</li>
+<li>
+<p>Озон Банк — у них есть раздел «зарубежные сервисы». Claude тоже сейчас временно недоступен.</p>
+</li>
+</ul>
+<p><strong>Сколько стоит:</strong> чаще всего подписки Claude продают с наценкой, но ChatGPT, например, наоборот можно найти со скидкой.</p>
+<blockquote>
+<p><strong>Важно:</strong> когда выбираешь продавца на маркетплейсе, обращай внимание на отзывы.</p>
+</blockquote>
+<h3>Вариант Б (средний): своя виртуальная карта</h3>
+<p>Заводишь себе виртуальную карту, пополняешь её через СБП или крипту, оплачиваешь подписку напрямую с сайта Claude/ChatGPT.</p>
+<p><strong>Рабочие сервисы (на момент апреля 2026):</strong></p>
+<ul>
+<li>
+<p>Zarub — виртуальные карты, выпуск от $8 (Claude временно недоступен)</p>
+</li>
+<li>
+<p>Pyypl Bot — тоже виртуальные карты, выпуск от $10 (по Claude уточнять в моменте)</p>
+</li>
+<li>
+<p>WantToPayBot — также пишут, что работает.</p>
+</li>
+</ul>
+<p><strong>Важные нюансы:</strong></p>
+<ul>
+<li>
+<p>Не все виртуальные карты работают для всех сервисов. Одна работает для ChatGPT, но не для Claude. Другая — для Claude, но даёт сбой в ChatGPT. Готовься к небольшому квесту тестирования.</p>
+</li>
+<li>
+<p>Одноразовые виртуальные карты не подходят для подписок — им нужны регулярные списания, а одноразовая отвалится после первого платежа.</p>
+</li>
+<li>
+<p>Одна карта — один аккаунт. Если ты одной картой оплатишь 5 разных подписок Claude — система прочитает это как перепродажу и забанит.</p>
+</li>
+</ul>
+<h3>Вариант В (профи): своя крипто-карта или банковская СНГ</h3>
+<p>Самый стабильный вариант надолго. Делается один раз, потом забываешь.</p>
+<p><strong>Карта Bybit (крипто-карта):</strong></p>
+<ol>
+<li>
+<p>Регистрируешься в Bybit, проходишь KYC</p>
+</li>
+<li>
+<p>В разделе Bybit Card выбираешь местоположение Казахстан или Кыргызстан</p>
+</li>
+<li>
+<p>Указываешь казахстанский адрес (можно найти любой)</p>
+</li>
+<li>
+<p>Документ — РФ загранпаспорт подходит</p>
+</li>
+<li>
+<p>Селфи (могут попросить)</p>
+</li>
+<li>
+<p>Номер телефона казахстанский</p>
+</li>
+<li>
+<p>Вводишь реферальный код на $20 — <code>V9PRG8</code></p>
+</li>
+<li>
+<p>Получаешь виртуальную карту</p>
+</li>
+<li>
+<p>После выпуска можешь поменять номер на РФ</p>
+</li>
+</ol>
+<p>Закидываешь USDT на Bybit, конвертируешь в USD на карте, оплачиваешь подписку. Реальный кейс из комьюнити: Claude Max за $100 списался ровно $102 (с учётом курса).</p>
+<p><strong>Карта банка СНГ (ЦентрКредит, Kaspi, Bakai и др):</strong></p>
+<p>Самый дорогой и сложный путь, но самый стабильный. Нужно либо ехать в Казахстан/Кыргызстан лично, либо использовать сервисы открытия карт удалённо (10 000–30 000₽ за всё под ключ).</p>
+<p>После выпуска это полноценная карта банка — она же привязывается к Apple Pay/Google Pay, ей можно платить за что угодно.</p>
+<h3>Лайфхак: оплата через App Store</h3>
+<p>Самый недооценённый способ — но часто он хорошо работает. Добавляешь карту в Apple Pay (не все карты могут подойти). Apple выступает посредником между тобой и сервисом. Anthropic/OpenAI видят платёж от Apple, а не с твоей карты напрямую. Но иногда цена может быть немного выше, чем если платить напрямую.</p>
+<hr />
+<h2>Шаг 5. Прогрев аккаунта</h2>
+<p>Самый игнорируемый шаг — и одна из главных причин бана.</p>
+<p>Свежий аккаунт (особенно Claude), который сразу после регистрации начинает делать кучу действий — это паттерн бота. Они видят цепочку: регистрация → оплата → 1000 запросов за час. Поэтому нам нужно показать системе, что мы реальный человек.</p>
+<p>Прогрев занимает 2 дня. Потерпи — это страховка для аккаунта на месяцы вперёд.</p>
+<h3>День 1 — знакомство (без оплаты)</h3>
+<ul>
+<li>
+<p>Трёхбуквенный включён, страна та же</p>
+</li>
+<li>
+<p>Заходишь на <code>claude.ai</code></p>
+</li>
+<li>
+<p>Задаёшь 5–10 обычных вопросов: переведи текст, объясни концепцию, проанализируй короткий файл</p>
+</li>
+<li>
+<p>Создаёшь 1–2 проекта в Projects, загружаешь PDF/txt, спрашиваешь по нему</p>
+</li>
+<li>
+<p>Проводишь 2–3 диалога по 5+ сообщений каждый</p>
+</li>
+<li>
+<p>Не оплачивай подписку. Сегодня просто пользуешься free-версией.</p>
+</li>
+</ul>
+<h3>День 2 — оплата и плавный переход</h3>
+<ul>
+<li>
+<p>Утром заходишь, проводишь 2–3 коротких диалога</p>
+</li>
+<li>
+<p>Потом идёшь → оплачиваешь подписку</p>
+</li>
+<li>
+<p>После оплаты ещё 3–5 диалогов</p>
+</li>
+<li>
+<p>Через 2–3 часа после оплаты можно начать активно использовать</p>
+</li>
+<li>
+<p>Первый день после оплаты — без рекордов. Не запускай Claude Code на 8 часов сразу.</p>
+</li>
+</ul>
+<p>С каждым днём система привыкает к твоему паттерну. Через неделю стабильного использования аккаунт уже считается «своим».</p>
+<hr />
+<h2>Чего категорически нельзя делать</h2>
+<p>Список причин, по которым аккаунты улетают в бан. Все собраны из реальных кейсов.</p>
+<ul>
+<li>
+<p><strong>Не шарить аккаунт с друзьями.</strong> Реальный кейс: трое парней пользовались одним Claude Pro втроём с разных IP → бан без возврата. Anthropic видит это как перепродажу доступа.</p>
+</li>
+<li>
+<p><strong>Не прыгать между странами трёхбуквенного.</strong> Сегодня Германия, завтра США, послезавтра Япония — прямой путь к блокировке.</p>
+</li>
+<li>
+<p><strong>Не покупать дешёвые аккаунты с маркетплейсов.</strong> Под видом обычных аккаунтов часто продают семейные или корпоративные с общей квотой → бан в первые 1–2 недели. Считай это расходником, не нормальным аккаунтом.</p>
+</li>
+<li>
+<p><strong>Не подключать подписку Claude Pro/Max к OpenClaw и другим IDE-обёрткам.</strong> С января 2026 Anthropic банит за это автоматически — система палит, что подписка используется для эмуляции официального API. Только официальный Claude Code или официальные интеграции.</p>
+</li>
+<li>
+<p><strong>Не менять регион подписки задним числом.</strong> Если изначально оплатил с USA-биллингом, старайся через 3 месяца не менять на карту другого региона. Принцип цифрового следа: настроил один раз — не меняй.</p>
+</li>
+<li>
+<p><strong>Не использовать одноразовые виртуальные карты для подписки.</strong> Они для разовых платежей, не для рекуррентных. Подписка отвалится через месяц.</p>
+</li>
+<li>
+<p><strong>Не выключать трёхбуквенный на устройстве, где открыт Claude/ChatGPT.</strong> Один промельк российского IP — и есть риск словить бан.</p>
+</li>
+<li>
+<p><strong>Не покупать готовые аккаунты с активной подпиской «дёшево» на Funpay/Playerok.</strong> Чаще всего это тот же общий аккаунт.</p>
+</li>
+</ul>
+<hr />
+<h2>Реальные кейсы</h2>
+<p><strong>Кейс 1.</strong> Ребята шарили один Claude Pro втроём + меняли регионы для оптимизации налога. Итог — бан без возврата денег, поддержка молчит. Мораль: один аккаунт = один человек, регион не трогаешь.</p>
+<p><strong>Кейс 2.</strong> Парень получил 3 бана подряд от Anthropic из-за постоянно меняющегося IP. Купил VPS в Чикаго ($10/мес), завёл аккаунт через него — стабильно работает уже полгода. Мораль: для самых упоротых кейсов VPS даёт абсолютно стабильный IP, на котором ты единственный пользователь.</p>
+<p><strong>Кейс 3.</strong> Bybit Card + Claude Max ($100/мес). С карты списалось $102 по курсу. Без проблем, без посредников, прямо с <code>claude.ai</code>. Делается один раз — забываешь на год.</p>
+<p><strong>Кейс 4.</strong> Турецкий App Store + ChatGPT Plus = 1040₽/мес вместо 2000₽. Подарочная карта Apple Turkey 500 лир (~1500₽) на маркетплейсе. Окупается за 2 месяца использования.</p>
+<hr />
+<h2>Полезные советы</h2>
+<ul>
+<li>
+<p><strong>Не экономь на трёхбуквенном.</strong> Это тот случай, где экономия 200₽ может стоить тебе аккаунта Claude Max за $100. Бесплатные трёхбуквенные — строго нет.</p>
+</li>
+<li>
+<p><strong>Не оплачивай весь год вперёд.</strong> Платить помесячно — это маленькая, но важная страховка.</p>
+</li>
+</ul>
+<hr />
+<h2>Важно понимать</h2>
+<p>Этот гайд — не гарантия, а набор рабочих практик, которые помогают снизить риски. Полностью застраховаться от блокировки нельзя.</p>
+<ul>
+<li>
+<p>Финальное решение всегда за Anthropic и OpenAI. Даже идеально настроенный сетап иногда улетает в бан — это часть реальности.</p>
+</li>
+<li>
+<p>Россия и Беларусь не входят в список поддерживаемых регионов, поэтому любой доступ к Claude и ChatGPT для нас — это работа на свой страх и риск.</p>
+</li>
+<li>
+<p>Всё, что описано выше — практический опыт сообщества и публичных источников по состоянию на апрель 2026. Это не юридический документ.</p>
+</li>
+</ul>
+<p>Платформы постоянно меняют правила: один способ оплаты отваливается, другой появляется. Гайд будем держать живым — обновлять, когда что-то перестаёт работать или находим что-то новое.</p>
+    </div>
+  </div>
+
+  <script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='ai-academy-progress';
+  function getProgress(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}}
+  function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p))}
+  function isCompleted(id){return!!getProgress()[id]}
+  function markCompleted(id){var p=getProgress();p[id]=true;saveProgress(p)}
+  function initTest(){
+    var f=document.getElementById('test-form');if(!f)return;
+    var btn=document.getElementById('test-submit'),res=document.getElementById('test-result'),lid=f.getAttribute('data-lesson');
+    if(isCompleted(lid)){res.innerHTML='\u2705 Урок пройден!';res.className='test__result test__result--pass';res.style.display='block'}
+    btn.addEventListener('click',function(){
+      var qs=f.querySelectorAll('.test__question'),total=qs.length,correct=0;
+      qs.forEach(function(q){var ca=q.getAttribute('data-correct'),sel=q.querySelector('input[type=radio]:checked'),opts=q.querySelectorAll('.test__option');
+        opts.forEach(function(o){o.classList.remove('test__option--correct','test__option--wrong')});
+        if(sel){if(sel.value===ca){correct++;sel.closest('.test__option').classList.add('test__option--correct')}else{sel.closest('.test__option').classList.add('test__option--wrong');opts.forEach(function(o){var r=o.querySelector('input[type=radio]');if(r&&r.value===ca)o.classList.add('test__option--correct')})}}});
+      if((correct/total)*100>=80){res.innerHTML='\u2705 '+correct+' из '+total+' правильно — урок пройден!';res.className='test__result test__result--pass';markCompleted(lid)}
+      else{res.innerHTML='\u274c '+correct+' из '+total+' правильно. Нужно \u226580%. Попробуйте ещё раз!';res.className='test__result test__result--fail'}
+      res.style.display='block'});
+  }
+  function initCopy(){
+    document.querySelectorAll('.lesson-content pre').forEach(function(pre){
+      var c=pre.querySelector('code');
+      if(!c||!c.className.match(/\blanguage-/))return;
+      var w=document.createElement('div');w.className='code-block';pre.parentNode.insertBefore(w,pre);w.appendChild(pre);
+      var b=document.createElement('button');b.className='copy-btn';b.textContent='КОПИРОВАТЬ';
+      b.addEventListener('click',function(){var t=c.textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='СКОПИРОВАНО';setTimeout(function(){b.textContent='КОПИРОВАТЬ'},1500)})});
+      w.appendChild(b)});
+  }
+  function copyToClipboard(text){
+    if(navigator.clipboard&&window.isSecureContext){
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function(resolve,reject){
+      var ta=document.createElement('textarea');
+      ta.value=text;
+      ta.style.position='fixed';ta.style.top='0';ta.style.left='0';
+      ta.style.opacity='0';ta.style.pointerEvents='none';
+      document.body.appendChild(ta);
+      ta.focus();ta.select();
+      try{
+        var ok=document.execCommand('copy');
+        document.body.removeChild(ta);
+        if(ok)resolve();else reject(new Error('execCommand failed'));
+      }catch(e){document.body.removeChild(ta);reject(e)}
+    });
+  }
+  var COPY_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+  var CHECK_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  function initInlineCopy(){
+    document.querySelectorAll('.lesson-content table tr').forEach(function(tr){
+      var firstCell=tr.querySelector('td:first-child');
+      if(!firstCell)return;
+      var code=firstCell.querySelector('code');
+      if(!code)return;
+      if(firstCell.querySelector('.copy-icon'))return;
+      var btn=document.createElement('button');
+      btn.className='copy-icon';
+      btn.type='button';
+      btn.title='Скопировать команду';
+      btn.setAttribute('aria-label','Скопировать команду');
+      btn.innerHTML=COPY_SVG;
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        copyToClipboard(code.textContent).then(function(){
+          btn.classList.add('copy-icon--ok');
+          btn.innerHTML=CHECK_SVG;
+          setTimeout(function(){btn.classList.remove('copy-icon--ok');btn.innerHTML=COPY_SVG},1200);
+        }).catch(function(){
+          btn.title='Не удалось скопировать';
+        });
+      });
+      firstCell.appendChild(btn);
+    });
+  }
+  document.addEventListener('DOMContentLoaded',function(){initTest();initCopy();initInlineCopy()});
+})();
+</script>
+  <script>
+var themes=['light','dark','girls'];
+var themeLabels={light:'\uD83C\uDF38 для девочек',dark:'\uD83D\uDCAA нормальный пацан',girls:'\u2600 светлая'};
+function toggleTheme(){
+  var body=document.body;
+  var current='light';
+  if(body.classList.contains('dark'))current='dark';
+  else if(body.classList.contains('girls'))current='girls';
+  var idx=themes.indexOf(current);
+  var next=themes[(idx+1)%themes.length];
+  body.classList.remove('dark','girls');
+  if(next!=='light')body.classList.add(next);
+  document.getElementById('theme-label').textContent=themeLabels[next];
+  localStorage.setItem('ai-academy-theme',next);
+}
+(function(){
+  var saved=localStorage.getItem('ai-academy-theme');
+  if(saved&&saved!=='light'){
+    document.body.classList.add(saved);
+    var el=document.getElementById('theme-label');
+    if(el)el.textContent=themeLabels[saved]||themeLabels.light;
+  }
+})();
+</script>
+</body>
+</html>
