@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Несколько чатов — Claude Code — AI Academy</title>
+  <title>Команды терминала — Материалы — AI Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -239,131 +239,445 @@ body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
   </button>
 
   <div class="lesson-header">
-    <a href="../claude-code.html" class="lesson-header__back">← НАЗАД К CLAUDE CODE</a>
-    <span class="lesson-header__meta">Модуль 5: Для продвинутых · Урок 2 из 8</span>
+    <a href="../materials.html" class="lesson-header__back">← НАЗАД К МАТЕРИАЛАМ</a>
+    <span class="lesson-header__meta">Материалы</span>
   </div>
 
   <div class="container">
     <div class="lesson-content">
-      <h1>Несколько чатов</h1>
-<p>Один чат — хорошо. Несколько параллельных — совсем другой уровень.</p>
-<hr />
-<h2>Зачем</h2>
-<p><strong>1. Разделение задач.</strong></p>
-<p>Один чат = одна задача. Не путаешь контексты.</p>
-<p><strong>2. Параллельная работа.</strong></p>
-<p>Два чата могут одновременно делать разные части проекта.</p>
-<p><strong>3. Перепроверка.</strong></p>
-<p>Сомневаешься? Открой новый чат и спроси то же самое. Сравни ответы.</p>
-<p><strong>4. Разные роли.</strong></p>
-<p>Один чат — исполнитель. Другой — критик.</p>
-<hr />
-<h2>Три вкладки</h2>
-<p>Рекомендую держать минимум три чата:</p>
-<ul>
-<li>
-<p><strong>Чат 1 — Общение.</strong> Обсуждаешь идеи, планируешь. Не делаешь — думаешь.</p>
-</li>
-<li>
-<p><strong>Чат 2 — Работа.</strong> Claude создаёт и редактирует файлы.</p>
-</li>
-<li>
-<p><strong>Чат 3 — Проверка.</strong> Проверяешь что сделано. Ищешь ошибки.</p>
-</li>
-</ul>
-<hr />
-<h2>Как открыть новый чат</h2>
-<ul>
-<li>
-<p><code>Shift + Cmd/Ctrl + Escape</code></p>
-</li>
-<li>
-<p>Или кликни на иконку Claude Code в боковой панели</p>
-</li>
-</ul>
+      <h1>Настольная книга команд</h1>
 <blockquote>
-<p>💡 <strong>Совет:</strong>
-Начинай чат с понятной фразы: «Работаем над формой» — проще найти потом.</p>
+<p>Распечатай и держи рядом. Всё, что нужно — на одном листе.
+Этот документ пополняется по мере прохождения курса.</p>
 </blockquote>
 <hr />
-<h2>Когда новый чат</h2>
-<p><strong>Да:</strong></p>
-<ul>
-<li>
-<p>Новая задача</p>
-</li>
-<li>
-<p>Длинный чат</p>
-</li>
-<li>
-<p>Хочешь проверить независимо</p>
-</li>
-<li>
-<p>Чат «запутался»</p>
-</li>
-</ul>
-<p><strong>Нет:</strong></p>
-<ul>
-<li>
-<p>Уточняешь последний ответ</p>
-</li>
-<li>
-<p>Задача связана с предыдущей</p>
-</li>
-<li>
-<p>Нужен контекст</p>
-</li>
-</ul>
-<blockquote>
-<p>⚠️ <strong>Важно:</strong>
-Много длинных чатов нагружают компьютер. Лучше несколько коротких.</p>
-</blockquote>
+<h2>1. Навигация по файловой системе</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pwd</code></td>
+<td>Показать текущую папку</td>
+<td><code>pwd</code> → <code>/Users/katya/Projects</code></td>
+</tr>
+<tr>
+<td><code>ls</code></td>
+<td>Список файлов</td>
+<td><code>ls</code></td>
+</tr>
+<tr>
+<td><code>ls -la</code></td>
+<td>Все файлы + скрытые + детали</td>
+<td><code>ls -la</code></td>
+</tr>
+<tr>
+<td><code>cd папка</code></td>
+<td>Зайти в папку</td>
+<td><code>cd Documents</code></td>
+</tr>
+<tr>
+<td><code>cd ..</code></td>
+<td>На уровень вверх</td>
+<td><code>cd ..</code></td>
+</tr>
+<tr>
+<td><code>cd ~</code></td>
+<td>В домашнюю папку</td>
+<td><code>cd ~</code></td>
+</tr>
+<tr>
+<td><code>cd /</code></td>
+<td>В корень системы</td>
+<td><code>cd /</code></td>
+</tr>
+</tbody>
+</table>
+<h2>2. Работа с файлами и папками</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mkdir имя</code></td>
+<td>Создать папку</td>
+<td><code>mkdir my-project</code></td>
+</tr>
+<tr>
+<td><code>mkdir -p a/b/c</code></td>
+<td>Создать вложенные папки</td>
+<td><code>mkdir -p src/components/ui</code></td>
+</tr>
+<tr>
+<td><code>touch файл</code></td>
+<td>Создать пустой файл</td>
+<td><code>touch app.py</code></td>
+</tr>
+<tr>
+<td><code>cp откуда куда</code></td>
+<td>Копировать</td>
+<td><code>cp file.txt backup.txt</code></td>
+</tr>
+<tr>
+<td><code>cp -r папка новая</code></td>
+<td>Копировать папку</td>
+<td><code>cp -r src src-backup</code></td>
+</tr>
+<tr>
+<td><code>mv откуда куда</code></td>
+<td>Переместить / переименовать</td>
+<td><code>mv old.py new.py</code></td>
+</tr>
+<tr>
+<td><code>rm файл</code></td>
+<td>Удалить файл</td>
+<td><code>rm temp.txt</code></td>
+</tr>
+<tr>
+<td><code>rm -r папка</code></td>
+<td>Удалить папку с содержимым</td>
+<td><code>rm -r old-folder</code></td>
+</tr>
+<tr>
+<td><code>cat файл</code></td>
+<td>Показать содержимое</td>
+<td><code>cat config.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2>3. Python</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python3 --version</code></td>
+<td>Проверить версию Python</td>
+<td><code>python3 --version</code></td>
+</tr>
+<tr>
+<td><code>python3 файл.py</code></td>
+<td>Запустить скрипт</td>
+<td><code>python3 app.py</code></td>
+</tr>
+<tr>
+<td><code>python3 -m venv env</code></td>
+<td>Создать виртуальное окружение</td>
+<td><code>python3 -m venv .venv</code></td>
+</tr>
+<tr>
+<td><code>source env/bin/activate</code></td>
+<td>Активировать окружение</td>
+<td><code>source .venv/bin/activate</code></td>
+</tr>
+<tr>
+<td><code>deactivate</code></td>
+<td>Выйти из окружения</td>
+<td><code>deactivate</code></td>
+</tr>
+<tr>
+<td><code>pip install пакет</code></td>
+<td>Установить библиотеку</td>
+<td><code>pip install anthropic</code></td>
+</tr>
+<tr>
+<td><code>pip install -r файл</code></td>
+<td>Установить из списка</td>
+<td><code>pip install -r requirements.txt</code></td>
+</tr>
+<tr>
+<td><code>pip list</code></td>
+<td>Список установленных пакетов</td>
+<td><code>pip list</code></td>
+</tr>
+<tr>
+<td><code>pip freeze &gt; файл</code></td>
+<td>Сохранить список пакетов</td>
+<td><code>pip freeze &gt; requirements.txt</code></td>
+</tr>
+</tbody>
+</table>
+<h2>4. Git — контроль версий</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git init</code></td>
+<td>Создать репозиторий</td>
+<td><code>git init</code></td>
+</tr>
+<tr>
+<td><code>git status</code></td>
+<td>Что изменилось?</td>
+<td><code>git status</code></td>
+</tr>
+<tr>
+<td><code>git add файл</code></td>
+<td>Подготовить к сохранению</td>
+<td><code>git add app.py</code></td>
+</tr>
+<tr>
+<td><code>git add .</code></td>
+<td>Подготовить всё</td>
+<td><code>git add .</code></td>
+</tr>
+<tr>
+<td><code>git commit -m "текст"</code></td>
+<td>Сохранить версию</td>
+<td><code>git commit -m "добавил авторизацию"</code></td>
+</tr>
+<tr>
+<td><code>git log --oneline</code></td>
+<td>История изменений</td>
+<td><code>git log --oneline</code></td>
+</tr>
+<tr>
+<td><code>git push</code></td>
+<td>Отправить на GitHub</td>
+<td><code>git push</code></td>
+</tr>
+<tr>
+<td><code>git pull</code></td>
+<td>Скачать обновления</td>
+<td><code>git pull</code></td>
+</tr>
+<tr>
+<td><code>git clone url</code></td>
+<td>Скачать репозиторий</td>
+<td><code>git clone https://github.com/user/repo</code></td>
+</tr>
+<tr>
+<td><code>git branch имя</code></td>
+<td>Создать ветку</td>
+<td><code>git branch feature-login</code></td>
+</tr>
+<tr>
+<td><code>git checkout ветка</code></td>
+<td>Переключиться на ветку</td>
+<td><code>git checkout feature-login</code></td>
+</tr>
+</tbody>
+</table>
+<h2>5. Node.js и npm</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>node --version</code></td>
+<td>Проверить версию Node</td>
+<td><code>node --version</code></td>
+</tr>
+<tr>
+<td><code>npm init -y</code></td>
+<td>Создать проект</td>
+<td><code>npm init -y</code></td>
+</tr>
+<tr>
+<td><code>npm install пакет</code></td>
+<td>Установить пакет</td>
+<td><code>npm install express</code></td>
+</tr>
+<tr>
+<td><code>npm install -g пакет</code></td>
+<td>Установить глобально</td>
+<td><code>npm install -g openclaw</code></td>
+</tr>
+<tr>
+<td><code>npm run скрипт</code></td>
+<td>Запустить скрипт</td>
+<td><code>npm run start</code></td>
+</tr>
+<tr>
+<td><code>npx команда</code></td>
+<td>Запустить без установки</td>
+<td><code>npx create-next-app</code></td>
+</tr>
+</tbody>
+</table>
+<h2>6. Серверы и сеть</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssh user@ip</code></td>
+<td>Подключиться к серверу</td>
+<td><code>ssh root@192.168.1.100</code></td>
+</tr>
+<tr>
+<td><code>scp файл user@ip:путь</code></td>
+<td>Скопировать файл на сервер</td>
+<td><code>scp app.py root@server:/home/</code></td>
+</tr>
+<tr>
+<td><code>curl url</code></td>
+<td>Сделать HTTP-запрос</td>
+<td><code>curl https://api.example.com</code></td>
+</tr>
+<tr>
+<td><code>ping адрес</code></td>
+<td>Проверить доступность</td>
+<td><code>ping google.com</code></td>
+</tr>
+<tr>
+<td><code>lsof -i :порт</code></td>
+<td>Кто занимает порт?</td>
+<td><code>lsof -i :3000</code></td>
+</tr>
+<tr>
+<td><code>kill PID</code></td>
+<td>Остановить процесс</td>
+<td><code>kill 12345</code></td>
+</tr>
+</tbody>
+</table>
+<h2>7. Docker</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker ps</code></td>
+<td>Запущенные контейнеры</td>
+<td><code>docker ps</code></td>
+</tr>
+<tr>
+<td><code>docker images</code></td>
+<td>Список образов</td>
+<td><code>docker images</code></td>
+</tr>
+<tr>
+<td><code>docker run образ</code></td>
+<td>Запустить контейнер</td>
+<td><code>docker run -d nginx</code></td>
+</tr>
+<tr>
+<td><code>docker stop id</code></td>
+<td>Остановить контейнер</td>
+<td><code>docker stop abc123</code></td>
+</tr>
+<tr>
+<td><code>docker-compose up</code></td>
+<td>Запустить всё из compose</td>
+<td><code>docker-compose up -d</code></td>
+</tr>
+<tr>
+<td><code>docker-compose down</code></td>
+<td>Остановить всё</td>
+<td><code>docker-compose down</code></td>
+</tr>
+</tbody>
+</table>
+<h2>8. Переменные окружения и конфиг</h2>
+<table>
+<thead>
+<tr>
+<th>Команда</th>
+<th>Что делает</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>echo $ПЕРЕМЕННАЯ</code></td>
+<td>Показать значение</td>
+<td><code>echo $PATH</code></td>
+</tr>
+<tr>
+<td><code>export KEY=value</code></td>
+<td>Установить переменную</td>
+<td><code>export API_KEY=sk-123</code></td>
+</tr>
+<tr>
+<td><code>cat .env</code></td>
+<td>Показать файл окружения</td>
+<td><code>cat .env</code></td>
+</tr>
+<tr>
+<td><code>chmod 600 файл</code></td>
+<td>Ограничить доступ</td>
+<td><code>chmod 600 .env</code></td>
+</tr>
+</tbody>
+</table>
+<h2>9. Быстрые комбинации в терминале</h2>
+<table>
+<thead>
+<tr>
+<th>Комбинация</th>
+<th>Что делает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tab</code></td>
+<td>Автодополнение команды/пути</td>
+</tr>
+<tr>
+<td><code>Ctrl+C</code></td>
+<td>Остановить текущую команду</td>
+</tr>
+<tr>
+<td><code>Ctrl+L</code></td>
+<td>Очистить экран</td>
+</tr>
+<tr>
+<td><code>↑ / ↓</code></td>
+<td>История предыдущих команд</td>
+</tr>
+<tr>
+<td><code>Ctrl+R</code></td>
+<td>Поиск по истории команд</td>
+</tr>
+<tr>
+<td><code>Ctrl+A</code></td>
+<td>Курсор в начало строки</td>
+</tr>
+<tr>
+<td><code>Ctrl+E</code></td>
+<td>Курсор в конец строки</td>
+</tr>
+</tbody>
+</table>
 <hr />
-<h2>Перепроверка в новом чате</h2>
-<p>Полезный приём:</p>
-<ol>
-<li>
-<p>Claude в чате 1 сделал что-то</p>
-</li>
-<li>
-<p>Открываешь чат 2 (новый, чистый)</p>
-</li>
-<li>
-<p>Показываешь результат: «Посмотри критически. Какие проблемы?»</p>
-</li>
-</ol>
-<p>Чат 2 не знает контекст чата 1 — смотрит свежим взглядом.</p>
-<hr />
-<h2>Тест</h2>
-<form id="test-form" data-lesson="cc-16">
-<div class="test__question" data-correct="a">
-<p><strong>1. Зачем несколько чатов?</strong></p>
-<label class="test__option"><input type="radio" name="q1" value="a"> Разделение задач и параллельная работа</label>
-<label class="test__option"><input type="radio" name="q1" value="b"> Чтобы потратить больше токенов</label>
-<label class="test__option"><input type="radio" name="q1" value="c"> Это не нужно</label>
-</div>
-<div class="test__question" data-correct="b">
-<p><strong>2. Зачем проверять в новом чате?</strong></p>
-<label class="test__option"><input type="radio" name="q2" value="a"> Чтобы удвоить работу</label>
-<label class="test__option"><input type="radio" name="q2" value="b"> Свежий взгляд без предыдущего контекста</label>
-<label class="test__option"><input type="radio" name="q2" value="c"> Так быстрее</label>
-</div>
-<div class="test__question" data-correct="c">
-<p><strong>3. Сколько чатов рекомендуется?</strong></p>
-<label class="test__option"><input type="radio" name="q3" value="a"> Один</label>
-<label class="test__option"><input type="radio" name="q3" value="b"> Десять</label>
-<label class="test__option"><input type="radio" name="q3" value="c"> Минимум три: общение, работа, проверка</label>
-</div>
-</form>
-<p><button id="test-submit">Проверить ответы</button></p>
-<div id="test-result" class="test__result" style="display:none"></div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="lesson-nav">
-      <a href="15-research-roles.html" class="lesson-nav__btn">← ПРЕДЫДУЩИЙ</a>
-      <a href="17-troubleshooting.html" class="lesson-nav__btn">СЛЕДУЮЩИЙ →</a>
+<p><em>Последнее обновление: Этап 1</em></p>
     </div>
   </div>
 
