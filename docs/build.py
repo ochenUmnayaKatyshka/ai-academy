@@ -182,9 +182,15 @@ a{color:#0a0a0a;text-decoration:none}
 .lesson-content table code{
   background:#e8e8e0;padding:2px 6px;font-size:13px;color:#0a0a0a;
 }
-.lesson-content table code.copyable{cursor:pointer;transition:all .15s}
-.lesson-content table code.copyable:hover{background:#c8e600}
-.lesson-content table code.copied{background:#c8e600;color:#0a0a0a;font-weight:700}
+.lesson-content table td:first-child{position:relative;padding-right:36px}
+.copy-icon{
+  position:absolute;top:50%;right:8px;transform:translateY(-50%);
+  background:transparent;border:1px solid #ccc;border-radius:4px;
+  width:24px;height:24px;padding:0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#666;transition:all .15s;
+}
+.copy-icon:hover{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+.copy-icon--ok{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
 .lesson-content pre code{background:none;padding:0;color:#e5e5e5}
 .code-block{position:relative}
 .copy-btn{
@@ -277,6 +283,9 @@ body.dark .lesson-content em{color:#888}
 body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
 body.dark .lesson-content ul,body.dark .lesson-content ol{color:#bbb}
 body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1a1a1a;color:#c8e600}
+body.dark .lesson-content table code{background:#1a1a1a;color:#c8e600}
+body.dark .copy-icon{border-color:#333;color:#888}
+body.dark .copy-icon:hover{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
 body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
 body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
 body.dark .lesson-content hr{border-top-color:#222}
@@ -317,6 +326,10 @@ body.girls .lesson-nav__btn{border-color:#d0c5c0;color:#c47a8a;font-family:'Geor
 body.girls .lesson-nav__btn:hover{border-color:#c47a8a}
 body.girls .lesson-nav__btn--disabled{color:#ccc;border-color:#e0d5d0}
 body.girls .copy-btn{background:#f8e0e6;color:#c47a8a}
+body.girls .lesson-content table code{background:#faf5f3;color:#8a5a6a}
+body.girls .copy-icon{border-color:#e0d5d0;color:#9a8a8a}
+body.girls .copy-icon:hover{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
+body.girls .copy-icon--ok{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
 body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
 body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
 
@@ -358,18 +371,31 @@ INLINE_JS = """
       w.appendChild(b)});
   }
   function initInlineCopy(){
-    document.querySelectorAll('.lesson-content table code').forEach(function(c){
-      c.classList.add('copyable');
-      c.title='Кликни — скопируется';
-      c.addEventListener('click',function(){
-        var t=c.textContent;
+    document.querySelectorAll('.lesson-content table tr').forEach(function(tr){
+      var firstCell=tr.querySelector('td:first-child');
+      if(!firstCell)return;
+      var code=firstCell.querySelector('code');
+      if(!code)return;
+      if(firstCell.querySelector('.copy-icon'))return;
+      var btn=document.createElement('button');
+      btn.className='copy-icon';
+      btn.type='button';
+      btn.title='Скопировать команду';
+      btn.setAttribute('aria-label','Скопировать команду');
+      btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        var t=code.textContent;
         navigator.clipboard.writeText(t).then(function(){
-          var orig=c.textContent;
-          c.classList.add('copied');
-          c.textContent='\\u2713 скопировано';
-          setTimeout(function(){c.textContent=orig;c.classList.remove('copied')},1000);
+          btn.classList.add('copy-icon--ok');
+          btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+          setTimeout(function(){
+            btn.classList.remove('copy-icon--ok');
+            btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+          },1200);
         });
       });
+      firstCell.appendChild(btn);
     });
   }
   document.addEventListener('DOMContentLoaded',function(){initTest();initCopy();initInlineCopy()});
