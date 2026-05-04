@@ -17,7 +17,7 @@ MATERIALS_OUTPUT_DIR = os.path.join(BASE_DIR, 'materials')
 MATERIALS = [
     ('claude-code-guide.html', 'reference/claude-code-friendly-guide.md', 'Как общаться с Claude'),
     ('cheat-sheet.html', 'reference/cheat-sheet.md', 'Команды терминала'),
-    ('payment-guide-russia.html', 'reference/payment-guide-russia.md', 'Оплата Claude и ChatGPT из РФ'),
+    ('payment-guide-russia.html', 'reference/payment-guide-russia.md', 'Как использовать ИИ если ты в РФ'),
 ]
 
 # Lesson definitions: (lesson_id, html_filename, md_path, title, stage, lesson_num, stage_total)
