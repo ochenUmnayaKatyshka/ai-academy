@@ -122,6 +122,40 @@ a{color:#0a0a0a;text-decoration:none}
 .lesson-content details>p:first-of-type{padding-top:12px}
 .lesson-content img{max-width:560px;width:100%;margin:16px 0;display:block;border-radius:6px}
 
+/* Barbie-themed "don't do" section */
+.lesson-content .dont-do{
+  position:relative;
+  background:linear-gradient(135deg, rgba(255,192,203,0.20), rgba(255,105,180,0.08));
+  border:2px dashed #e91e63;
+  border-radius:8px;
+  padding:24px 32px;
+  margin:32px 0;
+  overflow:hidden;
+}
+.lesson-content .dont-do::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  right:-40px;
+  transform:translateY(-50%);
+  width:240px;
+  height:560px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 500'><g fill='%23e91e63'><ellipse cx='100' cy='120' rx='52' ry='110'/><circle cx='100' cy='60' r='22'/><path d='M 80 80 Q 75 130 80 160 Q 60 180 65 240 Q 75 280 100 290 Q 125 280 135 240 Q 140 180 120 160 Q 125 130 120 80 Z'/><path d='M 65 240 Q 50 320 45 380 L 155 380 Q 150 320 135 240 Z'/><rect x='80' y='380' width='14' height='100'/><rect x='106' y='380' width='14' height='100'/><path d='M 78 480 L 96 480 L 96 488 L 80 484 Z'/><path d='M 104 480 L 122 480 L 120 484 L 104 488 Z'/></g></svg>");
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:0.18;
+  pointer-events:none;
+  z-index:0;
+}
+.lesson-content .dont-do > *{position:relative;z-index:1}
+.lesson-content .dont-do h2{color:#c2185b;border-top:none;padding-top:0;margin-top:0}
+.lesson-content .dont-do ul{margin-left:20px}
+.lesson-content .dont-do li{color:#5a3a4a;font-weight:500}
+@media(max-width:640px){
+  .lesson-content .dont-do::before{opacity:0.10;width:180px;right:-60px}
+}
+
 /* Test */
 .test__question{margin-bottom:24px}
 .test__option{display:block;padding:8px 12px;margin:6px 0;cursor:pointer;border:1px solid #ddd;transition:all .2s}
@@ -191,6 +225,9 @@ body.dark .lesson-content p code,body.dark .lesson-content li code{background:#1
 body.dark .lesson-content table code{background:#1a1a1a;color:#c8e600}
 body.dark .copy-icon{border-color:#333;color:#888}
 body.dark .copy-icon:hover{background:#c8e600;border-color:#c8e600;color:#0a0a0a}
+body.dark .lesson-content .dont-do{background:linear-gradient(135deg, rgba(233,30,99,0.10), rgba(233,30,99,0.04));border-color:#ad1457}
+body.dark .lesson-content .dont-do h2{color:#f48fb1;border-top:none}
+body.dark .lesson-content .dont-do li{color:#e5b8c4}
 body.dark .lesson-content th{background:#1a1a1a;color:#e5e5e5;border-bottom-color:#333}
 body.dark .lesson-content td{border-bottom-color:#222;color:#bbb}
 body.dark .lesson-content hr{border-top-color:#222}
@@ -235,6 +272,10 @@ body.girls .lesson-content table code{background:#faf5f3;color:#8a5a6a}
 body.girls .copy-icon{border-color:#e0d5d0;color:#9a8a8a}
 body.girls .copy-icon:hover{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
 body.girls .copy-icon--ok{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
+body.girls .lesson-content .dont-do{background:linear-gradient(135deg, rgba(244,143,177,0.30), rgba(248,224,230,0.20));border-color:#c47a8a;border-style:solid;border-width:1.5px}
+body.girls .lesson-content .dont-do h2{color:#c47a8a;font-family:'Georgia',serif}
+body.girls .lesson-content .dont-do li{color:#7a4a5a;font-family:'Georgia',serif}
+body.girls .lesson-content .dont-do::before{opacity:0.22}
 body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
 body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
 
