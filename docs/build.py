@@ -721,6 +721,28 @@ def build():
         materials_built += 1
         print(f'  ✅ [MATERIAL] {html_file} ← {md_path}')
 
+    # Build sitemap.xml
+    site_url = 'https://loveyouhumans.com'
+    today = __import__('datetime').date.today().isoformat()
+    urls = ['', '/claude-code.html', '/courses.html', '/materials.html']
+    for _, html_file, _, _, _, _, _ in LESSONS:
+        urls.append(f'/lessons/{html_file}')
+    for _, html_file, _, _, _, _, _ in CC_LESSONS:
+        urls.append(f'/lessons-cc/{html_file}')
+    for html_file, _, _ in MATERIALS:
+        urls.append(f'/materials/{html_file}')
+
+    sitemap_lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+                     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for url in urls:
+        priority = '1.0' if url == '' else '0.8' if url.endswith('.html') and '/' not in url[1:] else '0.6'
+        sitemap_lines.append(f'  <url><loc>{site_url}{url}</loc><lastmod>{today}</lastmod><priority>{priority}</priority></url>')
+    sitemap_lines.append('</urlset>')
+
+    with open(os.path.join(BASE_DIR, 'sitemap.xml'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(sitemap_lines))
+    print(f'  ✅ sitemap.xml ({len(urls)} страниц)')
+
     print(f'\nГотово: {built} уроков + {cc_built} Claude Code уроков + {materials_built} материалов, {errors + cc_errors + materials_errors} ошибок')
 
 
