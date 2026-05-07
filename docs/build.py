@@ -116,7 +116,7 @@ body{
 body::before{
   content:'';position:fixed;top:0;left:0;width:100%;height:100%;
   background-image:radial-gradient(circle,#3a3a3a 1.6px,transparent 1.6px);
-  background-size:24px 24px;opacity:0.32;pointer-events:none;z-index:0;
+  background-size:24px 24px;opacity:0.22;pointer-events:none;z-index:0;
 }
 body>*{position:relative;z-index:1}
 a{color:#0a0a0a;text-decoration:none}
