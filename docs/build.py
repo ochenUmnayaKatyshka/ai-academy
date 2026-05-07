@@ -161,6 +161,16 @@ a{color:#0a0a0a;text-decoration:none}
   margin-top:24px;margin-bottom:8px;
 }
 .lesson-content p{margin-bottom:16px;color:#333}
+.lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back){
+  color:#0a0a0a;
+  border-bottom:2px solid #c8e600;
+  font-weight:600;
+  transition:all .15s;
+}
+.lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back):hover{
+  background:#c8e600;
+  border-bottom-color:#0a0a0a;
+}
 .lesson-content strong{color:#0a0a0a;font-weight:700}
 .lesson-content em{color:#666;font-style:italic}
 .lesson-content blockquote{
@@ -337,6 +347,8 @@ body.dark .lesson-header__back{color:#e5e5e5}
 body.dark .lesson-header__meta{color:#555}
 body.dark .lesson-content h1,body.dark .lesson-content h2,body.dark .lesson-content h3,body.dark .lesson-content h4{color:#e5e5e5}
 body.dark .lesson-content p{color:#bbb}
+body.dark .lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back){color:#c8e600;border-bottom-color:#c8e600}
+body.dark .lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back):hover{background:#c8e600;color:#0a0a0a}
 body.dark .lesson-content strong{color:#e5e5e5}
 body.dark .lesson-content em{color:#888}
 body.dark .lesson-content blockquote{background:rgba(200,230,0,0.05);color:#aaa}
@@ -370,6 +382,8 @@ body.girls .lesson-header__meta{color:#9a8a8a;font-family:'Georgia',serif}
 body.girls .lesson-content h1,body.girls .lesson-content h2{color:#3a3a3a;font-family:'Georgia',serif;font-weight:400;text-transform:none;letter-spacing:0}
 body.girls .lesson-content h3,body.girls .lesson-content h4{color:#4a4a4a;font-family:'Georgia',serif;font-weight:400}
 body.girls .lesson-content p{color:#5a5a5a;font-family:'Georgia',serif}
+body.girls .lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back){color:#c47a8a;border-bottom-color:#c47a8a}
+body.girls .lesson-content a:not(.lesson-nav__btn):not(.lesson-header__back):hover{background:#f8e0e6;color:#3a3a3a}
 body.girls .lesson-content strong{color:#3a3a3a}
 body.girls .lesson-content em{color:#7a6a6a}
 body.girls .lesson-content blockquote{border-left-color:#d4a0aa;background:#faf5f3;color:#7a6a6a}
