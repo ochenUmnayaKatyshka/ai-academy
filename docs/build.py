@@ -115,8 +115,8 @@ body{
 }
 body::before{
   content:'';position:fixed;top:0;left:0;width:100%;height:100%;
-  background-image:radial-gradient(circle,#000 0.7px,transparent 0.7px);
-  background-size:24px 24px;opacity:0.06;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,#3a3a3a 1.2px,transparent 1.2px);
+  background-size:22px 22px;opacity:0.18;pointer-events:none;z-index:0;
 }
 body>*{position:relative;z-index:1}
 a{color:#0a0a0a;text-decoration:none}
@@ -340,7 +340,7 @@ body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Geor
 
 /* ===== DARK THEME ===== */
 body.dark{background:#0a0a0a;color:#e5e5e5}
-body.dark::before{background-image:radial-gradient(circle,#fff 0.7px,transparent 0.7px);opacity:0.04}
+body.dark::before{background-image:radial-gradient(circle,#999 1.2px,transparent 1.2px);opacity:0.12}
 body.dark a{color:#e5e5e5}
 body.dark .lesson-header{border-bottom-color:#222}
 body.dark .lesson-header__back{color:#e5e5e5}
@@ -374,7 +374,7 @@ body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
 
 /* ===== GIRLS THEME ===== */
 body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
-body.girls::before{background-image:radial-gradient(circle,#8a6a6a 0.6px,transparent 0.6px);opacity:0.04}
+body.girls::before{background-image:radial-gradient(circle,#c47a8a 1.2px,transparent 1.2px);opacity:0.12}
 body.girls a{color:#3a3a3a}
 body.girls .lesson-header{border-bottom-color:#e0d5d0}
 body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
