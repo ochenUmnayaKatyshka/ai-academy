@@ -1,12 +1,16 @@
 # Как использовать ИИ если ты в РФ
 
-<div class="video-wrapper">
-  <iframe src="https://www.youtube.com/embed/XThnGJ_Iyp4" title="Как использовать ИИ если ты в РФ" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-</div>
-
 Привет, девочки. Это была самая тяжёлая часть, с которой я столкнулась при написании курса. Я не живу в РФ, поэтому у меня нет личного опыта в том, что у вас сейчас работает, что заблокировано и какие сервисы реально помогают. Чтобы не оставить эту тему пустой, я собрала всё по крупицам — у тех ребят, кто прямо сейчас в РФ и пользуется ИИ.
 
 Гайд живой: что-то отваливается, что-то новое появляется. Если у тебя случилось не так как тут написано или нашла что-то лучше — напиши мне, обновлю.
+
+## 🎥 Видео-вступление
+
+<div class="video-wrapper">
+  <iframe src="https://www.youtube-nocookie.com/embed/XThnGJ_Iyp4?rel=0" title="Как использовать ИИ если ты в РФ" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+</div>
+
+Если видео не открывается — посмотри его [напрямую на YouTube](https://youtu.be/XThnGJ_Iyp4).
 
 ---
 

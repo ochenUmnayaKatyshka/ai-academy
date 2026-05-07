@@ -223,8 +223,24 @@ a{color:#0a0a0a;text-decoration:none}
 .lesson-content img{max-width:560px;width:100%;margin:16px 0;display:block;border-radius:6px}
 
 /* Responsive video embed */
-.lesson-content .video-wrapper{position:relative;padding-bottom:56.25%;height:0;margin:24px 0;border-radius:8px;overflow:hidden;background:#000;max-width:720px}
-.lesson-content .video-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.lesson-content .video-wrapper{
+  position:relative;
+  padding-bottom:56.25%;
+  height:0;
+  margin:24px auto;
+  border-radius:8px;
+  overflow:hidden;
+  background:#000;
+  max-width:720px;
+  border:2px solid #0a0a0a;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+}
+.lesson-content .video-wrapper iframe{
+  position:absolute;top:0;left:0;width:100%;height:100%;border:0;
+  display:block;
+}
+body.dark .lesson-content .video-wrapper{border-color:#333;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+body.girls .lesson-content .video-wrapper{border-color:#c47a8a;box-shadow:0 8px 24px rgba(196,122,138,0.25)}
 
 /* Barbie-themed "don't do" section */
 .lesson-content .dont-do{
