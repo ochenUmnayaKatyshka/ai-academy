@@ -115,8 +115,8 @@ body{
 }
 body::before{
   content:'';position:fixed;top:0;left:0;width:100%;height:100%;
-  background-image:radial-gradient(circle,#3a3a3a 1.1px,transparent 1.1px);
-  background-size:24px 24px;opacity:0.13;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,#1a1a1a 1.3px,transparent 1.3px);
+  background-size:24px 24px;opacity:0.28;pointer-events:none;z-index:0;
 }
 body>*{position:relative;z-index:1}
 a{color:#0a0a0a;text-decoration:none}
@@ -409,7 +409,7 @@ body.girls .copy-icon--ok{background:#f8e0e6;border-color:#c47a8a;color:#c47a8a}
 body.girls .lesson-content .dont-do{background:linear-gradient(135deg, rgba(244,143,177,0.30), rgba(248,224,230,0.20));border-color:#c47a8a;border-style:solid;border-width:1.5px}
 body.girls .lesson-content .dont-do h2{color:#c47a8a;font-family:'Georgia',serif}
 body.girls .lesson-content .dont-do li{color:#7a4a5a;font-family:'Georgia',serif}
-body.girls .lesson-content .dont-do::before{opacity:0.13}
+body.girls .lesson-content .dont-do::before{opacity:0.28}
 body.girls .theme-toggle{background:#fff;border-color:#e0d5d0;color:#9a8a8a;font-family:'Georgia',serif}
 body.girls .theme-toggle:hover{border-color:#c47a8a;color:#3a3a3a}
 
