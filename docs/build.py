@@ -17,7 +17,11 @@ MATERIALS_OUTPUT_DIR = os.path.join(BASE_DIR, 'materials')
 MATERIALS = [
     ('claude-code-guide.html', 'reference/claude-code-friendly-guide.md', 'Как общаться с Claude'),
     ('cheat-sheet.html', 'reference/cheat-sheet.md', 'Команды терминала'),
-    ('payment-guide-russia.html', 'reference/payment-guide-russia.md', 'Как использовать ИИ если ты в РФ'),
+]
+
+# Standalone pages outside materials: (output_html_path_relative_to_BASE_DIR, md_path, title, back_link, back_label)
+STANDALONE_PAGES = [
+    ('russia-guide.html', 'reference/payment-guide-russia.md', 'Как использовать ИИ если ты в РФ', 'index.html', '\u2190 НА ГЛАВНУЮ'),
 ]
 
 # Lesson definitions: (lesson_id, html_filename, md_path, title, stage, lesson_num, stage_total)
@@ -583,6 +587,39 @@ def get_cc_lesson_html_template(title, module, lesson_num, module_total, lesson_
 </html>'''
 
 
+def get_standalone_html_template(title, content_html, back_link, back_label):
+    return f'''<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} — AI Academy</title>
+  {GOOGLE_FONTS}
+  <style>{INLINE_CSS}</style>
+</head>
+<body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-label">\U0001F338 для девочек</span>
+  </button>
+
+  <div class="lesson-header">
+    <a href="{back_link}" class="lesson-header__back">{back_label}</a>
+    <span class="lesson-header__meta">{title}</span>
+  </div>
+
+  <div class="container">
+    <div class="lesson-content">
+      {content_html}
+    </div>
+  </div>
+
+  <script>{INLINE_JS}</script>
+  <script>{THEME_JS}</script>
+</body>
+</html>'''
+
+
 def get_material_html_template(title, content_html):
     return f'''<!DOCTYPE html>
 <html lang="ru">
@@ -725,6 +762,33 @@ def build():
         materials_built += 1
         print(f'  ✅ [MATERIAL] {html_file} ← {md_path}')
 
+    # Build standalone pages
+    standalone_built = 0
+    standalone_errors = 0
+
+    for out_path, md_path, title, back_link, back_label in STANDALONE_PAGES:
+        md_full_path = os.path.join(COURSE_DIR, md_path)
+
+        if not os.path.exists(md_full_path):
+            print(f'  ❌ Standalone файл не найден: {md_path}')
+            standalone_errors += 1
+            continue
+
+        with open(md_full_path, 'r', encoding='utf-8') as f:
+            md_text = f.read()
+
+        md_converter.reset()
+        content_html = md_converter.convert(md_text)
+
+        html = get_standalone_html_template(title, content_html, back_link, back_label)
+
+        output_path = os.path.join(BASE_DIR, out_path)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        standalone_built += 1
+        print(f'  ✅ [PAGE] {out_path} ← {md_path}')
+
     # Build sitemap.xml
     site_url = 'https://loveyouhumans.com'
     today = __import__('datetime').date.today().isoformat()
@@ -735,6 +799,8 @@ def build():
         urls.append(f'/lessons-cc/{html_file}')
     for html_file, _, _ in MATERIALS:
         urls.append(f'/materials/{html_file}')
+    for out_path, _, _, _, _ in STANDALONE_PAGES:
+        urls.append(f'/{out_path}')
 
     sitemap_lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
