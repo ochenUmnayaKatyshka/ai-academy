@@ -22,6 +22,7 @@ MATERIALS = [
 # Standalone pages outside materials: (output_html_path_relative_to_BASE_DIR, md_path, title, back_link, back_label)
 STANDALONE_PAGES = [
     ('russia-guide.html', 'reference/payment-guide-russia.md', 'Как использовать ИИ если ты в РФ', 'index.html', '\u2190 НА ГЛАВНУЮ'),
+    ('first-step.html', 'reference/first-step-product.md', 'Первый шаг к созданию продукта', 'courses.html', '\u2190 К ОБУЧЕНИЮ'),
 ]
 
 # Lesson definitions: (lesson_id, html_filename, md_path, title, stage, lesson_num, stage_total)
@@ -115,8 +116,8 @@ body{
 }
 body::before{
   content:'';position:fixed;top:0;left:0;width:100%;height:100%;
-  background-image:radial-gradient(circle,#1a1a1a 1.3px,transparent 1.3px);
-  background-size:24px 24px;opacity:0.38;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,#1a1a1a 0.8px,transparent 0.8px);
+  background-size:24px 24px;opacity:0.19;pointer-events:none;z-index:0;
 }
 body>*{position:relative;z-index:1}
 a{color:#0a0a0a;text-decoration:none}
@@ -340,7 +341,7 @@ body.girls .test__note{color:#9a8a8a;border-left-color:#e0d5d0;font-family:'Geor
 
 /* ===== DARK THEME ===== */
 body.dark{background:#0a0a0a;color:#e5e5e5}
-body.dark::before{background-image:radial-gradient(circle,#999 1.2px,transparent 1.2px);opacity:0.12}
+body.dark::before{background-image:radial-gradient(circle,#999 0.8px,transparent 0.8px);opacity:0.06}
 body.dark a{color:#e5e5e5}
 body.dark .lesson-header{border-bottom-color:#222}
 body.dark .lesson-header__back{color:#e5e5e5}
@@ -374,7 +375,7 @@ body.dark .theme-toggle:hover{border-color:#e5e5e5;color:#e5e5e5}
 
 /* ===== GIRLS THEME ===== */
 body.girls{background:#f5f0ed;color:#3a3a3a;font-family:'Georgia','Times New Roman',serif}
-body.girls::before{background-image:radial-gradient(circle,#c47a8a 1.2px,transparent 1.2px);opacity:0.12}
+body.girls::before{background-image:radial-gradient(circle,#c47a8a 0.8px,transparent 0.8px);opacity:0.06}
 body.girls a{color:#3a3a3a}
 body.girls .lesson-header{border-bottom-color:#e0d5d0}
 body.girls .lesson-header__back{color:#c47a8a;font-family:'Georgia',serif}
