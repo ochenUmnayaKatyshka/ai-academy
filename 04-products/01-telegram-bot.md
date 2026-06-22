@@ -4,6 +4,16 @@
 
 ---
 
+## Прежде чем начать
+
+Посмотри короткое видео — как создать первый продукт. А дальше пройдём всё пошагово.
+
+<div class="video-wrapper">
+<iframe src="https://www.youtube.com/embed/Nw0tksG2QnU" title="Как создать первый продукт" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+---
+
 ## Что мы будем строить
 
 ```
